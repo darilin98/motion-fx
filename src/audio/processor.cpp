@@ -2,7 +2,7 @@
 // Created by Darek Rudiš on 20.03.2025.
 //
 #include "processor.hpp"
-#include "controller.hpp"
+#include "../controller.hpp"
 
 #if defined(__APPLE__)
     #include <sys/proc.h>

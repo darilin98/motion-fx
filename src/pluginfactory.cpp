@@ -15,7 +15,7 @@
 #include "pluginterfaces/base/ustring.h"
 #include "pluginterfaces/vst/ivstaudioprocessor.h"
 #include "pluginterfaces/vst/ivsteditcontroller.h"
-#include "processor.hpp"
+#include "audio/processor.hpp"
 #include "controller.hpp"
 
 using namespace Steinberg::Vst;

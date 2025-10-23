@@ -23,8 +23,8 @@ set(SOURCES
         controller.cpp
         controller.hpp
         pluginfactory.cpp
-        processor.cpp
-        processor.hpp
+        audio/processor.cpp
+        audio/processor.hpp
         utils.hpp
 )
 
