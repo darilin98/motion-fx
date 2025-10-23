@@ -1,0 +1,51 @@
+{
+	"vstgui-ui-description": {
+		"version": "1",
+		"bitmaps": {},
+		"fonts": {},
+		"colors": {},
+		"custom": {
+			"FocusDrawing": {},
+			"VST3Editor": {
+				"Path": "/Users/darek/Documents/Projects/motion-fx/src/resources/viewGUI.uidesc"
+			},
+			"UIGridController": {
+				"Grids": "1x 1,5x 5,10x 10,12x 12,15x 15"
+			},
+			"UIEditController": {
+				"EditViewScale": "1",
+				"EditorSize": "0, 0, 500, 500",
+				"SplitViewSize_0_0": "0.7257383966244725925776037911418825387955",
+				"SplitViewSize_0_1": "0.2320675105485232037061393839394440874457",
+				"SplitViewSize_1_0": "0.4725738396624472592577603791141882538795",
+				"SplitViewSize_1_1": "0.5168776371308017036909632224706001579762",
+				"SplitViewSize_2_0": "0.6400000000000000133226762955018784850836",
+				"SplitViewSize_2_1": "0.3499999999999999777955395074968691915274",
+				"TabSwitchValue": "0",
+				"Version": "1"
+			},
+			"UITemplateController": {
+				"SelectedTemplate": "view"
+			},
+			"UIAttributesController": {},
+			"UIViewCreatorDataSource": {
+				"SelectedRow": "-1"
+			}
+		},
+		"templates": {
+			"view": {
+				"attributes": {
+					"background-color": "~ WhiteCColor",
+					"background-color-draw-style": "filled and stroked",
+					"class": "CViewContainer",
+					"mouse-enabled": "true",
+					"opacity": "1",
+					"origin": "0, 0",
+					"size": "300, 300",
+					"transparent": "false",
+					"wants-focus": "false"
+				}
+			}
+		}
+	}
+}
