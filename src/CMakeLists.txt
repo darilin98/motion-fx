@@ -25,6 +25,8 @@ set(SOURCES
         pluginfactory.cpp
         audio/processor.cpp
         audio/processor.hpp
+        ui/fileselectcontroller.hpp
+        ui/motionfxeditor.hpp
         utils.hpp
 )
 

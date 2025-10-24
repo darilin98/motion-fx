@@ -5,9 +5,11 @@
 #ifndef CONTROLLER_HPP
 #define CONTROLLER_HPP
 
+#include "base/source/fstring.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
 #include "vstgui4/vstgui/plugin-bindings/vst3editor.h"
 #include "public.sdk/source/main/moduleinit.h"
+
 
 using namespace Steinberg::Vst;
 using namespace Steinberg;
@@ -15,10 +17,13 @@ using namespace Steinberg;
 /**
  * @brief Defines parameters used by the plugin
  */
-enum CustomParamID : ParamID{
+enum AudioParamID : ParamID{
     kParamBypass = 101,
 };
 
+enum ViewParamID : ParamID {
+    kParamLoadVideo = 1001,
+};
 /**
  * @brief Custom implementation of the VSTSDK @ref EditController
  *

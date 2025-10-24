@@ -6,6 +6,7 @@
 
 #include "base/source/fstreamer.h"
 #include "vstgui/lib/vstguiinit.h"
+#include "ui/motionfxeditor.hpp"
 
 tresult PLUGIN_API PluginController::initialize(FUnknown* context)
 {
@@ -15,6 +16,8 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
     if (result != kResultOk)
         return result;
     parameters.removeAll();
+    parameters.addParameter(STR16("UiControl"), nullptr, 1, 0.0,ParameterInfo::kCanAutomate | ParameterInfo::kIsList,
+     kParamLoadVideo);
     parameters.addParameter(STR16("Bypass"), nullptr, 1, 0.0, ParameterInfo::kIsBypass | ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamBypass);
     return kResultOk;
 }
@@ -58,7 +61,7 @@ IPlugView* PLUGIN_API PluginController::createView (FIDString name)
 {
     if (strcmp (name, ViewType::kEditor) == 0)
     {
-        return new VSTGUI::VST3Editor (this, "view", "viewGUI.uidesc");
+        return new MotionFxEditor (this, "view", "viewGUI.uidesc");
     }
     return nullptr;
 }
