@@ -4,6 +4,32 @@
 		"bitmaps": {},
 		"fonts": {},
 		"colors": {},
+		"gradients": {
+			"Default TextButton Gradient": [
+				{
+					"rgba": "#dcdcdcff",
+					"start": "0"
+				},
+				{
+					"rgba": "#b4b4b4ff",
+					"start": "1"
+				}
+			],
+			"Default TextButton Gradient Highlighted": [
+				{
+					"rgba": "#b4b4b4ff",
+					"start": "0"
+				},
+				{
+					"rgba": "#646464ff",
+					"start": "1"
+				}
+			]
+		},
+		"control-tags": {
+			"Bypass": "101",
+			"UiControl": "1001"
+		},
 		"custom": {
 			"FocusDrawing": {},
 			"VST3Editor": {
@@ -14,13 +40,13 @@
 			},
 			"UIEditController": {
 				"EditViewScale": "1",
-				"EditorSize": "0, 0, 500, 500",
-				"SplitViewSize_0_0": "0.7257383966244725925776037911418825387955",
-				"SplitViewSize_0_1": "0.2320675105485232037061393839394440874457",
-				"SplitViewSize_1_0": "0.4725738396624472592577603791141882538795",
-				"SplitViewSize_1_1": "0.5168776371308017036909632224706001579762",
-				"SplitViewSize_2_0": "0.6400000000000000133226762955018784850836",
-				"SplitViewSize_2_1": "0.3499999999999999777955395074968691915274",
+				"EditorSize": "0, 0, 1470, 891",
+				"SplitViewSize_0_0": "0.8497109826589595016343992028851062059402",
+				"SplitViewSize_0_1": "0.1271676300578034601862498220725683495402",
+				"SplitViewSize_1_0": "0.485549132947976858076799544505774974823",
+				"SplitViewSize_1_1": "0.5098265895953757453895605067373253405094",
+				"SplitViewSize_2_0": "0.784353741496598644289406365714967250824",
+				"SplitViewSize_2_1": "0.2122448979591836648594949110702145844698",
 				"TabSwitchValue": "0",
 				"Version": "1"
 			},
@@ -29,7 +55,7 @@
 			},
 			"UIAttributesController": {},
 			"UIViewCreatorDataSource": {
-				"SelectedRow": "-1"
+				"SelectedRow": "26"
 			}
 		},
 		"templates": {
@@ -41,9 +67,54 @@
 					"mouse-enabled": "true",
 					"opacity": "1",
 					"origin": "0, 0",
-					"size": "300, 300",
+					"size": "460, 300",
 					"transparent": "false",
 					"wants-focus": "false"
+				},
+				"children": {
+					"CViewContainer": {
+						"attributes": {
+							"background-color": "~ TransparentCColor",
+							"background-color-draw-style": "filled and stroked",
+							"class": "CViewContainer",
+							"custom-view-name": "FileSelect",
+							"mouse-enabled": "true",
+							"opacity": "1",
+							"origin": "90, 160",
+							"size": "280, 100",
+							"transparent": "false",
+							"wants-focus": "false"
+						},
+						"children": {
+							"CTextButton": {
+								"attributes": {
+									"class": "CTextButton",
+									"control-tag": "UiControl",
+									"font": "~ SystemFont",
+									"frame-color": "~ BlackCColor",
+									"frame-color-highlighted": "~ BlackCColor",
+									"frame-width": "1",
+									"gradient": "Default TextButton Gradient",
+									"gradient-highlighted": "Default TextButton Gradient Highlighted",
+									"icon-position": "left",
+									"icon-text-margin": "0",
+									"kick-style": "true",
+									"opacity": "1",
+									"origin": "70, 40",
+									"round-radius": "6",
+									"size": "120, 30",
+									"sub-controller": "FileSelectController",
+									"text-alignment": "center",
+									"text-color": "~ BlackCColor",
+									"text-color-highlighted": "~ WhiteCColor",
+									"title": "Select a video file",
+									"transparent": "false",
+									"wants-focus": "true",
+									"wheel-inc-value": "0.1"
+								}
+							}
+						}
+					}
 				}
 			}
 		}
