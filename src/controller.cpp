@@ -61,7 +61,7 @@ IPlugView* PLUGIN_API PluginController::createView (FIDString name)
 {
     if (strcmp (name, ViewType::kEditor) == 0)
     {
-        return new MotionFxEditor (this, "view", "viewGUI.uidesc");
+        return new MotionFxEditor (this, "InputSelect", "viewGUI.uidesc");
     }
     return nullptr;
 }

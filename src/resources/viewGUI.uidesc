@@ -51,7 +51,7 @@
 				"Version": "1"
 			},
 			"UITemplateController": {
-				"SelectedTemplate": "view"
+				"SelectedTemplate": "InputSelect"
 			},
 			"UIAttributesController": {},
 			"UIViewCreatorDataSource": {
@@ -59,7 +59,7 @@
 			}
 		},
 		"templates": {
-			"view": {
+			"InputSelect": {
 				"attributes": {
 					"background-color": "~ WhiteCColor",
 					"background-color-draw-style": "filled and stroked",
@@ -113,6 +113,35 @@
 									"wheel-inc-value": "0.1"
 								}
 							}
+						}
+					}
+				}
+			},
+			"AudioProcessing": {
+				"attributes": {
+					"background-color": "~ BlueCColor",
+					"background-color-draw-style": "filled and stroked",
+					"class": "CViewContainer",
+					"mouse-enabled": "true",
+					"opacity": "1",
+					"origin": "0, 0",
+					"size": "460, 300",
+					"transparent": "false",
+					"wants-focus": "false"
+				},
+				"children": {
+					"CViewContainer": {
+						"attributes": {
+							"background-color": "~ TransparentCColor",
+							"background-color-draw-style": "filled and stroked",
+							"class": "CViewContainer",
+							"custom-view-name": "FileSelect",
+							"mouse-enabled": "true",
+							"opacity": "1",
+							"origin": "90, 160",
+							"size": "280, 100",
+							"transparent": "false",
+							"wants-focus": "false"
 						}
 					}
 				}

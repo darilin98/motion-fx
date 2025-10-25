@@ -20,6 +20,7 @@ public:
             runFileSelector();
         }
     }
+    std::function<void(const VSTGUI::UTF8String&)> onFileSelected;
 private:
     void runFileSelector() const {
         auto* selector = VSTGUI::CNewFileSelector::create (nullptr,
@@ -38,7 +39,8 @@ private:
                 if (sel->getNumSelectedFiles() > 0)
                 {
                     const VSTGUI::UTF8String result = sel->getSelectedFile(0);
-                    fprintf(stderr, "Selected: %s\n", result.getString().c_str());
+                    if (onFileSelected)
+                        onFileSelected(result.getString().c_str());
                 }
                 sel->forget();
             });

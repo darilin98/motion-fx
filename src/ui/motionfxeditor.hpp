@@ -13,16 +13,19 @@ class MotionFxEditor : public VSTGUI::VST3Editor
 {
 public:
 	MotionFxEditor(Steinberg::Vst::EditController* controller,
-			 const char* templateName,
-			 const char* xmlFile)
-		: VST3Editor(controller, templateName, xmlFile)
-	{}
+			 const char* templateName, const char* xmlFile)
+		: VST3Editor(controller, templateName, xmlFile) {}
 
-	VSTGUI::IController* createSubController(VSTGUI::UTF8StringPtr name,
-											 const VSTGUI::IUIDescription* description) override
+	VSTGUI::IController* createSubController(VSTGUI::UTF8StringPtr name, const VSTGUI::IUIDescription* description) override
 	{
-		if (strcmp(name, "FileSelectController") == 0)
-			return new FileSelectController(this);
+		if (strcmp(name, "FileSelectController") == 0) {
+			auto* ctrl = new FileSelectController(this);
+			ctrl->onFileSelected = [this](const VSTGUI::UTF8String& path){
+				fprintf(stderr, "Switching to AudioProcessingView for %s\n", path.data());
+				this->exchangeView("AudioProcessing");
+			};
+			return ctrl;
+		}
 		return nullptr;
 	}
 };
