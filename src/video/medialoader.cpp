@@ -3,6 +3,8 @@
 //
 
 #include "medialoader.hpp"
+#include "decoders/videodecoder.hpp"
+#include "decoders/imagedecoder.hpp"
 
 void MediaLoader::loadMedia(const std::string& path) {
 	return;
@@ -12,10 +14,10 @@ decoder_t MediaLoader::makeDecoder(const std::string &path) {
 	const std::string ext = path.substr(path.find_last_of('.') + 1);
 
 	if (ext == "mp4" || ext == "mov" || ext == "avi" || ext == "gif") {
-		return nullptr; // TODO: Decoder implementations
+		return std::make_shared<VideoDecoder>();
 	}
 	if (ext == "jpg" || ext == "jpeg" || ext == "png") {
-		return nullptr;
+		return std::make_shared<ImageDecoder>();
 	}
 	return nullptr;
 }
