@@ -7,14 +7,17 @@
 #include "decoders/imagedecoder.hpp"
 
 void MediaLoader::loadMedia(const std::string& path) {
-	return;
+	decoder_ = makeDecoder(path);
+	if (decoder_)
+		decoder_->open(path); // Should be a task
 }
 
 decoder_t MediaLoader::makeDecoder(const std::string &path) {
 	const std::string ext = path.substr(path.find_last_of('.') + 1);
 
 	if (ext == "mp4" || ext == "mov" || ext == "avi" || ext == "gif") {
-		return std::make_shared<VideoDecoder>();
+		return nullptr;
+		//return std::make_shared<VideoDecoder>();
 	}
 	if (ext == "jpg" || ext == "jpeg" || ext == "png") {
 		return std::make_shared<ImageDecoder>();

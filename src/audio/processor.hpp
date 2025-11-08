@@ -7,7 +7,6 @@
 
 #include "public.sdk/source/vst/vstaudioeffect.h"
 #include "pluginterfaces/base/ustring.h"
-#include <vector>
 
 using namespace Steinberg::Vst;
 using namespace Steinberg;
@@ -52,6 +51,6 @@ private:
      * @return State boolean
      */
     [[nodiscard]] bool getBypassState(const ProcessData& data) const;
-    ParamValue bypassState = 0.0f;
+    ParamValue bypass_state_ = 0.0f;
 };
 #endif //PROCESSOR_HPP

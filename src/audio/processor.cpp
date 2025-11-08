@@ -73,7 +73,7 @@ tresult PLUGIN_API PluginProcessor::process(ProcessData& data)
 bool PluginProcessor::getBypassState(const ProcessData &data) const
 {
     if (!data.inputParameterChanges)
-        return bypassState == 1.0f;
+        return bypass_state_ == 1.0f;
 
     for (int32 i = 0; i < data.inputParameterChanges->getParameterCount(); ++i)
     {
@@ -89,15 +89,15 @@ bool PluginProcessor::getBypassState(const ProcessData &data) const
 
         bool newBypassState = value == 1.0f;
 
-        if (!(bypassState == 1.0f) && newBypassState) {
+        if (!(bypass_state_ == 1.0f) && newBypassState) {
             // Flush
         }
 
-        const_cast<PluginProcessor*>(this)->bypassState = value;
+        const_cast<PluginProcessor*>(this)->bypass_state_ = value;
         return newBypassState;
     }
 
-    return bypassState == 1.0f;
+    return bypass_state_ == 1.0f;
 }
 
 tresult PLUGIN_API PluginProcessor::getControllerClassId(TUID classId)
@@ -121,7 +121,7 @@ tresult PluginProcessor::setState(IBStream *state)
 
     IBStreamer streamer(state, kLittleEndian);
 
-    if (!streamer.readDouble(bypassState))
+    if (!streamer.readDouble(bypass_state_))
         return kResultFalse;
     return kResultOk;
 }
@@ -133,7 +133,7 @@ tresult PluginProcessor::getState(IBStream *state)
 
     IBStreamer streamer(state, kLittleEndian);
 
-    if (!streamer.writeDouble(bypassState))
+    if (!streamer.writeDouble(bypass_state_))
         return kResultFalse;
 
     return kResultOk;

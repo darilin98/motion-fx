@@ -24,7 +24,7 @@ public:
         : CView(size) { }
     void draw(VSTGUI::CDrawContext* dc) override;
 private:
-    controller_t _controller = nullptr;
+    controller_t controller_ = nullptr;
 };
 
 namespace VSTGUI {

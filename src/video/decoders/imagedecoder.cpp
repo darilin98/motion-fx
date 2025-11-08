@@ -14,28 +14,28 @@ bool ImageDecoder::open(const std::string &path) {
 		return false;
 	}
 
-	cachedFrame.image.width = width;
-	cachedFrame.image.height = height;
-	cachedFrame.image.rgba_data.assign(
+	cached_frame_.image.width = width;
+	cached_frame_.image.height = height;
+	cached_frame_.image.rgba_data.assign(
 		stbi_data,
 		stbi_data + width * height * 4
 	);
-	cachedFrame.timestamp = 0.0;
+	cached_frame_.timestamp = 0.0;
 	stbi_image_free(stbi_data);
-	loaded = true;
+	loaded_ = true;
 	return true;
 }
 
 bool ImageDecoder::seekTo(int64_t time) {
 	// Does not make sense to call on image decoder
-	return loaded;
+	return loaded_;
 }
 
 bool ImageDecoder::decodeNext(VideoFrame &outFrame) {
-	if (!loaded) {
+	if (!loaded_) {
 		return false;
 	}
-	outFrame = cachedFrame;
+	outFrame = cached_frame_;
 	return true;
 }
 

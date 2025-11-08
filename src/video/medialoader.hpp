@@ -29,6 +29,6 @@ public:
 	std::function<void(VideoFrame&&)> onFrame;
 private:
 	static decoder_t makeDecoder(const std::string& path);
-	decoder_t decoder;
+	decoder_t decoder_;
 };
 #endif //MEDIALOADER_HPP
