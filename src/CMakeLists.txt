@@ -77,6 +77,10 @@ set(SOURCES
         video/videoframe.hpp
         video/medialoader.cpp
         video/medialoader.hpp
+        video/decoders/videodecoder.cpp
+        video/decoders/videodecoder.hpp
+        video/decoders/imagedecoder.cpp
+        video/decoders/imagedecoder.cpp
         utils.hpp
 )
 
