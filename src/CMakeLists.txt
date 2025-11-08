@@ -61,6 +61,20 @@ message(STATUS "FFmpeg library dirs: ${FFMPEG_LIB_DIRS}")
 message(STATUS "FFmpeg pkg-config libs: ${FFMPEG_LIBS_PKG}")
 
 #-------------------------------------------------------------------------------
+# Include stb_image headers
+#-------------------------------------------------------------------------------
+
+FetchContent_Declare(
+        stb_image
+        GIT_REPOSITORY https://github.com/nothings/stb.git
+        GIT_TAG master
+)
+
+FetchContent_MakeAvailable(stb_image)
+
+include_directories(${stb_image_SOURCE_DIR})
+
+#-------------------------------------------------------------------------------
 # Declare sources and ext. library directories
 #-------------------------------------------------------------------------------
 
