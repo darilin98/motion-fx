@@ -22,21 +22,22 @@ bool ImageDecoder::open(const std::string &path) {
 	);
 	cached_frame_.timestamp = 0.0;
 	stbi_image_free(stbi_data);
-	loaded_ = true;
+	has_returned_ = false;
 	return true;
 }
 
 bool ImageDecoder::seekTo(int64_t time) {
 	// Does not make sense to call on image decoder
-	return loaded_;
+	return has_returned_;
 }
 
-bool ImageDecoder::decodeNext(VideoFrame &outFrame) {
-	if (!loaded_) {
-		return false;
+bool ImageDecoder::decodeNext(VideoFrame& outFrame) {
+	if (!has_returned_) {
+		outFrame = cached_frame_;
+		has_returned_ = true;
+		return true;
 	}
-	outFrame = cached_frame_;
-	return true;
+	return false;
 }
 
 
