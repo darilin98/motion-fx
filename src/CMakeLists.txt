@@ -89,8 +89,11 @@ set(SOURCES
         ui/mediaview.cpp
         ui/mediaview.hpp
         video/videoframe.hpp
+        video/framequeue.hpp
         video/medialoader.cpp
         video/medialoader.hpp
+        video/playbackcontroller.cpp
+        video/playbackcontroller.hpp
         #video/decoders/videodecoder.cpp
         #video/decoders/videodecoder.hpp
         video/decoders/imagedecoder.cpp
