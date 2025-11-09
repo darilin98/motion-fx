@@ -1,38 +1,45 @@
 //
 // Created by Darek Rudiš on 24.10.2025.
 //
-
 #ifndef MOTIONFXEDITOR_HPP
 #define MOTIONFXEDITOR_HPP
 
 #include "public.sdk/source/vst/vsteditcontroller.h"
 #include "vstgui4/vstgui/plugin-bindings/vst3editor.h"
 #include "fileselectcontroller.hpp"
-#include "../video/medialoader.hpp"
-
-using loader_t = std::shared_ptr<MediaLoader>;
+#include "../video/playbackcontroller.hpp"
+#include "../video/framequeue.hpp"
 
 class MotionFxEditor : public VSTGUI::VST3Editor
 {
 public:
-	MotionFxEditor(EditController* controller,
+	MotionFxEditor(Steinberg::Vst::EditController* controller,
 			 const char* templateName, const char* xmlFile)
 		: VST3Editor(controller, templateName, xmlFile) {}
 
-	IController* createSubController(const VSTGUI::UTF8StringPtr name, const VSTGUI::IUIDescription* description)
+	VSTGUI::IController* createSubController(const VSTGUI::UTF8StringPtr name, const VSTGUI::IUIDescription* description)
 	 override
 	{
 		if (strcmp(name, "FileSelectController") == 0) {
 			auto* ctrl = new FileSelectController(this);
 			ctrl->onFileSelected = [this](const VSTGUI::UTF8String& path){
 				fprintf(stderr, "Switching to AudioProcessingView for %s\n", path.data());
+
+				// Allocate playback
+				// TODO: Remove refs on viewTemplate switch
+				frame_queue_ = std::make_shared<FrameQueue>();
+				playback_controller_ = std::make_shared<PlaybackController>(path.data(), frame_queue_);
+
 				this->exchangeView("AudioProcessing");
+				playback_controller_->startPipeline(1.0);
 			};
 			return ctrl;
 		}
 		return nullptr;
 	}
+	[[nodiscard]] frame_queue_t getFrameQueue() const { return frame_queue_; }
 private:
-	loader_t loader_;
+	frame_queue_t frame_queue_ = nullptr;
+	pcont_t playback_controller_ = nullptr;
 };
 #endif //MOTIONFXEDITOR_HPP
