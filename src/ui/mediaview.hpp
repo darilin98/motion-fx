@@ -1,10 +1,11 @@
 //
 // Created by Darek Rudiš on 07.11.2025.
 //
-
+#pragma once
 #ifndef MEDIAVIEW_HPP
 #define MEDIAVIEW_HPP
 
+#include "motionfxeditor.hpp"
 #include "vstgui/lib/cview.h"
 #include "vstgui/uidescription/iuidescription.h"
 #include "vstgui/uidescription/iviewcreator.h"
@@ -18,17 +19,24 @@
 
 using controller_t = Steinberg::Vst::EditController*;
 
-class MediaView : public VSTGUI::CView, public Steinberg::FObject {
+class MediaView final : public VSTGUI::CView, public Steinberg::FObject {
 public:
     explicit MediaView(const VSTGUI::CRect& size)
         : CView(size) { }
+    void setQueue(const frame_queue_t& queue);
     void draw(VSTGUI::CDrawContext* dc) override;
 private:
+    void updateFromQueue();
+    void frameToBitmap(VideoFrame&& frame);
+    VSTGUI::SharedPointer<VSTGUI::CBitmap> bitmap_;
+    uint32_t bmpWidth_ = 0;
+    uint32_t bmpHeight_ = 0;
     controller_t controller_ = nullptr;
+    frame_queue_t queue_ = nullptr;
 };
 
 namespace VSTGUI {
-    struct MediaViewCreator : public ViewCreatorAdapter {
+    struct MediaViewCreator : ViewCreatorAdapter {
 
         MediaViewCreator() { UIViewFactory::registerViewCreator(*this); }
 
@@ -40,12 +48,9 @@ namespace VSTGUI {
             fprintf(stderr, "creating custom view");
             auto* view = new MediaView({0, 0, 100, 100});
 
-            if (const auto* controller = dynamic_cast<VST3Editor*>(d->getController()))
+            if (const auto* editor = dynamic_cast<MotionFxEditor*>(d->getController()))
             {
-                if (auto* editController = controller->getController())
-                {
-                    // Setup view
-                }
+                 view->setQueue(editor->getFrameQueue());
             }
             return view;
         }
