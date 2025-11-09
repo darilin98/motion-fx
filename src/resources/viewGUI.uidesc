@@ -150,8 +150,8 @@
 									"class": "MediaView",
 									"mouse-enabled": "true",
 									"opacity": "1",
-									"origin": "80, 70",
-									"size": "110, 100",
+									"origin": "0, 0",
+									"size": "290, 220",
 									"transparent": "false",
 									"wants-focus": "false"
 								}
