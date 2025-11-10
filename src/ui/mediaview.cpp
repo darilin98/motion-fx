@@ -9,19 +9,19 @@
 void MediaView::draw(VSTGUI::CDrawContext* dc) {
 	updateFromQueue();
 
-	if (!bitmap_) {
+	if (!bmp_) {
 		setDirty(false);
 		return;
 	}
 
 	const VSTGUI::CRect viewRect = getViewSize();
-	if (bmpWidth_ == 0 || bmpHeight_ == 0) {
-		bitmap_->draw(dc, viewRect);
+	if (bmp_width_ == 0 || bmp_height_ == 0) {
+		bmp_->draw(dc, viewRect);
 		setDirty(false);
 		return;
 	}
 
-	bitmap_->draw(dc, viewRect);
+	bmp_->draw(dc, viewRect);
 	setDirty(false);
 }
 
@@ -82,9 +82,9 @@ void MediaView::frameToBitmap(VideoFrame&& frame)
 	}
 	access->forget();
 
-	bitmap_ = VSTGUI::owned(newBmp);
-	bmpWidth_ = w;
-	bmpHeight_ = h;
+	bmp_ = VSTGUI::owned(newBmp);
+	bmp_width_ = w;
+	bmp_height_ = h;
 
 	VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [this] {
 		this->invalid();

@@ -28,9 +28,9 @@ public:
 private:
     void updateFromQueue();
     void frameToBitmap(VideoFrame&& frame);
-    VSTGUI::SharedPointer<VSTGUI::CBitmap> bitmap_;
-    uint32_t bmpWidth_ = 0;
-    uint32_t bmpHeight_ = 0;
+    VSTGUI::SharedPointer<VSTGUI::CBitmap> bmp_;
+    uint32_t bmp_width_ = 0;
+    uint32_t bmp_height_ = 0;
     controller_t controller_ = nullptr;
     frame_queue_t queue_ = nullptr;
 };
