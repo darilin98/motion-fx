@@ -45,24 +45,35 @@ void MediaView::frameToBitmap(VideoFrame&& frame)
 	if (img.width == 0 || img.height == 0 || img.rgba_data.empty())
 		return;
 
-	const auto w = static_cast<uint32_t>(img.width);
-	const auto h = static_cast<uint32_t>(img.height);
+	const auto bitmapWidth = static_cast<uint32_t>(img.width);
+	const auto bitmapHeight = static_cast<uint32_t>(img.height);
 
-	// TODO: Rescaling for rect size
-	auto* newBmp = new VSTGUI::CBitmap(static_cast<VSTGUI::CCoord>(w), static_cast<VSTGUI::CCoord>(h));
+	VSTGUI::CRect viewRect = getViewSize();
+	const uint32_t viewWidth = viewRect.getWidth();
+	const uint32_t viewHeight = viewRect.getHeight();
+
+	std::vector<uint8_t> resized;
+	const uint8_t* srcPtr = img.rgba_data.data();
+	if (bitmapWidth == viewWidth && bitmapHeight == viewHeight) {
+		resized = img.rgba_data;
+	} else {
+		resized = resizeNearestRGBA(srcPtr, bitmapWidth, bitmapHeight, viewWidth, viewHeight);
+	}
+
+	auto* newBmp = new VSTGUI::CBitmap(static_cast<VSTGUI::CCoord>(bitmapWidth), static_cast<VSTGUI::CCoord>(bitmapHeight));
 	VSTGUI::CBitmapPixelAccess* access = VSTGUI::CBitmapPixelAccess::create(newBmp, true);
 	if (!access) {
 		delete newBmp;
 		return;
 	}
-	const uint8_t* src = img.rgba_data.data();
+	const uint8_t* src = resized.data();
 
-	for (uint32_t y = 0; y < h; ++y)
+	for (uint32_t y = 0; y < viewHeight; ++y)
 	{
 		if (!access->setPosition(0u, y))
 			continue;
 
-		for (uint32_t x = 0; x < w; ++x)
+		for (uint32_t x = 0; x < viewWidth; ++x)
 		{
 			const uint8_t r = *src++;
 			const uint8_t g = *src++;
@@ -83,10 +94,25 @@ void MediaView::frameToBitmap(VideoFrame&& frame)
 	access->forget();
 
 	bmp_ = VSTGUI::owned(newBmp);
-	bmp_width_ = w;
-	bmp_height_ = h;
+	bmp_width_ = bitmapWidth;
+	bmp_height_ = bitmapHeight;
 
 	VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [this] {
 		this->invalid();
 	});
+}
+
+
+static std::vector<uint8_t> resizeNearestRGBA(const uint8_t* src, const int originWidth, const int originHeight, const int destinationWidth, const int destinationHeight) {
+    std::vector<uint8_t> out(static_cast<size_t>(destinationWidth) * destinationHeight * 4);
+    for (int y = 0; y < destinationHeight; ++y) {
+        const int sy = std::min(originHeight - 1, (y * originHeight) / destinationHeight);
+        for (int x = 0; x < destinationWidth; ++x) {
+            const int sx = std::min(originWidth - 1, (x * originWidth) / destinationWidth);
+            const uint8_t* s = src + (sy * originWidth + sx) * 4;
+            uint8_t* d = out.data() + (y * destinationWidth + x) * 4;
+            d[0] = s[0]; d[1] = s[1]; d[2] = s[2]; d[3] = s[3];
+        }
+    }
+    return out;
 }

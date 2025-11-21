@@ -35,6 +35,8 @@ private:
     frame_queue_t queue_ = nullptr;
 };
 
+static std::vector<uint8_t> resizeNearestRGBA(const uint8_t* src, int originWidth, int originHeight, int destinationWidth, int destinationHeight);
+
 namespace VSTGUI {
     struct MediaViewCreator : ViewCreatorAdapter {
 
