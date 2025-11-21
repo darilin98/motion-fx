@@ -94,8 +94,8 @@ set(SOURCES
         video/medialoader.hpp
         video/playbackcontroller.cpp
         video/playbackcontroller.hpp
-        #video/decoders/videodecoder.cpp
-        #video/decoders/videodecoder.hpp
+        video/decoders/videodecoder.cpp
+        video/decoders/videodecoder.hpp
         video/decoders/imagedecoder.cpp
         video/decoders/imagedecoder.cpp
         utils.hpp
