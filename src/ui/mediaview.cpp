@@ -4,10 +4,10 @@
 
 #include "mediaview.hpp"
 
-#include "vstgui/lib/tasks.h"
+#include <iostream>
+#include <thread>
 
 void MediaView::draw(VSTGUI::CDrawContext* dc) {
-	updateFromQueue();
 
 	if (!bmp_) {
 		setDirty(false);
@@ -16,7 +16,6 @@ void MediaView::draw(VSTGUI::CDrawContext* dc) {
 
 	const VSTGUI::CRect viewRect = getViewSize();
 	if (bmp_width_ == 0 || bmp_height_ == 0) {
-		bmp_->draw(dc, viewRect);
 		setDirty(false);
 		return;
 	}
@@ -27,6 +26,7 @@ void MediaView::draw(VSTGUI::CDrawContext* dc) {
 
 void MediaView::setQueue(const frame_queue_t& queue) {
 	queue_ = queue;
+	startConsumingAt(25);
 }
 
 void MediaView::updateFromQueue() {
@@ -39,6 +39,70 @@ void MediaView::updateFromQueue() {
 	}
 }
 
+void MediaView::startConsumingAt(double fps) {
+	stopConsuming();
+
+	if (!queue_) return;
+
+	fps_ = fps > 0 ? fps : 25.0;
+	consumerRunning_.store(true);
+
+	consumerQueue_ = std::make_unique<VSTGUI::Tasks::Queue>(VSTGUI::Tasks::makeSerialQueue("frame-consumer"));
+	VSTGUI::Tasks::schedule(*consumerQueue_, [this] {
+		this->consumerLoop();
+	});
+}
+
+void MediaView::consumerLoop() {
+	if (!consumerRunning_) return;
+
+	using clock = std::chrono::system_clock;
+	const double periodSec = 1.0 / fps_;
+	const auto period = std::chrono::duration<double>(periodSec);
+	static auto start = clock::now();
+
+	const auto now = clock::now();
+	const double elapsed = std::chrono::duration<double>(now - start).count();
+
+	VideoFrame latest;
+	bool gotFrame = false;
+	VideoFrame tmp;
+
+	// Dropping any outdated frames to prevent slo-mo
+	while (queue_->tryPop(tmp)) {
+		if (tmp.timestamp >= elapsed) {
+			latest = std::move(tmp);
+			gotFrame = true;
+			break;
+		}
+	}
+
+	if (bmp_ && latest.timestamp == 0.0)
+		stopConsuming();
+
+	if (gotFrame) {
+		frameToBitmap(std::move(latest));
+
+		// Sleep the successful worker thread so we don't rush ahead
+		std::this_thread::sleep_for(period);
+	}
+
+	if (consumerRunning_.load()) {
+		VSTGUI::Tasks::schedule(*consumerQueue_, [this] {
+			this->consumerLoop();
+		});
+	}
+}
+
+void MediaView::stopConsuming() {
+	if (!consumerQueue_) return;
+
+	VSTGUI::Tasks::releaseSerialQueue(*consumerQueue_);
+	consumerQueue_.reset();
+
+	consumerRunning_ = false;
+}
+
 void MediaView::frameToBitmap(VideoFrame&& frame)
 {
 	const auto& img = frame.image;
@@ -48,7 +112,7 @@ void MediaView::frameToBitmap(VideoFrame&& frame)
 	const auto bitmapWidth = static_cast<uint32_t>(img.width);
 	const auto bitmapHeight = static_cast<uint32_t>(img.height);
 
-	VSTGUI::CRect viewRect = getViewSize();
+	const VSTGUI::CRect viewRect = getViewSize();
 	const uint32_t viewWidth = viewRect.getWidth();
 	const uint32_t viewHeight = viewRect.getHeight();
 
@@ -60,44 +124,44 @@ void MediaView::frameToBitmap(VideoFrame&& frame)
 		resized = resizeNearestRGBA(srcPtr, bitmapWidth, bitmapHeight, viewWidth, viewHeight);
 	}
 
-	auto* newBmp = new VSTGUI::CBitmap(static_cast<VSTGUI::CCoord>(bitmapWidth), static_cast<VSTGUI::CCoord>(bitmapHeight));
-	VSTGUI::CBitmapPixelAccess* access = VSTGUI::CBitmapPixelAccess::create(newBmp, true);
-	if (!access) {
-		delete newBmp;
-		return;
-	}
-	const uint8_t* src = resized.data();
-
-	for (uint32_t y = 0; y < viewHeight; ++y)
-	{
-		if (!access->setPosition(0u, y))
-			continue;
-
-		for (uint32_t x = 0; x < viewWidth; ++x)
-		{
-			const uint8_t r = *src++;
-			const uint8_t g = *src++;
-			const uint8_t b = *src++;
-			const uint8_t a = *src++;
-
-			const uint32_t val =
-				static_cast<uint32_t>(b) << 24 |
-				static_cast<uint32_t>(g) << 16 |
-				static_cast<uint32_t>(r) << 8  |
-				static_cast<uint32_t>(a);
-
-			access->setValue(val);
-
-			++(*access);
+	VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [this, resized, viewWidth, viewHeight]() {
+		auto* newBmp = new VSTGUI::CBitmap(static_cast<VSTGUI::CCoord>(viewWidth), static_cast<VSTGUI::CCoord>(viewHeight));
+		VSTGUI::CBitmapPixelAccess* access = VSTGUI::CBitmapPixelAccess::create(newBmp, true);
+		if (!access) {
+			delete newBmp;
+			return;
 		}
-	}
-	access->forget();
+		const uint8_t* src = resized.data();
 
-	bmp_ = VSTGUI::owned(newBmp);
-	bmp_width_ = bitmapWidth;
-	bmp_height_ = bitmapHeight;
+		for (uint32_t y = 0; y < viewHeight; ++y)
+		{
+			if (!access->setPosition(0u, y))
+				continue;
 
-	VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [this] {
+			for (uint32_t x = 0; x < viewWidth; ++x)
+			{
+				const uint8_t r = *src++;
+				const uint8_t g = *src++;
+				const uint8_t b = *src++;
+				const uint8_t a = *src++;
+
+				const uint32_t val =
+					static_cast<uint32_t>(b) << 24 |
+					static_cast<uint32_t>(g) << 16 |
+					static_cast<uint32_t>(r) << 8  |
+					static_cast<uint32_t>(a);
+
+				access->setValue(val);
+
+				++(*access);
+			}
+		}
+
+		access->forget();
+
+		this->bmp_ = VSTGUI::owned(newBmp);
+		this->bmp_width_ = viewWidth;
+		this->bmp_height_ = viewHeight;
 		this->invalid();
 	});
 }

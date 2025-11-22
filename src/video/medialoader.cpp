@@ -16,8 +16,7 @@ decoder_t MediaLoader::makeDecoder(const std::string &path) {
 	const std::string ext = path.substr(path.find_last_of('.') + 1);
 
 	if (ext == "mp4" || ext == "mov" || ext == "avi" || ext == "gif") {
-		return nullptr;
-		//return std::make_shared<VideoDecoder>();
+		return std::make_shared<VideoDecoder>();
 	}
 	if (ext == "jpg" || ext == "jpeg" || ext == "png") {
 		return std::make_shared<ImageDecoder>();
