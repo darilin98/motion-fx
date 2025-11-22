@@ -17,7 +17,7 @@ extern "C" {
 
 class VideoDecoder final : public IMediaDecoder {
 public:
-	explicit VideoDecoder(const std::string& extHint = "");
+	explicit VideoDecoder();
 	~VideoDecoder() override;
 	bool seekTo(int64_t time) override;
 	bool open(const std::string& path) override;
