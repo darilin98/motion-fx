@@ -16,6 +16,7 @@
 #include "vstgui/lib/idependency.h"
 #include "vstgui/plugin-bindings/vst3editor.h"
 #include "vstgui/uidescription/editing/uiviewcreatecontroller.h"
+#include "vstgui/lib/tasks.h"
 
 using controller_t = Steinberg::Vst::EditController*;
 
@@ -27,12 +28,18 @@ public:
     void draw(VSTGUI::CDrawContext* dc) override;
 private:
     void updateFromQueue();
+    void startConsumingAt(double fps);
+    void consumerLoop();
+    void stopConsuming();
     void frameToBitmap(VideoFrame&& frame);
     VSTGUI::SharedPointer<VSTGUI::CBitmap> bmp_;
     uint32_t bmp_width_ = 0;
     uint32_t bmp_height_ = 0;
     controller_t controller_ = nullptr;
     frame_queue_t queue_ = nullptr;
+    std::unique_ptr<VSTGUI::Tasks::Queue> consumerQueue_ = nullptr;
+    std::atomic<bool> consumerRunning_ {false};
+    double fps_ = 25.0;
 };
 
 static std::vector<uint8_t> resizeNearestRGBA(const uint8_t* src, int originWidth, int originHeight, int destinationWidth, int destinationHeight);
