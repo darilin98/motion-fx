@@ -70,7 +70,7 @@ void MediaView::consumerLoop() {
 
 	// Dropping any outdated frames to prevent slo-mo
 	while (queue_->tryPop(tmp)) {
-		if (tmp.timestamp >= elapsed) {
+		if (tmp.timestamp >= elapsed || !bmp_) {
 			latest = std::move(tmp);
 			gotFrame = true;
 			break;
