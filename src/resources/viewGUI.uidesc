@@ -55,7 +55,7 @@
 			},
 			"UIAttributesController": {},
 			"UIViewCreatorDataSource": {
-				"SelectedRow": "11"
+				"SelectedRow": "27"
 			}
 		},
 		"templates": {
@@ -67,7 +67,7 @@
 					"mouse-enabled": "true",
 					"opacity": "1",
 					"origin": "0, 0",
-					"size": "460, 300",
+					"size": "560, 300",
 					"transparent": "false",
 					"wants-focus": "false"
 				},
@@ -80,7 +80,7 @@
 							"custom-view-name": "FileSelect",
 							"mouse-enabled": "true",
 							"opacity": "1",
-							"origin": "90, 160",
+							"origin": "140, 100",
 							"size": "280, 100",
 							"transparent": "false",
 							"wants-focus": "false"
@@ -100,7 +100,7 @@
 									"icon-text-margin": "0",
 									"kick-style": "true",
 									"opacity": "1",
-									"origin": "70, 40",
+									"origin": "80, 30",
 									"round-radius": "6",
 									"size": "120, 30",
 									"sub-controller": "FileSelectController",
@@ -125,7 +125,7 @@
 					"mouse-enabled": "true",
 					"opacity": "1",
 					"origin": "0, 0",
-					"size": "460, 300",
+					"size": "560, 300",
 					"transparent": "false",
 					"wants-focus": "false"
 				},
@@ -138,7 +138,7 @@
 							"custom-view-name": "FileSelect",
 							"mouse-enabled": "true",
 							"opacity": "1",
-							"origin": "80, 40",
+							"origin": "60, 40",
 							"size": "290, 220",
 							"transparent": "false",
 							"wants-focus": "false"
@@ -154,6 +154,48 @@
 									"size": "290, 220",
 									"transparent": "false",
 									"wants-focus": "false"
+								}
+							}
+						}
+					},
+					"CViewContainer": {
+						"attributes": {
+							"background-color": "~ WhiteCColor",
+							"background-color-draw-style": "filled and stroked",
+							"class": "CViewContainer",
+							"mouse-enabled": "true",
+							"opacity": "1",
+							"origin": "410, 40",
+							"size": "110, 220",
+							"transparent": "false",
+							"wants-focus": "false"
+						},
+						"children": {
+							"CTextButton": {
+								"attributes": {
+									"class": "CTextButton",
+									"control-tag": "UiControl",
+									"font": "~ SystemFont",
+									"frame-color": "~ BlackCColor",
+									"frame-color-highlighted": "~ BlackCColor",
+									"frame-width": "1",
+									"gradient": "Default TextButton Gradient",
+									"gradient-highlighted": "Default TextButton Gradient Highlighted",
+									"icon-position": "left",
+									"icon-text-margin": "0",
+									"kick-style": "true",
+									"opacity": "1",
+									"origin": "10, 20",
+									"round-radius": "6",
+									"size": "90, 20",
+									"sub-controller": "ButtonActionController",
+									"text-alignment": "center",
+									"text-color": "~ BlackCColor",
+									"text-color-highlighted": "~ WhiteCColor",
+									"title": "Return",
+									"transparent": "false",
+									"wants-focus": "true",
+									"wheel-inc-value": "0.1"
 								}
 							}
 						}
