@@ -7,6 +7,22 @@
 #include <iostream>
 #include <thread>
 
+MediaView::~MediaView() {
+	fprintf(stderr, "Killing media view\n");
+	stopConsuming();
+	if (bmp_) {
+		auto bmp = std::move(bmp_);
+		auto mq = VSTGUI::Tasks::mainQueue();
+		schedule(mq, [bmp = std::move(bmp)]() mutable{});
+	}
+}
+
+bool MediaView::removed(CView *parent) {
+	stopConsuming();
+	fprintf(stderr, "Removed media view\n");
+	return CView::removed(parent);
+}
+
 void MediaView::draw(VSTGUI::CDrawContext* dc) {
 
 	if (!bmp_) {
@@ -26,6 +42,7 @@ void MediaView::draw(VSTGUI::CDrawContext* dc) {
 
 void MediaView::setQueue(const frame_queue_t& queue) {
 	queue_ = queue;
+	fprintf(stderr, "Queue loaded, starting video stream...\n");
 	startConsumingAt(25);
 }
 
@@ -77,8 +94,12 @@ void MediaView::consumerLoop() {
 		}
 	}
 
-	if (bmp_ && latest.timestamp == 0.0)
+	// TODO: This is troublesome, ends the stream prematurely if view runs ahead of decoder
+	//		 There needs to be a better way to terminate the stream
+	if (bmp_ && latest.timestamp == 0.0) {
+		fprintf(stderr, "Reached static frame, terminating\n");
 		stopConsuming();
+	}
 
 	if (gotFrame) {
 		frameToBitmap(std::move(latest));
@@ -101,6 +122,7 @@ void MediaView::stopConsuming() {
 	consumerQueue_.reset();
 
 	consumerRunning_ = false;
+	queue_.reset();
 }
 
 void MediaView::frameToBitmap(VideoFrame&& frame)

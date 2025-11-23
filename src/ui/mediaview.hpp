@@ -24,8 +24,10 @@ class MediaView final : public VSTGUI::CView, public Steinberg::FObject {
 public:
     explicit MediaView(const VSTGUI::CRect& size)
         : CView(size) { }
+    ~MediaView() override;
     void setQueue(const frame_queue_t& queue);
     void draw(VSTGUI::CDrawContext* dc) override;
+    bool removed(CView *parent) override;
 private:
     void updateFromQueue();
     void startConsumingAt(double fps);
@@ -54,12 +56,12 @@ namespace VSTGUI {
         [[nodiscard]] IdStringPtr getBaseViewName() const override { return UIViewCreator::kCView; }
 
         CView* create(const UIAttributes& attr, const IUIDescription* d) const override {
-            fprintf(stderr, "creating custom view");
             auto* view = new MediaView({0, 0, 100, 100});
 
             if (const auto* editor = dynamic_cast<MotionFxEditor*>(d->getController()))
             {
-                 view->setQueue(editor->getFrameQueue());
+                fprintf(stderr, "Creating fresh media view\n");
+                view->setQueue(editor->getFrameQueue());
             }
             return view;
         }
