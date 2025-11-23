@@ -4,6 +4,7 @@
 #ifndef MOTIONFXEDITOR_HPP
 #define MOTIONFXEDITOR_HPP
 
+#include "buttonactioncontroller.hpp"
 #include "public.sdk/source/vst/vsteditcontroller.h"
 #include "vstgui4/vstgui/plugin-bindings/vst3editor.h"
 #include "fileselectcontroller.hpp"
@@ -22,7 +23,7 @@ public:
 	{
 		if (strcmp(name, "FileSelectController") == 0) {
 			auto* ctrl = new FileSelectController(this);
-			ctrl->onFileSelected = [this](const VSTGUI::UTF8String& path){
+			ctrl->onFileSelected = [this](const VSTGUI::UTF8String& path) {
 				fprintf(stderr, "Switching to AudioProcessingView for %s\n", path.data());
 
 				// Allocate playback
@@ -32,6 +33,20 @@ public:
 
 				this->exchangeView("AudioProcessing");
 				playback_controller_->startPipeline(1.0);
+			};
+			return ctrl;
+		}
+		if (strcmp(name, "ButtonActionController") == 0) {
+			fprintf(stderr, "Creating controller of name %s\n", name);
+			auto* ctrl = new ButtonActionController(this);
+			ctrl->action = [this]() {
+				fprintf(stderr, "Switching back to  InputSelectView\n");
+
+				frame_queue_ = nullptr;
+				playback_controller_->stopPipeline();
+				playback_controller_ = nullptr;
+
+				this->exchangeView("InputSelect");
 			};
 			return ctrl;
 		}
