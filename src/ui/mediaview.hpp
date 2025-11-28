@@ -5,7 +5,7 @@
 #ifndef MEDIAVIEW_HPP
 #define MEDIAVIEW_HPP
 
-#include "motionfxeditor.hpp"
+#include "../video/framequeue.hpp"
 #include "vstgui/lib/cview.h"
 #include "vstgui/uidescription/iuidescription.h"
 #include "vstgui/uidescription/iviewcreator.h"
@@ -28,11 +28,11 @@ public:
     void setQueue(const frame_queue_t& queue);
     void draw(VSTGUI::CDrawContext* dc) override;
     bool removed(CView *parent) override;
-private:
-    void updateFromQueue();
     void startConsumingAt(double fps);
-    void consumerLoop();
     void stopConsuming();
+private:
+    void consumerLoop();
+    void updateFromQueue();
     void frameToBitmap(VideoFrame&& frame);
     VSTGUI::SharedPointer<VSTGUI::CBitmap> bmp_;
     uint32_t bmp_width_ = 0;
@@ -55,16 +55,8 @@ namespace VSTGUI {
 
         [[nodiscard]] IdStringPtr getBaseViewName() const override { return UIViewCreator::kCView; }
 
-        CView* create(const UIAttributes& attr, const IUIDescription* d) const override {
-            auto* view = new MediaView({0, 0, 100, 100});
+        CView* create(const UIAttributes& attr, const IUIDescription* d) const override;
 
-            if (const auto* editor = dynamic_cast<MotionFxEditor*>(d->getController()))
-            {
-                fprintf(stderr, "Creating fresh media view\n");
-                view->setQueue(editor->getFrameQueue());
-            }
-            return view;
-        }
     };
     static MediaViewCreator __gMediaViewCreator;
 }

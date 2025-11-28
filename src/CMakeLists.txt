@@ -88,6 +88,7 @@ set(SOURCES
         ui/motionfxeditor.hpp
         ui/mediaview.cpp
         ui/mediaview.hpp
+        ui/mediaviewcreator.cpp
         ui/buttonactioncontroller.hpp
         video/videoframe.hpp
         video/framequeue.hpp
