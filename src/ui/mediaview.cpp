@@ -42,8 +42,6 @@ void MediaView::draw(VSTGUI::CDrawContext* dc) {
 
 void MediaView::setQueue(const frame_queue_t& queue) {
 	queue_ = queue;
-	fprintf(stderr, "Queue loaded, starting video stream...\n");
-	startConsumingAt(25);
 }
 
 void MediaView::updateFromQueue() {
@@ -73,6 +71,7 @@ void MediaView::startConsumingAt(double fps) {
 void MediaView::consumerLoop() {
 	if (!consumerRunning_) return;
 
+	// TODO: Timing is broken on re-entry
 	using clock = std::chrono::system_clock;
 	const double periodSec = 1.0 / fps_;
 	const auto period = std::chrono::duration<double>(periodSec);
@@ -85,6 +84,8 @@ void MediaView::consumerLoop() {
 	bool gotFrame = false;
 	VideoFrame tmp;
 
+	fprintf(stderr, "Elapsed: %f\n", elapsed);
+
 	// Dropping any outdated frames to prevent slo-mo
 	while (queue_->tryPop(tmp)) {
 		if (tmp.timestamp >= elapsed || !bmp_) {
@@ -94,12 +95,6 @@ void MediaView::consumerLoop() {
 		}
 	}
 
-	// TODO: This is troublesome, ends the stream prematurely if view runs ahead of decoder
-	//		 There needs to be a better way to terminate the stream
-	if (bmp_ && latest.timestamp == 0.0) {
-		fprintf(stderr, "Reached static frame, terminating\n");
-		stopConsuming();
-	}
 
 	if (gotFrame) {
 		frameToBitmap(std::move(latest));

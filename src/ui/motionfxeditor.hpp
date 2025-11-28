@@ -11,6 +11,8 @@
 #include "../video/playbackcontroller.hpp"
 #include "../video/framequeue.hpp"
 
+class MediaView;
+
 class MotionFxEditor : public VSTGUI::VST3Editor
 {
 public:
@@ -32,7 +34,6 @@ public:
 				playback_controller_ = std::make_shared<PlaybackController>(path.data(), frame_queue_);
 
 				this->exchangeView("AudioProcessing");
-				playback_controller_->startPipeline(1.0);
 			};
 			return ctrl;
 		}
@@ -53,6 +54,12 @@ public:
 		return nullptr;
 	}
 	[[nodiscard]] frame_queue_t getFrameQueue() const { return frame_queue_; }
+	void setMediaView(MediaView* view) const {
+		if (playback_controller_) {
+			playback_controller_->setMediaView(view);
+			playback_controller_->startPipeline(1.0);
+		}
+	}
 private:
 	frame_queue_t frame_queue_ = nullptr;
 	pcont_t playback_controller_ = nullptr;

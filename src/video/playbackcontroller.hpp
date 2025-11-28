@@ -9,8 +9,9 @@
 #include <utility>
 #include "../video/framequeue.hpp"
 #include "../video/medialoader.hpp"
+#include "../ui/mediaview.hpp"
 
-
+class MediaView;
 
 class PlaybackController : public std::enable_shared_from_this<PlaybackController> {
 public:
@@ -33,6 +34,8 @@ public:
 	void stopPipeline();
 	// void setPlaybackRate(double playbackRate);
 
+	void setMediaView(MediaView* view);
+
 private:
 	void scheduleNextFrame();
 	bool is_running_ = false;
@@ -40,8 +43,11 @@ private:
 	double rate_ = 0.0;
 	loader_t loader_;
 	frame_queue_t frame_queue_;
+
+	MediaView* view_ = nullptr;
 };
 
 using pcont_t = std::shared_ptr<PlaybackController>;
+
 
 #endif //PLAYBACKCONTROLLER_HPP
