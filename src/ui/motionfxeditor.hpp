@@ -42,8 +42,8 @@ public:
 			ctrl->action = [this]() {
 				fprintf(stderr, "Switching back to  InputSelectView\n");
 
-				frame_queue_ = nullptr;
 				playback_controller_->stopPipeline();
+				frame_queue_ = nullptr;
 				playback_controller_ = nullptr;
 
 				this->exchangeView("InputSelect");

@@ -20,7 +20,7 @@ public:
 	[[nodiscard]] virtual double frameRate() const = 0;
 };
 
-using decoder_t = std::shared_ptr<IMediaDecoder>;
+using decoder_t = std::unique_ptr<IMediaDecoder>;
 
 class MediaLoader {
 public:
@@ -34,6 +34,6 @@ private:
 	decoder_t decoder_;
 };
 
-using loader_t = std::shared_ptr<MediaLoader>;
+using loader_t = std::unique_ptr<MediaLoader>;
 
 #endif //MEDIALOADER_HPP

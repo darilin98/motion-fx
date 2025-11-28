@@ -15,7 +15,7 @@
 class PlaybackController : public std::enable_shared_from_this<PlaybackController> {
 public:
 	explicit PlaybackController(const std::string& path, frame_queue_t frameQueue)
-		: loader_(std::make_shared<MediaLoader>(path)), frame_queue_(std::move(frameQueue)) {
+		: loader_(std::make_unique<MediaLoader>(path)), frame_queue_(std::move(frameQueue)) {
 		loader_->onFrame = [this](VideoFrame&& frame) {
 			frame_queue_->push(std::move(frame));
 		};
@@ -36,6 +36,7 @@ public:
 private:
 	void scheduleNextFrame();
 	bool is_running_ = false;
+	bool looping_ = true;
 	double rate_ = 0.0;
 	loader_t loader_;
 	frame_queue_t frame_queue_;
