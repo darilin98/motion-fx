@@ -18,12 +18,13 @@ void PlaybackController::startPipeline(const double playbackRate) {
 
 void PlaybackController::stopPipeline() {
 	if (view_) view_->stopConsuming();
-	is_running_ = false;
+	is_running_.store(false);
 }
 
 void PlaybackController::scheduleNextFrame() {
 	if (!is_running_) return;
 
+	// TODO: Move this to regular work thread - needs to function without GUI
 	VSTGUI::Tasks::schedule(VSTGUI::Tasks::backgroundQueue(), [self = shared_from_this()] {
 		if (!self->is_running_) return;
 

@@ -87,8 +87,6 @@ void MediaView::consumerLoop() {
 	bool gotFrame = false;
 	VideoFrame tmp;
 
-	// fprintf(stderr, "Elapsed: %f\n", elapsed);
-
 	// Dropping any outdated frames to prevent slo-mo
 	while (queue_->tryPop(tmp)) {
 		if (tmp.timestamp >= elapsed || !bmp_) {
@@ -149,7 +147,12 @@ void MediaView::frameToBitmap(VideoFrame&& frame)
 		resized = resizeNearestRGBA(srcPtr, bitmapWidth, bitmapHeight, viewWidth, viewHeight);
 	}
 
-	VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [this, resized, viewWidth, viewHeight]() {
+	std::weak_ptr view_lifetime = render_token_;
+
+	VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [this, view_lifetime, resized, viewWidth, viewHeight]() {
+		if (view_lifetime.expired()) {
+			return;
+		}
 		auto* newBmp = new VSTGUI::CBitmap(static_cast<VSTGUI::CCoord>(viewWidth), static_cast<VSTGUI::CCoord>(viewHeight));
 		VSTGUI::CBitmapPixelAccess* access = VSTGUI::CBitmapPixelAccess::create(newBmp, true);
 		if (!access) {

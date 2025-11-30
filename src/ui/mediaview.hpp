@@ -43,6 +43,7 @@ private:
     frame_queue_t queue_ = nullptr;
     std::unique_ptr<VSTGUI::Tasks::Queue> consumer_queue_ = nullptr;
     std::atomic<bool> consumer_running_ {false};
+    std::shared_ptr<int> render_token_ { std::make_shared<int>(1) };
     std::chrono::system_clock::time_point consumer_start_;
     std::mutex time_mutex_;
     double fps_ = 25.0;
