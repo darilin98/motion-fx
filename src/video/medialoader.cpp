@@ -34,3 +34,9 @@ bool MediaLoader::requestNextFrame() const {
 	}
 	return false;
 }
+
+bool MediaLoader::tryRewindToStart() {
+	if (!decoder_)
+		return false;
+	return decoder_->seekTo(0);
+}

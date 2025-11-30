@@ -38,7 +38,7 @@ public:
 
 private:
 	void scheduleNextFrame();
-	bool is_running_ = false;
+	std::atomic<bool> is_running_ = false;
 	bool looping_ = true;
 	double rate_ = 0.0;
 	loader_t loader_;

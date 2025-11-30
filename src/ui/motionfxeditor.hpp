@@ -40,12 +40,11 @@ public:
 			fprintf(stderr, "Creating controller of name %s\n", name);
 			auto* ctrl = new ButtonActionController(this);
 			ctrl->action = [this]() {
-				fprintf(stderr, "Switching back to  InputSelectView\n");
-
 				playback_controller_->stopPipeline();
 				frame_queue_.reset();
 				playback_controller_.reset();
 
+				fprintf(stderr, "Switching back to  InputSelectView\n");
 				this->exchangeView("InputSelect");
 			};
 			return ctrl;

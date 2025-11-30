@@ -28,6 +28,7 @@ public:
 	explicit MediaLoader(decoder_t decoder)
 		: decoder_(std::move(decoder)) {}
 	std::function<void(VideoFrame&&)> onFrame;
+	bool tryRewindToStart();
 	[[nodiscard]] bool requestNextFrame() const;
 private:
 	static decoder_t makeDecoder(const std::string& path);

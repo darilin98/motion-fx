@@ -40,6 +40,18 @@ void PlaybackController::setMediaView(MediaView* view) {
 	view_ = view;
 	if (view_) {
 		view_->onQueueEmpty = [self = shared_from_this()] {
+			if (self->looping_) {
+				if (self->is_running_) {
+					return;
+				}
+				self->is_running_.store(true);
+				if (self->loader_->tryRewindToStart()) {
+					self->scheduleNextFrame();
+					self->view_->resetTiming();
+					return;
+				}
+				return;
+			}
 			self->stopPipeline();
 			fprintf(stderr, "Playback finished, static last frame displayed\n");
 		};

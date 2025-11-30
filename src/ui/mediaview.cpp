@@ -87,7 +87,7 @@ void MediaView::consumerLoop() {
 	bool gotFrame = false;
 	VideoFrame tmp;
 
-	fprintf(stderr, "Elapsed: %f\n", elapsed);
+	// fprintf(stderr, "Elapsed: %f\n", elapsed);
 
 	// Dropping any outdated frames to prevent slo-mo
 	while (queue_->tryPop(tmp)) {
