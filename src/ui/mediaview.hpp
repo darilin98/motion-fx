@@ -30,6 +30,7 @@ public:
     bool removed(CView *parent) override;
     void startConsumingAt(double fps);
     void stopConsuming();
+    void resetTiming();
 private:
     void consumerLoop();
     void updateFromQueue();
@@ -39,8 +40,10 @@ private:
     uint32_t bmp_height_ = 0;
     controller_t controller_ = nullptr;
     frame_queue_t queue_ = nullptr;
-    std::unique_ptr<VSTGUI::Tasks::Queue> consumerQueue_ = nullptr;
-    std::atomic<bool> consumerRunning_ {false};
+    std::unique_ptr<VSTGUI::Tasks::Queue> consumer_queue_ = nullptr;
+    std::atomic<bool> consumer_running_ {false};
+    std::chrono::system_clock::time_point consumer_start_;
+    std::mutex time_mutex_;
     double fps_ = 25.0;
 };
 

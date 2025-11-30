@@ -9,7 +9,10 @@
 void PlaybackController::startPipeline(const double playbackRate) {
 	is_running_ = true;
 	rate_ = playbackRate;
-	if (view_) view_->startConsumingAt(25);
+	if (view_) {
+		view_->resetTiming();
+		view_->startConsumingAt(25);
+	}
 	scheduleNextFrame();
 }
 

@@ -29,7 +29,6 @@ public:
 				fprintf(stderr, "Switching to AudioProcessingView for %s\n", path.data());
 
 				// Allocate playback
-				// TODO: Remove refs on viewTemplate switch
 				frame_queue_ = std::make_shared<FrameQueue>();
 				playback_controller_ = std::make_shared<PlaybackController>(path.data(), frame_queue_);
 
@@ -44,8 +43,8 @@ public:
 				fprintf(stderr, "Switching back to  InputSelectView\n");
 
 				playback_controller_->stopPipeline();
-				frame_queue_ = nullptr;
-				playback_controller_ = nullptr;
+				frame_queue_.reset();
+				playback_controller_.reset();
 
 				this->exchangeView("InputSelect");
 			};

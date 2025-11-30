@@ -60,25 +60,28 @@ void MediaView::startConsumingAt(double fps) {
 	if (!queue_) return;
 
 	fps_ = fps > 0 ? fps : 25.0;
-	consumerRunning_.store(true);
+	consumer_running_.store(true);
 
-	consumerQueue_ = std::make_unique<VSTGUI::Tasks::Queue>(VSTGUI::Tasks::makeSerialQueue("frame-consumer"));
-	VSTGUI::Tasks::schedule(*consumerQueue_, [this] {
+	consumer_queue_ = std::make_unique<VSTGUI::Tasks::Queue>(VSTGUI::Tasks::makeSerialQueue("frame-consumer"));
+	VSTGUI::Tasks::schedule(*consumer_queue_, [this] {
 		this->consumerLoop();
 	});
 }
 
 void MediaView::consumerLoop() {
-	if (!consumerRunning_) return;
+	if (!consumer_running_) return;
 
-	// TODO: Timing is broken on re-entry
-	using clock = std::chrono::system_clock;
 	const double periodSec = 1.0 / fps_;
 	const auto period = std::chrono::duration<double>(periodSec);
-	static auto start = clock::now();
-
-	const auto now = clock::now();
-	const double elapsed = std::chrono::duration<double>(now - start).count();
+	std::chrono::system_clock::time_point local_start;
+	{
+		std::lock_guard lock(time_mutex_);
+		if (consumer_start_.time_since_epoch().count() == 0) {
+			consumer_start_ = std::chrono::system_clock::now();
+		}
+		local_start = consumer_start_;
+	}	const auto now = std::chrono::system_clock::now();
+	const double elapsed = std::chrono::duration<double>(now - local_start).count();
 
 	VideoFrame latest;
 	bool gotFrame = false;
@@ -98,25 +101,27 @@ void MediaView::consumerLoop() {
 
 	if (gotFrame) {
 		frameToBitmap(std::move(latest));
-
 		// Sleep the successful worker thread so we don't rush ahead
 		std::this_thread::sleep_for(period);
+	} else {
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 	}
 
-	if (consumerRunning_.load()) {
-		VSTGUI::Tasks::schedule(*consumerQueue_, [this] {
+	if (consumer_running_.load()) {
+		VSTGUI::Tasks::schedule(*consumer_queue_, [this] {
 			this->consumerLoop();
 		});
 	}
 }
 
 void MediaView::stopConsuming() {
-	if (!consumerQueue_) return;
+	if (!consumer_queue_) return;
+	if (!consumer_running_.load()) return;
 
-	VSTGUI::Tasks::releaseSerialQueue(*consumerQueue_);
-	consumerQueue_.reset();
+	VSTGUI::Tasks::releaseSerialQueue(*consumer_queue_);
+	consumer_queue_.reset();
 
-	consumerRunning_ = false;
+	consumer_running_ = false;
 	queue_.reset();
 }
 
@@ -182,6 +187,12 @@ void MediaView::frameToBitmap(VideoFrame&& frame)
 		this->invalid();
 	});
 }
+
+void MediaView::resetTiming() {
+	std::lock_guard lock(time_mutex_);
+	consumer_start_ = std::chrono::system_clock::now();
+}
+
 
 
 static std::vector<uint8_t> resizeNearestRGBA(const uint8_t* src, const int originWidth, const int originHeight, const int destinationWidth, const int destinationHeight) {
