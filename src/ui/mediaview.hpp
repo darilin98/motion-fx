@@ -31,6 +31,7 @@ public:
     void startConsumingAt(double fps);
     void stopConsuming();
     void resetTiming();
+    std::function<void()> onQueueEmpty;
 private:
     void consumerLoop();
     void updateFromQueue();

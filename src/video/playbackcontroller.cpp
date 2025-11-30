@@ -38,6 +38,12 @@ void PlaybackController::scheduleNextFrame() {
 
 void PlaybackController::setMediaView(MediaView* view) {
 	view_ = view;
+	if (view_) {
+		view_->onQueueEmpty = [self = shared_from_this()] {
+			self->stopPipeline();
+			fprintf(stderr, "Playback finished, static last frame displayed\n");
+		};
+	}
 }
 
 

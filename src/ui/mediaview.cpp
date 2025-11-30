@@ -98,6 +98,9 @@ void MediaView::consumerLoop() {
 		}
 	}
 
+	if (bmp_ && latest.timestamp == 0.0) {
+		if (onQueueEmpty) onQueueEmpty();
+	}
 
 	if (gotFrame) {
 		frameToBitmap(std::move(latest));
