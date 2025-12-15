@@ -17,36 +17,28 @@
 #include "vstgui/plugin-bindings/vst3editor.h"
 #include "vstgui/uidescription/editing/uiviewcreatecontroller.h"
 #include "vstgui/lib/tasks.h"
+#include "../video/iframereceiver.hpp"
 
 using controller_t = Steinberg::Vst::EditController*;
 
-class MediaView final : public VSTGUI::CView, public Steinberg::FObject {
+class MediaView final : public VSTGUI::CView, public Steinberg::FObject, public IFrameReceiver {
 public:
     explicit MediaView(const VSTGUI::CRect& size)
-        : CView(size) { }
+        : CView(size) { render_queue_ = std::make_unique<VSTGUI::Tasks::Queue>(VSTGUI::Tasks::makeSerialQueue("frame-consumer")); }
     ~MediaView() override;
-    void setQueue(const frame_queue_t& queue);
     void draw(VSTGUI::CDrawContext* dc) override;
     bool removed(CView *parent) override;
-    void startConsumingAt(double fps);
-    void stopConsuming();
-    void resetTiming();
-    std::function<void()> onQueueEmpty;
+    void onFrame(const VideoFrame& frame) override;
 private:
-    void consumerLoop();
-    void updateFromQueue();
-    void frameToBitmap(VideoFrame&& frame);
+    void finishRenderQueue();
+    void frameToBitmap(const VideoFrame& frame);
     VSTGUI::SharedPointer<VSTGUI::CBitmap> bmp_;
     uint32_t bmp_width_ = 0;
     uint32_t bmp_height_ = 0;
     controller_t controller_ = nullptr;
     frame_queue_t queue_ = nullptr;
-    std::unique_ptr<VSTGUI::Tasks::Queue> consumer_queue_ = nullptr;
-    std::atomic<bool> consumer_running_ {false};
+    std::unique_ptr<VSTGUI::Tasks::Queue> render_queue_;
     std::shared_ptr<int> render_token_ { std::make_shared<int>(1) };
-    std::chrono::system_clock::time_point consumer_start_;
-    std::mutex time_mutex_;
-    double fps_ = 25.0;
 };
 
 static std::vector<uint8_t> resizeNearestRGBA(const uint8_t* src, int originWidth, int originHeight, int destinationWidth, int destinationHeight);

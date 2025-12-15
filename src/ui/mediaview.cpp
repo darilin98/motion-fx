@@ -9,7 +9,7 @@
 
 MediaView::~MediaView() {
 	fprintf(stderr, "Killing media view\n");
-	stopConsuming();
+	finishRenderQueue();
 	if (bmp_) {
 		auto bmp = std::move(bmp_);
 		auto mq = VSTGUI::Tasks::mainQueue();
@@ -18,7 +18,7 @@ MediaView::~MediaView() {
 }
 
 bool MediaView::removed(CView *parent) {
-	stopConsuming();
+	finishRenderQueue();
 	fprintf(stderr, "Removed media view\n");
 	return CView::removed(parent);
 }
@@ -40,93 +40,19 @@ void MediaView::draw(VSTGUI::CDrawContext* dc) {
 	setDirty(false);
 }
 
-void MediaView::setQueue(const frame_queue_t& queue) {
-	queue_ = queue;
+void MediaView::finishRenderQueue() {
+	if (!render_queue_) return;
+	VSTGUI::Tasks::releaseSerialQueue(*render_queue_);
+	render_queue_.reset();
 }
 
-void MediaView::updateFromQueue() {
-	if (!queue_)
-		return;
-
-	VideoFrame newFrame;
-	if(queue_->tryPop(newFrame)) {
-		frameToBitmap(std::move(newFrame));
-	}
-}
-
-void MediaView::startConsumingAt(double fps) {
-	stopConsuming();
-
-	if (!queue_) return;
-
-	fps_ = fps > 0 ? fps : 25.0;
-	consumer_running_.store(true);
-
-	consumer_queue_ = std::make_unique<VSTGUI::Tasks::Queue>(VSTGUI::Tasks::makeSerialQueue("frame-consumer"));
-	VSTGUI::Tasks::schedule(*consumer_queue_, [this] {
-		this->consumerLoop();
+void MediaView::onFrame(const VideoFrame &frame) {
+	VSTGUI::Tasks::schedule(*render_queue_, [this, frame] {
+		this->frameToBitmap(frame);
 	});
 }
 
-void MediaView::consumerLoop() {
-	if (!consumer_running_) return;
-
-	const double periodSec = 1.0 / fps_;
-	const auto period = std::chrono::duration<double>(periodSec);
-	std::chrono::system_clock::time_point local_start;
-	{
-		std::lock_guard lock(time_mutex_);
-		if (consumer_start_.time_since_epoch().count() == 0) {
-			consumer_start_ = std::chrono::system_clock::now();
-		}
-		local_start = consumer_start_;
-	}	const auto now = std::chrono::system_clock::now();
-	const double elapsed = std::chrono::duration<double>(now - local_start).count();
-
-	VideoFrame latest;
-	bool gotFrame = false;
-	VideoFrame tmp;
-
-	// Dropping any outdated frames to prevent slo-mo
-	while (queue_->tryPop(tmp)) {
-		if (tmp.timestamp >= elapsed || !bmp_) {
-			latest = std::move(tmp);
-			gotFrame = true;
-			break;
-		}
-	}
-
-	if (bmp_ && latest.timestamp == 0.0) {
-		if (onQueueEmpty) onQueueEmpty();
-	}
-
-	if (gotFrame) {
-		frameToBitmap(std::move(latest));
-		// Sleep the successful worker thread so we don't rush ahead
-		std::this_thread::sleep_for(period);
-	} else {
-		std::this_thread::sleep_for(std::chrono::milliseconds(5));
-	}
-
-	if (consumer_running_.load()) {
-		VSTGUI::Tasks::schedule(*consumer_queue_, [this] {
-			this->consumerLoop();
-		});
-	}
-}
-
-void MediaView::stopConsuming() {
-	if (!consumer_queue_) return;
-	if (!consumer_running_.load()) return;
-
-	VSTGUI::Tasks::releaseSerialQueue(*consumer_queue_);
-	consumer_queue_.reset();
-
-	consumer_running_ = false;
-	queue_.reset();
-}
-
-void MediaView::frameToBitmap(VideoFrame&& frame)
+void MediaView::frameToBitmap(const VideoFrame& frame)
 {
 	const auto& img = frame.image;
 	if (img.width == 0 || img.height == 0 || img.rgba_data.empty())
@@ -193,13 +119,6 @@ void MediaView::frameToBitmap(VideoFrame&& frame)
 		this->invalid();
 	});
 }
-
-void MediaView::resetTiming() {
-	std::lock_guard lock(time_mutex_);
-	consumer_start_ = std::chrono::system_clock::now();
-}
-
-
 
 static std::vector<uint8_t> resizeNearestRGBA(const uint8_t* src, const int originWidth, const int originHeight, const int destinationWidth, const int destinationHeight) {
     std::vector<uint8_t> out(static_cast<size_t>(destinationWidth) * destinationHeight * 4);

@@ -11,7 +11,6 @@ namespace VSTGUI {
         if (const auto* editor = dynamic_cast<MotionFxEditor*>(d->getController()))
         {
             fprintf(stderr, "Creating fresh media view\n");
-            view->setQueue(editor->getFrameQueue());
             editor->setMediaView(view);
         }
         return view;
