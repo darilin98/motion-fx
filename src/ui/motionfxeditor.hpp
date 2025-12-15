@@ -10,6 +10,7 @@
 #include "fileselectcontroller.hpp"
 #include "../video/playbackcontroller.hpp"
 #include "../video/framequeue.hpp"
+#include "../video/frameticker.hpp"
 
 class MediaView;
 
@@ -30,7 +31,10 @@ public:
 
 				// Allocate playback
 				frame_queue_ = std::make_shared<FrameQueue>();
-				playback_controller_ = std::make_shared<PlaybackController>(path.data(), frame_queue_);
+				auto temp_ticker = std::make_unique<FrameTicker>();
+				temp_ticker->setQueue(frame_queue_);
+				playback_controller_ = std::make_shared<PlaybackController>(path.data(), frame_queue_,
+				std::move(temp_ticker));
 
 				this->exchangeView("AudioProcessing");
 			};

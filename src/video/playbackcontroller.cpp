@@ -9,15 +9,16 @@
 void PlaybackController::startPipeline(const double playbackRate) {
 	is_running_ = true;
 	rate_ = playbackRate;
-	if (view_) {
-		view_->resetTiming();
-		view_->startConsumingAt(25);
+	setupCallbacks();
+	if (frame_ticker_) {
+		frame_ticker_->resetTimer();
+		frame_ticker_->startConsumingAt(25);
 	}
 	scheduleNextFrame();
 }
 
 void PlaybackController::stopPipeline() {
-	if (view_) view_->stopConsuming();
+	if (frame_ticker_) frame_ticker_->stopConsuming();
 	is_running_.store(false);
 }
 
@@ -37,10 +38,17 @@ void PlaybackController::scheduleNextFrame() {
 	});
 }
 
-void PlaybackController::setMediaView(MediaView* view) {
-	view_ = view;
-	if (view_) {
-		view_->onQueueEmpty = [self = shared_from_this()] {
+void PlaybackController::setupCallbacks() {
+	if (loader_) {
+		loader_->onFrame = [this](VideoFrame&& frame) {
+			frame_queue_->push(std::move(frame));
+		};
+	}
+
+	if (frame_ticker_) {
+		fprintf(stderr, "Setting callback\n");
+		frame_ticker_->setOnQueueEmptyCallback([self = shared_from_this()] {
+			fprintf(stderr, "In callback\n");
 			if (self->looping_) {
 				if (self->is_running_) {
 					return;
@@ -48,15 +56,20 @@ void PlaybackController::setMediaView(MediaView* view) {
 				self->is_running_.store(true);
 				if (self->loader_->tryRewindToStart()) {
 					self->scheduleNextFrame();
-					self->view_->resetTiming();
+					self->frame_ticker_->resetTimer();
 					return;
 				}
 				return;
 			}
 			self->stopPipeline();
 			fprintf(stderr, "Playback finished, static last frame displayed\n");
-		};
+		});
 	}
+}
+
+
+void PlaybackController::setMediaView(MediaView* view) const {
+	if (frame_ticker_) frame_ticker_->addReceiver(view);
 }
 
 
