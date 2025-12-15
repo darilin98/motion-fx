@@ -33,7 +33,9 @@ void FrameTicker::stopConsuming() {
 
 	consumer_running_.store(false, std::memory_order_release);
 	if (consumer_thread_.joinable()) {
-		consumer_thread_.join();
+		try {
+			consumer_thread_.detach();
+		} catch (...) { }
 	}
 
 	frame_queue_.reset();
@@ -54,6 +56,7 @@ void FrameTicker::consumerLoop() {
 		consumer_start_ = std::chrono::steady_clock::now();
 	}
 
+	bool firstFrame = true;
 	while (consumer_running_.load(std::memory_order_acquire)) {
 		const auto tickStart = std::chrono::steady_clock::now();
 
@@ -69,9 +72,10 @@ void FrameTicker::consumerLoop() {
 
 		// Dropping any outdated frames to prevent slo-mo
 		while (frame_queue_->tryPop(tmp)) {
-			if (tmp.timestamp >= elapsed) {
+			if (tmp.timestamp >= elapsed || firstFrame) {
 				latest = std::move(tmp);
 				gotFrame = true;
+				firstFrame = false;
 				break;
 			}
 		}
@@ -81,7 +85,6 @@ void FrameTicker::consumerLoop() {
 				receiver->onFrame(latest);
 			}
 		} else {
-			fprintf(stderr, "Calling empty\n");
 			onQueueEmpty();
 		}
 		std::this_thread::sleep_until(tickStart + period);

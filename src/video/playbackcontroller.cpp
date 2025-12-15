@@ -46,23 +46,19 @@ void PlaybackController::setupCallbacks() {
 	}
 
 	if (frame_ticker_) {
-		fprintf(stderr, "Setting callback\n");
 		frame_ticker_->setOnQueueEmptyCallback([self = shared_from_this()] {
-			fprintf(stderr, "In callback\n");
+			if (self->is_running_)
+				return;
 			if (self->looping_) {
-				if (self->is_running_) {
-					return;
-				}
-				self->is_running_.store(true);
 				if (self->loader_->tryRewindToStart()) {
+					self->is_running_.store(true);
 					self->scheduleNextFrame();
 					self->frame_ticker_->resetTimer();
 					return;
 				}
-				return;
 			}
-			self->stopPipeline();
 			fprintf(stderr, "Playback finished, static last frame displayed\n");
+			self->stopPipeline();
 		});
 	}
 }

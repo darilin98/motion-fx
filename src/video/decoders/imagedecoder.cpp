@@ -28,7 +28,7 @@ bool ImageDecoder::open(const std::string &path) {
 
 bool ImageDecoder::seekTo(int64_t time) {
 	// Does not make sense to call on image decoder
-	return has_returned_;
+	return !has_returned_;
 }
 
 bool ImageDecoder::decodeNext(VideoFrame& outFrame) {
