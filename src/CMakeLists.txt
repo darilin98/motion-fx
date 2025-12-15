@@ -96,10 +96,16 @@ set(SOURCES
         video/medialoader.hpp
         video/playbackcontroller.cpp
         video/playbackcontroller.hpp
+        video/frameticker.cpp
+        video/frameticker.hpp
+        video/iframereceiver.hpp
         video/decoders/videodecoder.cpp
         video/decoders/videodecoder.hpp
         video/decoders/imagedecoder.cpp
         video/decoders/imagedecoder.cpp
+        video/features/ifeatureextractor.hpp
+        video/features/brightnessfeatureextractor.cpp
+        video/features/brightnessfeatureextractor.hpp
         utils.hpp
 )
 
