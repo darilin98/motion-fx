@@ -52,5 +52,6 @@ private:
      */
     [[nodiscard]] bool getBypassState(const ProcessData& data) const;
     ParamValue bypass_state_ = 0.0f;
+    ParamValue gain_ = 0.5f;
 };
 #endif //PROCESSOR_HPP

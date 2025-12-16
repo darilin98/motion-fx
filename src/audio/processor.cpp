@@ -44,6 +44,26 @@ tresult PLUGIN_API PluginProcessor::process(ProcessData& data)
     const float sampleRate = this->processSetup.sampleRate;
     const int32 numChannels = data.inputs[0].numChannels;
 
+    if (data.inputParameterChanges)
+    {
+        for (int32 i = 0; i < data.inputParameterChanges->getParameterCount(); ++i)
+        {
+            auto* queue = data.inputParameterChanges->getParameterData(i);
+            if (!queue) continue;
+
+            if (queue->getParameterId() == kParamGain)
+            {
+                int32 sampleOffset;
+                ParamValue value;
+                // Take the last point in the queue for current block
+                if (queue->getPoint(queue->getPointCount() - 1, sampleOffset, value) == kResultTrue)
+                {
+                    gain_ = static_cast<float>(value);
+                }
+            }
+        }
+    }
+
     if (isBypass)
     {
         for (int32 ch = 0; ch < numChannels; ++ch)
@@ -63,8 +83,9 @@ tresult PLUGIN_API PluginProcessor::process(ProcessData& data)
         float* output = data.outputs[0].channelBuffers32[ch];
 
         if (input && output) {
-            std::copy(input, input + numSamples, output);
-            // Run DSP
+            for (int32 i = 0; i < numSamples; ++i) {
+                output[i] = input[i] * gain_;
+            }
         }
     }
     return kResultOk;
