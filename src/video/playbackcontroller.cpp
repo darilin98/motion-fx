@@ -63,9 +63,8 @@ void PlaybackController::setupCallbacks() {
 	}
 }
 
-
-void PlaybackController::setMediaView(MediaView* view) const {
-	if (frame_ticker_) frame_ticker_->addReceiver(view);
+void PlaybackController::registerReceiver(IFrameReceiver *receiver) const {
+	if (frame_ticker_) frame_ticker_->addReceiver(receiver);
 }
 
 

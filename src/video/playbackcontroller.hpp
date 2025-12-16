@@ -11,6 +11,7 @@
 #include "../video/medialoader.hpp"
 #include "../ui/mediaview.hpp"
 #include "frameticker.hpp"
+#include "features/ifeatureextractor.hpp"
 
 class MediaView;
 
@@ -27,7 +28,7 @@ public:
 	void stopPipeline();
 	// void setPlaybackRate(double playbackRate);
 
-	void setMediaView(MediaView* view) const;
+	void registerReceiver(IFrameReceiver* receiver) const;
 
 private:
 	void setupCallbacks();
