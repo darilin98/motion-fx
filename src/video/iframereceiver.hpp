@@ -13,6 +13,7 @@ public:
 	virtual void onFrame(const VideoFrame& frame) = 0 ;
 };
 
-using receiver_list_t = std::vector<IFrameReceiver*>;
+using receiver_t = IFrameReceiver*;
+using receiver_list_t = std::vector<receiver_t>;
 
 #endif //IFRAMERECEIVER_HPP

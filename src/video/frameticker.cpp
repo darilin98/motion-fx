@@ -34,7 +34,7 @@ void FrameTicker::stopConsuming() {
 	consumer_running_.store(false, std::memory_order_release);
 	if (consumer_thread_.joinable()) {
 		try {
-			consumer_thread_.detach();
+			consumer_thread_.join();
 		} catch (...) { }
 	}
 
