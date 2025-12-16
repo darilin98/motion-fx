@@ -28,6 +28,7 @@
 		},
 		"control-tags": {
 			"Bypass": "101",
+			"Gain": "102",
 			"UiControl": "1001"
 		},
 		"custom": {
@@ -55,7 +56,7 @@
 			},
 			"UIAttributesController": {},
 			"UIViewCreatorDataSource": {
-				"SelectedRow": "27"
+				"SelectedRow": "8"
 			}
 		},
 		"templates": {
@@ -196,6 +197,38 @@
 									"transparent": "false",
 									"wants-focus": "true",
 									"wheel-inc-value": "0.1"
+								}
+							},
+							"CKnob": {
+								"attributes": {
+									"angle-range": "270",
+									"angle-start": "135",
+									"circle-drawing": "false",
+									"class": "CKnob",
+									"control-tag": "Gain",
+									"corona-color": "~ RedCColor",
+									"corona-dash-dot": "false",
+									"corona-dash-dot-lengths": "1.26,0.1",
+									"corona-drawing": "true",
+									"corona-from-center": "false",
+									"corona-inset": "12",
+									"corona-inverted": "false",
+									"corona-line-cap-butt": "true",
+									"corona-outline": "true",
+									"corona-outline-width-add": "2",
+									"handle-color": "~ WhiteCColor",
+									"handle-line-width": "8",
+									"handle-shadow-color": "~ BlackCColor",
+									"knob-range": "200",
+									"opacity": "1",
+									"origin": "20, 60",
+									"size": "70, 70",
+									"skip-handle-drawing": "true",
+									"transparent": "false",
+									"value-inset": "3",
+									"wants-focus": "true",
+									"wheel-inc-value": "0.1",
+									"zoom-factor": "1.5"
 								}
 							}
 						}
