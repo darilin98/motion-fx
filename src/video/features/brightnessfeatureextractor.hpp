@@ -1,0 +1,25 @@
+//
+// Created by Darek Rudiš on 13.12.2025.
+//
+
+#ifndef BRIGHTNESS_FEATURE_EXTRACTOR_HPP
+#define BRIGHTNESS_FEATURE_EXTRACTOR_HPP
+
+#include "ifeatureextractor.hpp"
+#include "../iframereceiver.hpp"
+#include "utility/audiobuffers.h"
+
+class BrightnessFeatureExtractor : public IFrameReceiver, public IFeatureExtractor {
+public:
+	explicit BrightnessFeatureExtractor(const Steinberg::Vst::ParamID pid) : param_id_(pid) {}
+	~BrightnessFeatureExtractor() override;
+	void processFrame(const VideoFrame& videoFrame) override;
+	void onFrame(const VideoFrame& videoFrame) override;
+	void setOutController(const econt_t &controller) override;
+private:
+	std::atomic<bool> busy_{false};
+	Steinberg::Vst::ParamID param_id_;
+	econt_t out_controller_;
+};
+
+#endif //BRIGHTNESS_FEATURE_EXTRACTOR_HPP
