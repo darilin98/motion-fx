@@ -19,6 +19,7 @@ using namespace Steinberg;
  */
 enum AudioParamID : ParamID{
     kParamBypass = 101,
+    kParamGain,
 };
 
 enum ViewParamID : ParamID {
@@ -55,13 +56,7 @@ public:
      * @brief Tries to update @kParamBypass by the state of the stream
      */
     tresult PLUGIN_API setState(IBStream*) SMTG_OVERRIDE;
-    /**
-     * @brief Handles translation between parameter float values and their name representations inside selector lists.
-     * @param id Type of parameter being handled
-     * @param valueNormalized Current value of the parameter
-     * @param string String representing the translated name
-     * @return
-     */
+    tresult PLUGIN_API setParamNormalized(ParamID tag, ParamValue value) SMTG_OVERRIDE;
 
     ParamValue bypassState = 0.0;
 };
