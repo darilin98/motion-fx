@@ -30,8 +30,7 @@ enum ViewParamID : ParamID {
  *
  * Manages plugin states and parameter values. Communicates with a VSTGUI instance.
  */
-class PluginController : public EditController
-{
+class PluginController : public EditController {
 public:
     PluginController() = default;
     ~PluginController() override = default;

@@ -19,7 +19,7 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
     parameters.addParameter(STR16("UiControl"), nullptr, 1, 0.0,ParameterInfo::kCanAutomate | ParameterInfo::kIsList,
      kParamLoadVideo);
     parameters.addParameter(STR16("Bypass"), nullptr, 1, 0.0, ParameterInfo::kIsBypass | ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamBypass);
-    parameters.addParameter(STR16("Gain"), nullptr, 1, 0.5, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly,kParamGain);
+    parameters.addParameter(STR16("Gain"), nullptr, 1, 1, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly,kParamGain);
     return kResultOk;
 }
 
