@@ -29,6 +29,7 @@ public:
     void draw(VSTGUI::CDrawContext* dc) override;
     bool removed(CView *parent) override;
     void onFrame(const VideoFrame& frame) override;
+    void setController(controller_t controller);
 private:
     void finishRenderQueue();
     void frameToBitmap(const VideoFrame& frame);

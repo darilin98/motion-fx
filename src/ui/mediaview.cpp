@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <thread>
+#include "../controller.hpp"
 
 MediaView::~MediaView() {
 	fprintf(stderr, "Killing media view\n");
@@ -15,12 +16,18 @@ MediaView::~MediaView() {
 		auto mq = VSTGUI::Tasks::mainQueue();
 		schedule(mq, [bmp = std::move(bmp)]() mutable{});
 	}
+	auto pcont = dynamic_cast<PluginController*>(controller_);
+	if (pcont) pcont->unregisterReceiver(this);
 }
 
 bool MediaView::removed(CView *parent) {
 	finishRenderQueue();
 	fprintf(stderr, "Removed media view\n");
 	return CView::removed(parent);
+}
+
+void MediaView::setController(controller_t controller) {
+	controller_ = controller;
 }
 
 void MediaView::draw(VSTGUI::CDrawContext* dc) {

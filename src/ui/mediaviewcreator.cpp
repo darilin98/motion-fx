@@ -11,7 +11,10 @@ namespace VSTGUI {
         if (const auto* editor = dynamic_cast<MotionFxEditor*>(d->getController()))
         {
             fprintf(stderr, "Creating fresh media view\n");
-            editor->setMediaView(view);
+            if (auto* pcont = dynamic_cast<PluginController*>(editor->getController())) {
+                view->setController(pcont);
+                pcont->registerReceiver(view);
+            }
         }
         return view;
     }
