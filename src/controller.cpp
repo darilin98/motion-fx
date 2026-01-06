@@ -20,6 +20,7 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
      kParamLoadVideo);
     parameters.addParameter(STR16("Bypass"), nullptr, 1, 0.0, ParameterInfo::kIsBypass | ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamBypass);
     parameters.addParameter(STR16("Gain"), nullptr, 1, 1, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly,kParamGain);
+
     return kResultOk;
 }
 
@@ -62,6 +63,8 @@ IPlugView* PLUGIN_API PluginController::createView (FIDString name)
 {
     if (strcmp (name, ViewType::kEditor) == 0)
     {
+        if (video_is_playing_)
+            return new MotionFxEditor (this, "AudioProcessing", "viewGUI.uidesc");
         return new MotionFxEditor (this, "InputSelect", "viewGUI.uidesc");
     }
     return nullptr;
@@ -71,7 +74,45 @@ tresult PLUGIN_API PluginController::setParamNormalized(ParamID tag, ParamValue 
 {
     if (tag == kParamGain)
     {
-        fprintf(stderr, ">>> setParamNormalized(kParamGain, %f)\n", value);
+        // fprintf(stderr, ">>> setParamNormalized(kParamGain, %f)\n", value);
     }
     return EditController::setParamNormalized(tag, value);
 }
+
+void PluginController::setupPlayback(const VSTGUI::UTF8String& path) {
+    frame_queue_ = std::make_shared<FrameQueue>();
+
+    auto ticker = std::make_unique<FrameTicker>();
+    ticker->setQueue(frame_queue_);
+    feature_extractor_ = std::make_unique<BrightnessFeatureExtractor>(kParamGain);
+    feature_extractor_->setOutController(this);
+
+    playback_controller_ = std::make_shared<PlaybackController>(path.data(), frame_queue_, std::move(ticker));
+    playback_controller_->registerReceiver(feature_extractor_.get());
+    video_is_playing_ = true;
+    playback_controller_->startPipeline(1.0);
+}
+
+void PluginController::cleanUpPlayback() {
+    playback_controller_->stopPipeline();
+    feature_extractor_.reset();
+    frame_queue_.reset();
+    playback_controller_.reset();
+    video_is_playing_ = false;
+}
+
+void PluginController::registerReceiver(IFrameReceiver* receiver) const {
+    if (playback_controller_) {
+        playback_controller_->registerReceiver(receiver);
+   }
+}
+
+void PluginController::unregisterReceiver(IFrameReceiver *receiver) const {
+    if (playback_controller_) {
+        playback_controller_->unregisterReceiver(receiver);
+    }
+}
+
+
+
+

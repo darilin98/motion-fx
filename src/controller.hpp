@@ -9,6 +9,8 @@
 #include "public.sdk/source/vst/vsteditcontroller.h"
 #include "vstgui4/vstgui/plugin-bindings/vst3editor.h"
 #include "public.sdk/source/main/moduleinit.h"
+#include "video/playbackcontroller.hpp"
+#include "video/features/brightnessfeatureextractor.hpp"
 
 
 using namespace Steinberg::Vst;
@@ -57,6 +59,18 @@ public:
     tresult PLUGIN_API setState(IBStream*) SMTG_OVERRIDE;
     tresult PLUGIN_API setParamNormalized(ParamID tag, ParamValue value) SMTG_OVERRIDE;
 
+    void setupPlayback(const VSTGUI::UTF8String& path);
+    void cleanUpPlayback();
+
+    [[nodiscard]] frame_queue_t getFrameQueue() const { return frame_queue_; }
+    void registerReceiver(IFrameReceiver* receiver) const;
+    void unregisterReceiver(IFrameReceiver* receiver) const;
+
     ParamValue bypassState = 0.0;
+private:
+    bool video_is_playing_ = false;
+    pcont_t playback_controller_ = nullptr;
+    frame_queue_t frame_queue_ = nullptr;
+    std::unique_ptr<BrightnessFeatureExtractor> feature_extractor_ = nullptr;
 };
 #endif //CONTROLLER_HPP
