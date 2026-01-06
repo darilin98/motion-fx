@@ -29,6 +29,7 @@ public:
 	void stopConsuming() override;
 	void setQueue(const frame_queue_t& queue) override;
 	void addReceiver(IFrameReceiver* receiver);
+	void removeReceiver(IFrameReceiver* receiver);
 
 	void onQueueEmpty() override {
 		if (on_queue_empty_callback_) on_queue_empty_callback_();
@@ -39,6 +40,7 @@ public:
 private:
 	void consumerLoop();
 	receiver_list_t receivers_;
+	std::mutex receivers_mutex_;
 
 	std::thread consumer_thread_;
 	std::atomic<bool> consumer_running_ {false};

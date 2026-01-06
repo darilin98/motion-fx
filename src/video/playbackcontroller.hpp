@@ -29,6 +29,7 @@ public:
 	// void setPlaybackRate(double playbackRate);
 
 	void registerReceiver(IFrameReceiver* receiver) const;
+	void unregisterReceiver(IFrameReceiver* receiver) const;
 
 private:
 	void setupCallbacks();

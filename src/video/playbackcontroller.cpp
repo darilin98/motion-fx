@@ -63,8 +63,13 @@ void PlaybackController::setupCallbacks() {
 	}
 }
 
-void PlaybackController::registerReceiver(IFrameReceiver *receiver) const {
+void PlaybackController::registerReceiver(IFrameReceiver* receiver) const {
 	if (frame_ticker_) frame_ticker_->addReceiver(receiver);
+}
+
+
+void PlaybackController::unregisterReceiver(IFrameReceiver* receiver) const {
+	if (frame_ticker_) frame_ticker_->removeReceiver(receiver);
 }
 
 

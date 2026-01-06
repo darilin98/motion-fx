@@ -11,7 +11,14 @@ void FrameTicker::setQueue(const frame_queue_t& queue) {
 }
 
 void FrameTicker::addReceiver(IFrameReceiver* receiver) {
+	std::lock_guard lock(receivers_mutex_);
 	receivers_.emplace_back(receiver);
+}
+
+void FrameTicker::removeReceiver(IFrameReceiver* receiver) {
+	std::lock_guard lock(receivers_mutex_);
+	auto it = std::remove(receivers_.begin(), receivers_.end(), receiver);
+	receivers_.erase(it, receivers_.end());
 }
 
 
@@ -81,8 +88,14 @@ void FrameTicker::consumerLoop() {
 		}
 
 		if (gotFrame) {
-			for (auto* receiver : receivers_) {
-				receiver->onFrame(latest);
+			std::vector<IFrameReceiver*> snapshot;
+			{
+				std::lock_guard lock(receivers_mutex_);
+				snapshot = receivers_;
+			}
+
+			for (auto* r : snapshot) {
+				r->onFrame(latest);
 			}
 		} else {
 			onQueueEmpty();
