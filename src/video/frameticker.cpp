@@ -36,14 +36,11 @@ void FrameTicker::startConsumingAt(double fps) {
 }
 
 void FrameTicker::stopConsuming() {
-	if (!consumer_running_.load()) return;
+	if (!consumer_running_.exchange(false))
+		return;
 
-	consumer_running_.store(false, std::memory_order_release);
-	if (consumer_thread_.joinable()) {
-		try {
-			consumer_thread_.join();
-		} catch (...) { }
-	}
+	if (consumer_thread_.joinable())
+		consumer_thread_.join();
 
 	frame_queue_.reset();
 }
@@ -78,7 +75,10 @@ void FrameTicker::consumerLoop() {
 		VideoFrame tmp;
 
 		// Dropping any outdated frames to prevent slo-mo
-		while (frame_queue_->tryPop(tmp)) {
+		const auto queue = frame_queue_;
+		if (!queue) return;
+
+		while (queue->tryPop(tmp)) {
 			if (tmp.timestamp >= elapsed || firstFrame) {
 				latest = std::move(tmp);
 				gotFrame = true;
