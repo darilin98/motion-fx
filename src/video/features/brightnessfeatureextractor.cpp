@@ -38,16 +38,8 @@ void BrightnessFeatureExtractor::processFrame(const VideoFrame& videoFrame) {
 	});
 }
 
-BrightnessFeatureExtractor::~BrightnessFeatureExtractor() {
-	while (busy_.load()) std::this_thread::sleep_for(std::chrono::milliseconds(1));
-}
-
 void BrightnessFeatureExtractor::onFrame(const VideoFrame& videoFrame) {
-	if (busy_.exchange(true)) return;
-	std::thread([this, videoFrame]() {
-		processFrame(videoFrame);
-		busy_.store(false);
-	}).detach();
+	frame_worker_->enqueueFrame(videoFrame);
 }
 
 void BrightnessFeatureExtractor::setOutController(const econt_t &controller) {
