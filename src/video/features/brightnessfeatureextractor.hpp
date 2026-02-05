@@ -9,6 +9,7 @@
 #include "asyncframeworker.hpp"
 #include "../iframereceiver.hpp"
 #include "utility/audiobuffers.h"
+#include "../../audio/modulationcurve.hpp"
 
 class BrightnessFeatureExtractor : public IFrameReceiver, public IFeatureExtractor {
 public:
@@ -21,6 +22,7 @@ public:
 	void onFrame(const VideoFrame& videoFrame) override;
 	void setOutController(const econt_t &controller) override;
 private:
+	void emitModulation(ModulationPoint point) override;
 	std::atomic<bool> busy_{false};
 	std::unique_ptr<AsyncFrameWorker> frame_worker_;
 	Steinberg::Vst::ParamID param_id_;

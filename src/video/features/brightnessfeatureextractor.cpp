@@ -4,6 +4,7 @@
 
 #include "brightnessfeatureextractor.hpp"
 #include "vstgui/lib/tasks.h"
+#include "../../controller.hpp"
 #include <thread>
 
 void BrightnessFeatureExtractor::processFrame(const VideoFrame& videoFrame) {
@@ -36,6 +37,7 @@ void BrightnessFeatureExtractor::processFrame(const VideoFrame& videoFrame) {
 			controller->setParamNormalized(paramId, normalized);
 		}
 	});
+	emitModulation({videoFrame.timestamp, {{param_id_, normalized}}});
 }
 
 void BrightnessFeatureExtractor::onFrame(const VideoFrame& videoFrame) {
@@ -45,3 +47,12 @@ void BrightnessFeatureExtractor::onFrame(const VideoFrame& videoFrame) {
 void BrightnessFeatureExtractor::setOutController(const econt_t &controller) {
 	out_controller_ = controller;
 }
+
+void BrightnessFeatureExtractor::emitModulation(ModulationPoint point) {
+	if (out_controller_) {
+		if (auto* pcont = dynamic_cast<PluginController*>(out_controller_.get())) {
+			pcont->addModulation(point);
+		}
+	}
+}
+
