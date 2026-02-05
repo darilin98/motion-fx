@@ -84,6 +84,7 @@ set(SOURCES
         pluginfactory.cpp
         audio/processor.cpp
         audio/processor.hpp
+        audio/modulationcurve.hpp
         ui/fileselectcontroller.hpp
         ui/motionfxeditor.hpp
         ui/mediaview.cpp
