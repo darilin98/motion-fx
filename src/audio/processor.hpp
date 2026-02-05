@@ -5,6 +5,7 @@
 #ifndef PROCESSOR_HPP
 #define PROCESSOR_HPP
 
+#include "modulationcurve.hpp"
 #include "public.sdk/source/vst/vstaudioeffect.h"
 #include "pluginterfaces/base/ustring.h"
 
@@ -21,37 +22,55 @@ constexpr int FFT_SIZE = 1024;
  *
  * Called by the host. Works with provided samples, outputs them for further actions.
  */
-class PluginProcessor : public AudioEffect
-{
+class PluginProcessor : public AudioEffect {
 public:
-    PluginProcessor() = default;
-    ~PluginProcessor() override = default;
+	PluginProcessor() = default;
 
-    static FUnknown* createInstance(void*) { return static_cast<IAudioProcessor *>(new PluginProcessor()); }
+	~PluginProcessor() override = default;
 
-    tresult PLUGIN_API getControllerClassId(TUID classId) SMTG_OVERRIDE;
-    tresult PLUGIN_API initialize(FUnknown* context) SMTG_OVERRIDE;
-    tresult PLUGIN_API terminate() SMTG_OVERRIDE;
-    /**
-     * @brief Main processing method.
-     *
-     * Called periodically by the host when the plugin is not bypassing.
-     */
-    tresult PLUGIN_API process(ProcessData& data) SMTG_OVERRIDE;
-    /**
-     * @brief Sets up internal pipeline processor objects and buffers.
-     */
-    tresult PLUGIN_API setupProcessing(ProcessSetup &setup) SMTG_OVERRIDE;
-    tresult PLUGIN_API setState(IBStream* state) SMTG_OVERRIDE;
-    tresult PLUGIN_API getState(IBStream* state) SMTG_OVERRIDE;
+	static FUnknown* createInstance(void*) { return static_cast<IAudioProcessor*>(new PluginProcessor()); }
+
+	tresult PLUGIN_API getControllerClassId(TUID classId) SMTG_OVERRIDE;
+
+	tresult PLUGIN_API initialize(FUnknown* context) SMTG_OVERRIDE;
+
+	tresult PLUGIN_API terminate() SMTG_OVERRIDE;
+
+	/**
+	 * @brief Main processing method.
+	 *
+	 * Called periodically by the host when the plugin is not bypassing.
+	 */
+	tresult PLUGIN_API process(ProcessData& data) SMTG_OVERRIDE;
+
+	/**
+	 * @brief Sets up internal pipeline processor objects and buffers.
+	 */
+	tresult PLUGIN_API setupProcessing(ProcessSetup& setup) SMTG_OVERRIDE;
+
+	tresult PLUGIN_API setState(IBStream* state) SMTG_OVERRIDE;
+
+	tresult PLUGIN_API getState(IBStream* state) SMTG_OVERRIDE;
+
+	tresult PLUGIN_API notify(IMessage* message) SMTG_OVERRIDE;
+
 private:
-    /**
-     * @brief Helper to safely get the plugin's bypass state.
-     * @param data Parameter data
-     * @return State boolean
-     */
-    [[nodiscard]] bool getBypassState(const ProcessData& data) const;
-    ParamValue bypass_state_ = 0.0f;
-    ParamValue gain_ = 1.0f;
+	/**
+	 * @brief Helper to safely get the plugin's bypass state.
+	 * @param data Parameter data
+	 * @return State boolean
+	 */
+	[[nodiscard]] bool tryGetBypassState(const ProcessData& data) const;
+
+	[[nodiscard]] bool tryUpdateParamValues(const ProcessData& data);
+
+	[[nodiscard]] static tresult bypassProcessing(const ProcessData& data, int32_t numChannels, int32_t numSamples);
+
+	[[nodiscard]] tresult processSamples(const ProcessData& data, int32_t numChannels, int32_t numSamples) const;
+
+	ParamValue bypass_state_ = 0.0f;
+	ParamValue gain_ = 1.0f;
+	modulation_curve_t modulation_curve_;
+	std::mutex modulation_mutex_;
 };
 #endif //PROCESSOR_HPP
