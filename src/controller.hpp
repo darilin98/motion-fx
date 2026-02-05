@@ -11,6 +11,7 @@
 #include "public.sdk/source/main/moduleinit.h"
 #include "video/playbackcontroller.hpp"
 #include "video/features/brightnessfeatureextractor.hpp"
+#include "audio/modulationcurve.hpp"
 
 
 using namespace Steinberg::Vst;
@@ -22,6 +23,13 @@ using namespace Steinberg;
 enum AudioParamID : ParamID{
     kParamBypass = 101,
     kParamGain,
+};
+
+enum ControlParamID : ParamID {
+    kParamPlay = 501,
+	kParamReset,
+	kParamLoop,
+
 };
 
 enum ViewParamID : ParamID {
@@ -66,8 +74,13 @@ public:
     void registerReceiver(IFrameReceiver* receiver) const;
     void unregisterReceiver(IFrameReceiver* receiver) const;
 
+    void addModulation(ModulationPoint modPoint) const;
+    tresult PLUGIN_API connect(IConnectionPoint* other) override;
+    // tresult PLUGIN_API notify(IMessage* message) override;
+
     ParamValue bypassState = 0.0;
 private:
+    IConnectionPoint* processorConnection_ {nullptr};
     bool video_is_playing_ = false;
     pcont_t playback_controller_ = nullptr;
     frame_queue_t frame_queue_ = nullptr;

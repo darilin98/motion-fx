@@ -16,8 +16,9 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
     if (result != kResultOk)
         return result;
     parameters.removeAll();
-    parameters.addParameter(STR16("UiControl"), nullptr, 1, 0.0,ParameterInfo::kCanAutomate | ParameterInfo::kIsList,
-     kParamLoadVideo);
+    parameters.addParameter(STR16("UiControl"), nullptr, 1, 0.0,ParameterInfo::kCanAutomate | ParameterInfo::kIsList,kParamLoadVideo);
+    parameters.addParameter(STR16("Play"), nullptr, 1, 0.0, ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamPlay);
+    parameters.addParameter(STR16("Reset"), nullptr, 1, 0.0, ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamReset);
     parameters.addParameter(STR16("Bypass"), nullptr, 1, 0.0, ParameterInfo::kIsBypass | ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamBypass);
     parameters.addParameter(STR16("Gain"), nullptr, 1, 1, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly,kParamGain);
 
@@ -112,6 +113,29 @@ void PluginController::unregisterReceiver(IFrameReceiver *receiver) const {
         playback_controller_->unregisterReceiver(receiver);
     }
 }
+
+tresult PLUGIN_API PluginController::connect(IConnectionPoint* other) {
+    processorConnection_ = other;
+    return kResultOk;
+}
+
+void PluginController::addModulation(ModulationPoint modPoint) const {
+    if (!processorConnection_)
+        return;
+
+    Steinberg::Vst::IMessage* msg = allocateMessage();
+    if (!msg)
+        return;
+
+    msg->setMessageID("AddModulationPoint");
+
+    auto* attr = msg->getAttributes();
+    attr->setFloat("time", static_cast<float>(modPoint.timestamp));
+    attr->setFloat("value", modPoint.values[kParamGain]);
+
+    processorConnection_->notify(msg);
+}
+
 
 
 
