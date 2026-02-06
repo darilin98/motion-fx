@@ -122,18 +122,6 @@ tresult PLUGIN_API PluginController::connect(IConnectionPoint* other) {
 void PluginController::addModulation(ModulationPoint modPoint) const {
     if (!processorConnection_)
         return;
-
-    Steinberg::Vst::IMessage* msg = allocateMessage();
-    if (!msg)
-        return;
-
-    msg->setMessageID("AddModulationPoint");
-
-    auto* attr = msg->getAttributes();
-    attr->setFloat("time", static_cast<float>(modPoint.timestamp));
-    attr->setFloat("value", modPoint.values[kParamGain]);
-
-    processorConnection_->notify(msg);
 }
 
 

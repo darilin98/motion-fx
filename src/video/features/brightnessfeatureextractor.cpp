@@ -37,7 +37,6 @@ void BrightnessFeatureExtractor::processFrame(const VideoFrame& videoFrame) {
 			controller->setParamNormalized(paramId, normalized);
 		}
 	});
-	emitModulation({videoFrame.timestamp, {{param_id_, normalized}}});
 }
 
 void BrightnessFeatureExtractor::onFrame(const VideoFrame& videoFrame) {

@@ -4,13 +4,13 @@
 
 #ifndef MODULATIONCURVE_HPP
 #define MODULATIONCURVE_HPP
-#include <unordered_map>
+#include <vector>
 
 #include "vst/vsttypes.h"
 
 struct ModulationPoint {
-	double timestamp;
-    std::unordered_map<Steinberg::Vst::ParamID, double> values;
+	Steinberg::Vst::TSamples timestamp;
+    std::vector<std::pair<Steinberg::Vst::ParamID, Steinberg::Vst::ParamValue>> values;
 };
 
 using modulation_curve_t = std::vector<ModulationPoint>;
