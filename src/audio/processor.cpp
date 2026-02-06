@@ -15,6 +15,7 @@
 #include "base/source/fstreamer.h"
 #include "vst/ivstparameterchanges.h"
 #include "vst/ivstprocesscontext.h"
+#include "parameterextraction.hpp"
 
 tresult PLUGIN_API PluginProcessor::initialize(FUnknown *context)
 {
@@ -28,6 +29,7 @@ tresult PLUGIN_API PluginProcessor::initialize(FUnknown *context)
 }
 tresult PLUGIN_API PluginProcessor::setupProcessing(ProcessSetup &setup)
 {
+    is_offline_ = setup.processMode == kOffline;
     tresult result = AudioEffect::setupProcessing(setup);
     if(result != kResultOk)
         return result;
@@ -40,24 +42,22 @@ tresult PLUGIN_API PluginProcessor::process(ProcessData& data)
     if (!(data.numInputs > 0 && data.inputs[0].numChannels > 0))
         return kResultOk;
 
-    // TODO: Infer timing
-    TSamples start = 0;
-    if (data.processContext) {
-        start = data.processContext->projectTimeSamples;
-    }
-
     const int32 num_channels = data.inputs[0].numChannels;
     const int32 num_samples = data.numSamples;
     const float sample_rate = this->processSetup.sampleRate;
 
-    if (bool isParamUpdates = tryUpdateParamValues(data)) {
-        // Params get updated real-time
-    } else {
-        // Update params using modulation vector indexed by time
+    updateControlParamValues(data);
+
+    if (is_video_playing_) {
+        if (is_offline_ || (data.processMode == kOffline)) {
+            // Update params using modulation vector indexed by time
+        } else {
+            updateDspParamValues(data);
+        }
     }
 
     // Choose to either apply DSP or bypass
-    if (const bool isBypass = tryGetBypassState(data))
+    if (tryGetBypassState(data))
         return bypassProcessing(data, num_channels, num_samples);
 
     return processSamples(data, num_channels, num_samples);
@@ -137,47 +137,80 @@ tresult PLUGIN_API PluginProcessor::notify(Steinberg::Vst::IMessage* message)
     if (!message)
         return kInvalidArgument;
 
-    if (strcmp(message->getMessageID(), "AddModulationPoint") == 0) {
-        double time, value;
-        auto* attr = message->getAttributes();
-
-        if (attr->getFloat("time", time) == kResultOk &&
-            attr->getFloat("value", value) == kResultOk) {
-
-            std::lock_guard<std::mutex> lock(modulation_mutex_);
-            modulation_curve_.push_back({ time, {{kParamGain, value }}});
-        }
-    }
-
-    else if (strcmp(message->getMessageID(), "ResetModulation") == 0)
-    {
-        std::lock_guard lock(modulation_mutex_);
-        modulation_curve_.clear();
-    }
-
     return kResultOk;
 }
 
-bool PluginProcessor::tryUpdateParamValues(const ProcessData& data) {
-    if (data.inputParameterChanges) {
-        for (int32 i = 0; i < data.inputParameterChanges->getParameterCount(); ++i)
+void PluginProcessor::updateControlParamValues(const ProcessData& data) {
+    forEachLastParamChange(data,
+        [&](ParamID id, ParamValue value, int32)
         {
-            auto* queue = data.inputParameterChanges->getParameterData(i);
-            if (!queue) continue;
-
-            if (queue->getParameterId() == kParamGain) {
-                int32 sampleOffset;
-                ParamValue value;
-                // Take the last point in the queue for current block
-                if (queue->getPoint(queue->getPointCount() - 1, sampleOffset, value) == kResultTrue) {
-                    gain_ = static_cast<float>(value);
-                    return true;
-                }
-            }
+            handleControlParam(id, value, data);
         }
-    }
-    return false;
+    );
 }
+
+void PluginProcessor::handleControlParam(ParamID id, ParamValue value, const ProcessData& data) {
+    switch (id) {
+        case kParamPlay:
+            if (value > 0.5 && !is_video_playing_) {
+                is_video_playing_ = true;
+                epoch_start_sample_ = data.processContext ? data.processContext->projectTimeSamples : totalSamplesProcessed_;
+            }
+            else if (value <= 0.5) {
+                is_video_playing_ = false;
+            }
+            break;
+        case kParamReset:
+            if (value > 0.5) {
+                modulation_curve_.clear();
+                epoch_start_sample_ = -1;
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+
+void PluginProcessor::updateDspParamValues(const ProcessData& data) {
+    forEachLastParamChange(data,
+        [&](ParamID id, ParamValue value, int32)
+        {
+            handleDspParam(id, value);
+            captureModulation(id, value, data);
+        }
+    );
+}
+
+void PluginProcessor::handleDspParam(ParamID id, ParamValue value) {
+    switch (id) {
+        case kParamGain:
+            gain_ = static_cast<float>(value);
+            break;
+        default:
+            break;
+    }
+}
+
+void PluginProcessor::captureModulation(ParamID id, ParamValue value, const ProcessData& data) {
+    if (!is_video_playing_ || epoch_start_sample_ < 0)
+        return;
+
+    const auto nowSamples =
+        data.processContext ? data.processContext->projectTimeSamples : 0; //totalSamplesProcessed_;
+
+    const auto relativeSamples = nowSamples - epoch_start_sample_;
+
+    if (modulation_curve_.empty() || modulation_curve_.back().timestamp != relativeSamples)
+    {
+        modulation_curve_.push_back({relativeSamples, {}});
+    }
+
+    modulation_curve_.back().values.emplace_back(id, value);
+}
+
+
+
 
 tresult PluginProcessor::bypassProcessing(const ProcessData& data, const int32_t numChannels, const int32_t numSamples) {
     for (int32 ch = 0; ch < numChannels; ++ch)

@@ -62,12 +62,21 @@ private:
 	 */
 	[[nodiscard]] bool tryGetBypassState(const ProcessData& data) const;
 
-	[[nodiscard]] bool tryUpdateParamValues(const ProcessData& data);
+	void updateDspParamValues(const ProcessData& data);
+	void handleDspParam(ParamID id, ParamValue value);
+	void captureModulation(ParamID id, ParamValue value, const ProcessData& data);
+
+	void updateControlParamValues(const ProcessData& data);
+	void handleControlParam(ParamID id, ParamValue value, const ProcessData& data)
 
 	[[nodiscard]] static tresult bypassProcessing(const ProcessData& data, int32_t numChannels, int32_t numSamples);
 
 	[[nodiscard]] tresult processSamples(const ProcessData& data, int32_t numChannels, int32_t numSamples) const;
 
+	bool is_offline_ = false;
+	bool is_video_playing_ = false;
+	TSamples epoch_start_sample_ = 0;
+	TSamples total_samples_ = 0;
 	ParamValue bypass_state_ = 0.0f;
 	ParamValue gain_ = 1.0f;
 	modulation_curve_t modulation_curve_;
