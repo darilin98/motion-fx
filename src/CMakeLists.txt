@@ -85,6 +85,7 @@ set(SOURCES
         audio/processor.cpp
         audio/processor.hpp
         audio/modulationcurve.hpp
+        audio/parameterextraction.hpp
         ui/fileselectcontroller.hpp
         ui/motionfxeditor.hpp
         ui/mediaview.cpp
