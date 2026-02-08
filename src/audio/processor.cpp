@@ -16,6 +16,7 @@
 #include "vst/ivstparameterchanges.h"
 #include "vst/ivstprocesscontext.h"
 #include "parameterextraction.hpp"
+#include "../parameterdefaults.hpp"
 
 tresult PLUGIN_API PluginProcessor::initialize(FUnknown *context)
 {
@@ -152,12 +153,11 @@ void PluginProcessor::updateControlParamValues(const ProcessData& data) {
 void PluginProcessor::handleControlParam(ParamID id, ParamValue value, const ProcessData& data) {
     switch (id) {
         case kParamPlay:
-            if (value > 0.5 && !is_video_playing_) {
-                is_video_playing_ = true;
-                epoch_start_sample_ = data.processContext ? data.processContext->projectTimeSamples : totalSamplesProcessed_;
-            }
-            else if (value <= 0.5) {
-                is_video_playing_ = false;
+            if (value > 0.5) {
+                if (!is_video_playing_)
+                    epoch_start_sample_ = data.processContext ? data.processContext->projectTimeSamples : total_samples_;
+
+                is_video_playing_ = !is_video_playing_;
             }
             break;
         case kParamReset:
@@ -197,7 +197,7 @@ void PluginProcessor::captureModulation(ParamID id, ParamValue value, const Proc
         return;
 
     const auto nowSamples =
-        data.processContext ? data.processContext->projectTimeSamples : 0; //totalSamplesProcessed_;
+        data.processContext ? data.processContext->projectTimeSamples : total_samples_;
 
     const auto relativeSamples = nowSamples - epoch_start_sample_;
 

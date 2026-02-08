@@ -67,9 +67,9 @@ private:
 	void captureModulation(ParamID id, ParamValue value, const ProcessData& data);
 
 	void updateControlParamValues(const ProcessData& data);
-	void handleControlParam(ParamID id, ParamValue value, const ProcessData& data)
+	void handleControlParam(ParamID id, ParamValue value, const ProcessData& data);
 
-	[[nodiscard]] static tresult bypassProcessing(const ProcessData& data, int32_t numChannels, int32_t numSamples);
+	static tresult bypassProcessing(const ProcessData& data, int32_t numChannels, int32_t numSamples);
 
 	[[nodiscard]] tresult processSamples(const ProcessData& data, int32_t numChannels, int32_t numSamples) const;
 

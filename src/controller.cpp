@@ -4,6 +4,7 @@
 #include "controller.hpp"
 #include "base/ustring.h"
 
+#include "parameterdefaults.hpp"
 #include "base/source/fstreamer.h"
 #include "vstgui/lib/vstguiinit.h"
 #include "ui/motionfxeditor.hpp"
@@ -64,7 +65,7 @@ IPlugView* PLUGIN_API PluginController::createView (FIDString name)
 {
     if (strcmp (name, ViewType::kEditor) == 0)
     {
-        if (video_is_playing_)
+        if (is_video_preview_mode_)
             return new MotionFxEditor (this, "AudioProcessing", "viewGUI.uidesc");
         return new MotionFxEditor (this, "InputSelect", "viewGUI.uidesc");
     }
@@ -90,16 +91,17 @@ void PluginController::setupPlayback(const VSTGUI::UTF8String& path) {
 
     playback_controller_ = std::make_shared<PlaybackController>(path.data(), frame_queue_, std::move(ticker));
     playback_controller_->registerReceiver(feature_extractor_.get());
-    video_is_playing_ = true;
-    playback_controller_->startPipeline(1.0);
+    playback_controller_->setParamListeners(this);
+    is_video_preview_mode_ = true;
 }
 
 void PluginController::cleanUpPlayback() {
     playback_controller_->stopPipeline();
+    // TODO: Reset param call?
     feature_extractor_.reset();
     frame_queue_.reset();
     playback_controller_.reset();
-    video_is_playing_ = false;
+    is_video_preview_mode_ = false;
 }
 
 void PluginController::registerReceiver(IFrameReceiver* receiver) const {

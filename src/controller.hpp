@@ -12,29 +12,13 @@
 #include "video/playbackcontroller.hpp"
 #include "video/features/brightnessfeatureextractor.hpp"
 #include "audio/modulationcurve.hpp"
+//#include "parameterdefaults.hpp"
 
 
 using namespace Steinberg::Vst;
 using namespace Steinberg;
 
-/**
- * @brief Defines parameters used by the plugin
- */
-enum AudioParamID : ParamID{
-    kParamBypass = 101,
-    kParamGain,
-};
 
-enum ControlParamID : ParamID {
-    kParamPlay = 501,
-	kParamReset,
-	kParamLoop,
-
-};
-
-enum ViewParamID : ParamID {
-    kParamLoadVideo = 1001,
-};
 /**
  * @brief Custom implementation of the VSTSDK @ref EditController
  *
@@ -76,14 +60,16 @@ public:
 
     void addModulation(ModulationPoint modPoint) const;
     tresult PLUGIN_API connect(IConnectionPoint* other) override;
-    // tresult PLUGIN_API notify(IMessage* message) override;
 
     ParamValue bypassState = 0.0;
 private:
     IConnectionPoint* processorConnection_ {nullptr};
-    bool video_is_playing_ = false;
+    bool is_video_preview_mode_ = false;
     pcont_t playback_controller_ = nullptr;
     frame_queue_t frame_queue_ = nullptr;
     std::unique_ptr<BrightnessFeatureExtractor> feature_extractor_ = nullptr;
 };
+
+using controller_t = Steinberg::Vst::EditController*;
+
 #endif //CONTROLLER_HPP
