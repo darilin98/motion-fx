@@ -82,6 +82,7 @@ set(SOURCES
         controller.cpp
         controller.hpp
         pluginfactory.cpp
+        parameterdefaults.hpp
         audio/processor.cpp
         audio/processor.hpp
         audio/modulationcurve.hpp
@@ -101,6 +102,8 @@ set(SOURCES
         video/frameticker.cpp
         video/frameticker.hpp
         video/iframereceiver.hpp
+        video/videoparamlistener.cpp
+        video/videoparamlistener.hpp
         video/decoders/videodecoder.cpp
         video/decoders/videodecoder.hpp
         video/decoders/imagedecoder.cpp
