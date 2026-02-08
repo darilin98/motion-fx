@@ -29,6 +29,8 @@
 		"control-tags": {
 			"Bypass": "101",
 			"Gain": "102",
+			"Play": "501",
+			"Reset": "502",
 			"UiControl": "1001"
 		},
 		"custom": {
@@ -56,7 +58,7 @@
 			},
 			"UIAttributesController": {},
 			"UIViewCreatorDataSource": {
-				"SelectedRow": "8"
+				"SelectedRow": "27"
 			}
 		},
 		"templates": {
@@ -229,6 +231,58 @@
 									"wants-focus": "true",
 									"wheel-inc-value": "0.1",
 									"zoom-factor": "1.5"
+								}
+							},
+							"CTextButton": {
+								"attributes": {
+									"class": "CTextButton",
+									"control-tag": "Play",
+									"font": "~ SystemFont",
+									"frame-color": "~ BlackCColor",
+									"frame-color-highlighted": "~ BlackCColor",
+									"frame-width": "1",
+									"gradient": "Default TextButton Gradient",
+									"gradient-highlighted": "Default TextButton Gradient Highlighted",
+									"icon-position": "left",
+									"icon-text-margin": "0",
+									"kick-style": "true",
+									"opacity": "1",
+									"origin": "10, 130",
+									"round-radius": "6",
+									"size": "20, 20",
+									"text-alignment": "center",
+									"text-color": "~ BlackCColor",
+									"text-color-highlighted": "~ WhiteCColor",
+									"title": "|>",
+									"transparent": "false",
+									"wants-focus": "true",
+									"wheel-inc-value": "0.1"
+								}
+							},
+							"CTextButton": {
+								"attributes": {
+									"class": "CTextButton",
+									"control-tag": "Reset",
+									"font": "~ SystemFont",
+									"frame-color": "~ BlackCColor",
+									"frame-color-highlighted": "~ BlackCColor",
+									"frame-width": "1",
+									"gradient": "Default TextButton Gradient",
+									"gradient-highlighted": "Default TextButton Gradient Highlighted",
+									"icon-position": "left",
+									"icon-text-margin": "0",
+									"kick-style": "false",
+									"opacity": "1",
+									"origin": "40, 130",
+									"round-radius": "6",
+									"size": "60, 20",
+									"text-alignment": "center",
+									"text-color": "~ BlackCColor",
+									"text-color-highlighted": "~ WhiteCColor",
+									"title": "Reset",
+									"transparent": "false",
+									"wants-focus": "true",
+									"wheel-inc-value": "0.1"
 								}
 							}
 						}
