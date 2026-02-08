@@ -13,7 +13,7 @@
 #include "frameticker.hpp"
 #include "features/ifeatureextractor.hpp"
 
-class MediaView;
+#include "videoparamlistener.hpp"
 
 class PlaybackController : public std::enable_shared_from_this<PlaybackController> {
 public:
@@ -23,6 +23,8 @@ public:
 	explicit PlaybackController(loader_t loader, frame_queue_t frameQueue, frame_ticker_t ticker)
 		: loader_(std::move(loader)), frame_queue_(std::move(frameQueue)), frame_ticker_(std::move(ticker)) {}
 
+	~PlaybackController();
+
 	void startPipeline(double playbackRate);
 	// void pausePipeline();
 	void stopPipeline();
@@ -30,6 +32,9 @@ public:
 
 	void registerReceiver(IFrameReceiver* receiver) const;
 	void unregisterReceiver(IFrameReceiver* receiver) const;
+
+	void setParamListeners(controller_t controller);
+	void onParamChanged(Steinberg::Vst::ParamID paramId, float paramValue);
 
 private:
 	void setupCallbacks();
@@ -40,9 +45,11 @@ private:
 	loader_t loader_;
 	frame_queue_t frame_queue_;
 	frame_ticker_t frame_ticker_;
+	controller_t controller_ = nullptr;
+
+	listener_t play_listener_;
 };
 
 using pcont_t = std::shared_ptr<PlaybackController>;
-
 
 #endif //PLAYBACKCONTROLLER_HPP

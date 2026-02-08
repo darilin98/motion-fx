@@ -4,7 +4,11 @@
 
 
 #include "playbackcontroller.hpp"
+#include "videoparamlistener.hpp"
 #include "vstgui/lib/tasks.h"
+#include "../parameterdefaults.hpp"
+
+PlaybackController::~PlaybackController() = default;
 
 void PlaybackController::startPipeline(const double playbackRate) {
 	is_running_ = true;
@@ -71,6 +75,26 @@ void PlaybackController::registerReceiver(IFrameReceiver* receiver) const {
 void PlaybackController::unregisterReceiver(IFrameReceiver* receiver) const {
 	if (frame_ticker_) frame_ticker_->removeReceiver(receiver);
 }
+
+void PlaybackController::setParamListeners(controller_t controller) {
+	this->controller_ = controller;
+	play_listener_ = std::make_unique<VideoParamListener>(
+		controller_->getParameterObject(kParamPlay), shared_from_this(), controller_);
+}
+
+
+void PlaybackController::onParamChanged(Steinberg::Vst::ParamID paramId, float paramValue) {
+	switch (paramId) {
+		case kParamPlay:
+			if (paramValue > 0.5) {
+				is_running_ ? stopPipeline() : startPipeline(1.0);
+			}
+			break;
+		default:
+			break;
+	}
+}
+
 
 
 
