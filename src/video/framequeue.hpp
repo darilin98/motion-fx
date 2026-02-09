@@ -7,6 +7,7 @@
 
 #include <mutex>
 #include <queue>
+#include <thread>
 
 #include "videoframe.hpp"
 
@@ -15,7 +16,7 @@ public:
 	virtual ~IFrameQueue() = default;
 	virtual bool tryPop(VideoFrame& outFrame) = 0;
 	virtual void push(VideoFrame&& frame) = 0;
-	virtual void clear() = 0;
+	virtual void clearAsync() = 0;
 };
 
 class FrameQueue final : public IFrameQueue {
@@ -35,7 +36,16 @@ public:
 		queue_.push(std::move(frame));
 	}
 
-	void clear() override {
+	void clearAsync() override {
+		std::queue<VideoFrame> old_queue;
+		{
+			std::lock_guard lock(mutex_);
+			std::swap(queue_, old_queue);
+		}
+
+		// Spawning a thread for de-allocation in order to not slow down the main thread
+		std::thread([oldQueue = std::move(old_queue)]() mutable {}).detach();
+
 		std::lock_guard lock(mutex_);
 		std::queue<VideoFrame> empty;
 		queue_.swap(empty);

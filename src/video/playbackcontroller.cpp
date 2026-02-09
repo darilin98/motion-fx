@@ -121,7 +121,7 @@ void PlaybackController::onParamChanged(Steinberg::Vst::ParamID paramId, float p
 			if (paramValue > 0.5 && is_playing_) {
 				if (loader_->tryRewindToStart()) {
 					stopPipeline();
-					frame_queue_->clear();
+					frame_queue_->clearAsync();
 				}
 			}
 		default:
