@@ -10,34 +10,58 @@
 
 PlaybackController::~PlaybackController() = default;
 
+void PlaybackController::shutdown() {
+	++generation_;
+
+	is_decoding_.store(false);
+	if (loader_) {
+		loader_->onFrame = nullptr;
+	}
+	if (frame_ticker_) {
+		frame_ticker_->stopConsuming();
+		frame_ticker_->clearReceivers();
+	}
+
+	play_listener_.reset();
+	reset_listener_.reset();
+}
+
 void PlaybackController::startPipeline(const double playbackRate) {
-	is_running_ = true;
+	++generation_;
+	is_decoding_ = true;
 	rate_ = playbackRate;
 	setupCallbacks();
 	if (frame_ticker_) {
 		frame_ticker_->resetTimer();
 		frame_ticker_->startConsumingAt(25);
+		is_playing_ = true;
 	}
 	scheduleNextFrame();
 }
 
 void PlaybackController::stopPipeline() {
-	if (frame_ticker_) frame_ticker_->stopConsuming();
-	is_running_.store(false);
+	++generation_;
+	if (frame_ticker_) {
+		frame_ticker_->stopConsuming();
+		is_playing_ = false;
+	}
+	is_decoding_.store(false);
 }
 
 void PlaybackController::scheduleNextFrame() {
-	if (!is_running_) return;
+	if (!is_decoding_) return;
 
+	const uint64_t task_generation = generation_.load();
 	// TODO: Move this to regular work thread - needs to function without GUI
-	VSTGUI::Tasks::schedule(VSTGUI::Tasks::backgroundQueue(), [self = shared_from_this()] {
-		if (!self->is_running_) return;
+	VSTGUI::Tasks::schedule(VSTGUI::Tasks::backgroundQueue(), [self = shared_from_this(), task_generation]() {
+		if (self->generation_ != task_generation) return;
+		if (!self->is_decoding_) return;
 
 		// TODO: manage rate of requests based on speed setting
 		if(self->loader_->requestNextFrame()) {
 			self->scheduleNextFrame();
 		} else {
-			self->is_running_ = false;
+			self->is_decoding_ = false;
 		}
 	});
 }
@@ -51,11 +75,11 @@ void PlaybackController::setupCallbacks() {
 
 	if (frame_ticker_) {
 		frame_ticker_->setOnQueueEmptyCallback([self = shared_from_this()] {
-			if (self->is_running_)
+			if (self->is_decoding_)
 				return;
 			if (self->looping_) {
 				if (self->loader_->tryRewindToStart()) {
-					self->is_running_.store(true);
+					self->is_decoding_.store(true);
 					self->scheduleNextFrame();
 					self->frame_ticker_->resetTimer();
 					return;
@@ -80,16 +104,26 @@ void PlaybackController::setParamListeners(controller_t controller) {
 	this->controller_ = controller;
 	play_listener_ = std::make_unique<VideoParamListener>(
 		controller_->getParameterObject(kParamPlay), shared_from_this(), controller_);
+	reset_listener_ = std::make_unique<VideoParamListener>(
+		controller_->getParameterObject(kParamReset), shared_from_this(), controller_);
 }
 
 
 void PlaybackController::onParamChanged(Steinberg::Vst::ParamID paramId, float paramValue) {
 	switch (paramId) {
 		case kParamPlay:
-			if (paramValue > 0.5) {
-				is_running_ ? stopPipeline() : startPipeline(1.0);
+			if (paramValue > 0.5 && !is_playing_) {
+				startPipeline(1.0);
 			}
 			break;
+		case kParamReset:
+			// TODO: FIX Might block the main UI thread too much
+			if (paramValue > 0.5 && is_playing_) {
+				if (loader_->tryRewindToStart()) {
+					stopPipeline();
+					frame_queue_->clear();
+				}
+			}
 		default:
 			break;
 	}

@@ -82,25 +82,27 @@ tresult PLUGIN_API PluginController::setParamNormalized(ParamID tag, ParamValue 
 }
 
 void PluginController::setupPlayback(const VSTGUI::UTF8String& path) {
-    frame_queue_ = std::make_shared<FrameQueue>();
+    auto frame_queue = std::make_shared<FrameQueue>();
 
     auto ticker = std::make_unique<FrameTicker>();
-    ticker->setQueue(frame_queue_);
+    ticker->setQueue(frame_queue);
+
     feature_extractor_ = std::make_unique<BrightnessFeatureExtractor>(kParamGain);
     feature_extractor_->setOutController(this);
 
-    playback_controller_ = std::make_shared<PlaybackController>(path.data(), frame_queue_, std::move(ticker));
+    playback_controller_ = std::make_shared<PlaybackController>(path.data(), std::move(frame_queue), std::move(ticker));
     playback_controller_->registerReceiver(feature_extractor_.get());
     playback_controller_->setParamListeners(this);
     is_video_preview_mode_ = true;
 }
 
 void PluginController::cleanUpPlayback() {
-    playback_controller_->stopPipeline();
+    if (playback_controller_) {
+        playback_controller_->shutdown();
+        playback_controller_.reset();
+    }
     // TODO: Reset param call?
     feature_extractor_.reset();
-    frame_queue_.reset();
-    playback_controller_.reset();
     is_video_preview_mode_ = false;
 }
 
@@ -110,7 +112,7 @@ void PluginController::registerReceiver(IFrameReceiver* receiver) const {
    }
 }
 
-void PluginController::unregisterReceiver(IFrameReceiver *receiver) const {
+void PluginController::unregisterReceiver(IFrameReceiver* receiver) const {
     if (playback_controller_) {
         playback_controller_->unregisterReceiver(receiver);
     }

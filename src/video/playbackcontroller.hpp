@@ -30,6 +30,8 @@ public:
 	void stopPipeline();
 	// void setPlaybackRate(double playbackRate);
 
+	void shutdown();
+
 	void registerReceiver(IFrameReceiver* receiver) const;
 	void unregisterReceiver(IFrameReceiver* receiver) const;
 
@@ -39,7 +41,9 @@ public:
 private:
 	void setupCallbacks();
 	void scheduleNextFrame();
-	std::atomic<bool> is_running_ = false;
+	std::atomic<bool> is_decoding_ = false;
+	std::atomic<bool> is_playing_ = false;
+	std::atomic<uint64_t> generation_ { 0 };
 	bool looping_ = true;
 	double rate_ = 0.0;
 	loader_t loader_;
@@ -48,6 +52,7 @@ private:
 	controller_t controller_ = nullptr;
 
 	listener_t play_listener_;
+	listener_t reset_listener_;
 };
 
 using pcont_t = std::shared_ptr<PlaybackController>;

@@ -6,6 +6,10 @@
 
 #include <thread>
 
+FrameTicker::~FrameTicker() {
+	FrameTicker::stopConsuming();
+}
+
 void FrameTicker::setQueue(const frame_queue_t& queue) {
 	frame_queue_ = queue;
 }
@@ -21,6 +25,10 @@ void FrameTicker::removeReceiver(IFrameReceiver* receiver) {
 	receivers_.erase(it, receivers_.end());
 }
 
+void FrameTicker::clearReceivers() {
+	std::lock_guard lock(receivers_mutex_);
+	receivers_.clear();
+}
 
 void FrameTicker::startConsumingAt(double fps) {
 	stopConsuming();
@@ -42,7 +50,6 @@ void FrameTicker::stopConsuming() {
 	if (consumer_thread_.joinable())
 		consumer_thread_.join();
 
-	frame_queue_.reset();
 }
 
 void FrameTicker::resetTimer() {

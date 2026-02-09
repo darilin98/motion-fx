@@ -23,13 +23,14 @@ public:
 
 class FrameTicker : public IFrameTicker {
 public:
-	~FrameTicker() override { FrameTicker::stopConsuming(); }
+	~FrameTicker() override;
 	void resetTimer() override;
 	void startConsumingAt(double fps) override;
 	void stopConsuming() override;
 	void setQueue(const frame_queue_t& queue) override;
 	void addReceiver(IFrameReceiver* receiver);
 	void removeReceiver(IFrameReceiver* receiver);
+	void clearReceivers();
 
 	void onQueueEmpty() override {
 		if (on_queue_empty_callback_) on_queue_empty_callback_();

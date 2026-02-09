@@ -54,7 +54,6 @@ public:
     void setupPlayback(const VSTGUI::UTF8String& path);
     void cleanUpPlayback();
 
-    [[nodiscard]] frame_queue_t getFrameQueue() const { return frame_queue_; }
     void registerReceiver(IFrameReceiver* receiver) const;
     void unregisterReceiver(IFrameReceiver* receiver) const;
 
@@ -66,7 +65,6 @@ private:
     IConnectionPoint* processorConnection_ {nullptr};
     bool is_video_preview_mode_ = false;
     pcont_t playback_controller_ = nullptr;
-    frame_queue_t frame_queue_ = nullptr;
     std::unique_ptr<BrightnessFeatureExtractor> feature_extractor_ = nullptr;
 };
 
