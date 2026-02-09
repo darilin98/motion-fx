@@ -15,7 +15,7 @@ public:
 	virtual ~IFrameQueue() = default;
 	virtual bool tryPop(VideoFrame& outFrame) = 0;
 	virtual void push(VideoFrame&& frame) = 0;
-
+	virtual void clear() = 0;
 };
 
 class FrameQueue final : public IFrameQueue {
@@ -33,6 +33,12 @@ public:
 	void push(VideoFrame &&frame) override {
 		std::lock_guard lock(mutex_);
 		queue_.push(std::move(frame));
+	}
+
+	void clear() override {
+		std::lock_guard lock(mutex_);
+		std::queue<VideoFrame> empty;
+		queue_.swap(empty);
 	}
 
 private:
