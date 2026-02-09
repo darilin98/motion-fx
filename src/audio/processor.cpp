@@ -152,18 +152,18 @@ void PluginProcessor::updateControlParamValues(const ProcessData& data) {
 
 void PluginProcessor::handleControlParam(ParamID id, ParamValue value, const ProcessData& data) {
     switch (id) {
-        case kParamPlay:
-            if (value > 0.5) {
-                if (!is_video_playing_)
-                    epoch_start_sample_ = data.processContext ? data.processContext->projectTimeSamples : total_samples_;
-
-                is_video_playing_ = !is_video_playing_;
+        case kParamPlay: {
+            if (!is_video_playing_) {
+                epoch_start_sample_ = data.processContext ? data.processContext->projectTimeSamples : total_samples_;
+                is_video_playing_ = true;
             }
             break;
+        }
         case kParamReset:
-            if (value > 0.5) {
+            if (is_video_playing_) {
                 modulation_curve_.clear();
                 epoch_start_sample_ = -1;
+                is_video_playing_ = false;
             }
             break;
         default:
@@ -177,7 +177,8 @@ void PluginProcessor::updateDspParamValues(const ProcessData& data) {
         [&](ParamID id, ParamValue value, int32)
         {
             handleDspParam(id, value);
-            captureModulation(id, value, data);
+            // Dangerous for now
+            // captureModulation(id, value, data);
         }
     );
 }
@@ -196,6 +197,9 @@ void PluginProcessor::captureModulation(ParamID id, ParamValue value, const Proc
     if (!is_video_playing_ || epoch_start_sample_ < 0)
         return;
 
+    if (isControlParam(id))
+        return;
+
     const auto nowSamples =
         data.processContext ? data.processContext->projectTimeSamples : total_samples_;
 
@@ -208,9 +212,6 @@ void PluginProcessor::captureModulation(ParamID id, ParamValue value, const Proc
 
     modulation_curve_.back().values.emplace_back(id, value);
 }
-
-
-
 
 tresult PluginProcessor::bypassProcessing(const ProcessData& data, const int32_t numChannels, const int32_t numSamples) {
     for (int32 ch = 0; ch < numChannels; ++ch)
