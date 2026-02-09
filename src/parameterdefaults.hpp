@@ -25,5 +25,15 @@ enum ViewParamID : Steinberg::Vst::ParamID {
     kParamLoadVideo = 1001,
 };
 
+inline bool isControlParam(Steinberg::Vst::ParamID id) noexcept {
+    switch (id) {
+        case kParamPlay:
+        case kParamReset:
+        case kParamLoop:
+            return true;
+        default:
+            return false;
+    }
+}
 
 #endif //PARAMETERDEFAULTS_HPP
