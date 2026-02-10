@@ -17,6 +17,8 @@ static const FUID PluginControllerUID(0x16616cb1, 0xdace4b43, 0xb29ea085, 0xa674
 
 constexpr int FFT_SIZE = 1024;
 
+constexpr int32 kStateVersion = 1;
+
 /**
  * @brief Main class for the audio processing part of the plugin.
  *

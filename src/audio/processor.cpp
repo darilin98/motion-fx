@@ -115,8 +115,52 @@ tresult PluginProcessor::setState(IBStream *state)
 
     IBStreamer streamer(state, kLittleEndian);
 
+    int32 version = 0;
+    if (!streamer.readInt32(version))
+        return kResultFalse;
+
+    if (version > kStateVersion)
+        return kResultFalse;
+
     if (!streamer.readDouble(bypass_state_))
         return kResultFalse;
+
+    if (!streamer.readBool(is_video_playing_))
+        return kResultFalse;
+
+    // Modulation vector de-serialization
+    modulation_curve_.clear();
+    uint32 numPoints = 0;
+    if (!streamer.readInt32u(numPoints))
+        return kResultFalse;
+
+    modulation_curve_.reserve(numPoints);
+    for (uint32 i = 0; i < numPoints; ++i) {
+        ModulationPoint point{};
+
+        if (!streamer.readInt64(point.timestamp))
+            return kResultFalse;
+
+        uint32 numValues = 0;
+        if (!streamer.readInt32u(numValues))
+            return kResultFalse;
+
+        point.values.reserve(numValues);
+
+        for (int32 j = 0; j < numValues; ++j) {
+            uint32 id;
+            double value;
+
+            if (!streamer.readInt32u(id))
+                return kResultFalse;
+            if (!streamer.readDouble(value))
+                return kResultFalse;
+
+            point.values.emplace_back(id, value);
+        }
+
+        modulation_curve_.push_back(std::move(point));
+    }
     return kResultOk;
 }
 
@@ -127,8 +171,35 @@ tresult PluginProcessor::getState(IBStream *state)
 
     IBStreamer streamer(state, kLittleEndian);
 
+    if (!streamer.writeInt32(kStateVersion))
+        return kResultFalse;
+
     if (!streamer.writeDouble(bypass_state_))
         return kResultFalse;
+
+    if (!streamer.writeBool(is_video_playing_))
+        return kResultFalse;
+
+    // Modulation vector serialization
+    auto numPoints = static_cast<uint32>(modulation_curve_.size());
+    if (!streamer.writeInt32u(numPoints))
+        return kResultFalse;
+
+    for (const auto& point : modulation_curve_) {
+        if (!streamer.writeInt64(point.timestamp))
+            return kResultFalse;
+
+        auto numValues = static_cast<uint32>(point.values.size());
+        if (!streamer.writeInt32u(numValues))
+            return kResultFalse;
+
+        for (const auto& [id, value] : point.values) {
+            if (!streamer.writeInt32u(id))
+                return kResultFalse;
+            if (!streamer.writeDouble(value))
+                return kResultFalse;
+        }
+    }
 
     return kResultOk;
 }
