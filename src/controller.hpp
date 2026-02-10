@@ -60,10 +60,11 @@ public:
     void addModulation(ModulationPoint modPoint) const;
     tresult PLUGIN_API connect(IConnectionPoint* other) override;
 
-    ParamValue bypassState = 0.0;
 private:
     IConnectionPoint* processorConnection_ {nullptr};
     bool is_video_preview_mode_ = false;
+    bool pending_restore_playback_ = false;
+    VSTGUI::UTF8String video_path_ = "";
     pcont_t playback_controller_ = nullptr;
     std::unique_ptr<BrightnessFeatureExtractor> feature_extractor_ = nullptr;
 };

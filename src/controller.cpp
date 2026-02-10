@@ -5,6 +5,7 @@
 #include "base/ustring.h"
 
 #include "parameterdefaults.hpp"
+#include "utils.hpp"
 #include "base/source/fstreamer.h"
 #include "vstgui/lib/vstguiinit.h"
 #include "ui/motionfxeditor.hpp"
@@ -38,10 +39,26 @@ tresult PLUGIN_API PluginController::setState(IBStream *state)
 
     IBStreamer streamer(state, kLittleEndian);
 
-    if (!streamer.readDouble(bypassState))
+    int32 version;
+    if (!streamer.readInt32(version))
         return kResultFalse;
 
-    setParamNormalized(kParamBypass, bypassState);
+    double bypass_state = 0.0;
+    if (!streamer.readDouble(bypass_state))
+        return kResultFalse;
+    setParamNormalized(kParamBypass, bypass_state);
+
+    if (char* path = streamer.readStr8()) {
+        video_path_ = VSTGUI::UTF8String(path);
+        delete[] path;
+    } else {
+        video_path_.clear();
+    }
+
+    if(!streamer.readBool(is_video_preview_mode_))
+        return kResultFalse;
+
+    pending_restore_playback_ = !video_path_.empty();
 
     return kResultOk;
 }
@@ -52,10 +69,18 @@ tresult PLUGIN_API PluginController::getState(IBStream *state)
         return kResultFalse;
 
     IBStreamer streamer(state, kLittleEndian);
+    if(!streamer.writeInt32(1)) // version
+        return kResultFalse;
 
-    bypassState = getParamNormalized(kParamBypass);
+    auto bypass_state = getParamNormalized(kParamBypass);
+    if (!streamer.writeDouble(bypass_state))
+        return kResultFalse;
 
-    if (!streamer.writeDouble(bypassState))
+    const std::string pathUtf8 = video_path_.getString();
+    if (!streamer.writeStr8(pathUtf8.c_str()))
+        return kResultFalse;
+
+    if (!streamer.writeBool(is_video_preview_mode_))
         return kResultFalse;
 
     return kResultOk;
@@ -65,6 +90,10 @@ IPlugView* PLUGIN_API PluginController::createView (FIDString name)
 {
     if (strcmp (name, ViewType::kEditor) == 0)
     {
+        if (pending_restore_playback_ && is_video_preview_mode_) {
+            setupPlayback(video_path_);
+            pending_restore_playback_ = false;
+        }
         if (is_video_preview_mode_)
             return new MotionFxEditor (this, "AudioProcessing", "viewGUI.uidesc");
         return new MotionFxEditor (this, "InputSelect", "viewGUI.uidesc");
@@ -93,6 +122,8 @@ void PluginController::setupPlayback(const VSTGUI::UTF8String& path) {
     playback_controller_ = std::make_shared<PlaybackController>(path.data(), std::move(frame_queue), std::move(ticker));
     playback_controller_->registerReceiver(feature_extractor_.get());
     playback_controller_->setParamListeners(this);
+
+    video_path_ = path;
     is_video_preview_mode_ = true;
 }
 
@@ -103,6 +134,8 @@ void PluginController::cleanUpPlayback() {
     }
     // TODO: Reset param call?
     feature_extractor_.reset();
+
+    video_path_.clear();
     is_video_preview_mode_ = false;
 }
 
