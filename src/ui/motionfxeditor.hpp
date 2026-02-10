@@ -9,10 +9,6 @@
 #include "vstgui4/vstgui/plugin-bindings/vst3editor.h"
 #include "fileselectcontroller.hpp"
 #include "../controller.hpp"
-#include "../video/playbackcontroller.hpp"
-#include "../video/framequeue.hpp"
-#include "../video/frameticker.hpp"
-#include "../video/features/brightnessfeatureextractor.hpp"
 
 class MediaView;
 
@@ -52,10 +48,5 @@ public:
 		}
 		return nullptr;
 	}
-
-private:
-	std::unique_ptr<BrightnessFeatureExtractor> feature_extractor_ = nullptr;
-	frame_queue_t frame_queue_ = nullptr;
-	pcont_t playback_controller_ = nullptr;
 };
 #endif //MOTIONFXEDITOR_HPP

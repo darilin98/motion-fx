@@ -37,7 +37,6 @@ private:
     uint32_t bmp_width_ = 0;
     uint32_t bmp_height_ = 0;
     controller_t controller_ = nullptr;
-    frame_queue_t queue_ = nullptr;
     std::unique_ptr<VSTGUI::Tasks::Queue> render_queue_;
     std::shared_ptr<int> render_token_ { std::make_shared<int>(1) };
 };
