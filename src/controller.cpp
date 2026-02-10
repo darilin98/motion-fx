@@ -58,7 +58,8 @@ tresult PLUGIN_API PluginController::setState(IBStream *state)
     if(!streamer.readBool(is_video_preview_mode_))
         return kResultFalse;
 
-    pending_restore_playback_ = !video_path_.empty();
+    if (!video_path_.empty() && is_video_preview_mode_)
+        setupPlayback(video_path_);
 
     return kResultOk;
 }
@@ -90,10 +91,6 @@ IPlugView* PLUGIN_API PluginController::createView (FIDString name)
 {
     if (strcmp (name, ViewType::kEditor) == 0)
     {
-        if (pending_restore_playback_ && is_video_preview_mode_) {
-            setupPlayback(video_path_);
-            pending_restore_playback_ = false;
-        }
         if (is_video_preview_mode_)
             return new MotionFxEditor (this, "AudioProcessing", "viewGUI.uidesc");
         return new MotionFxEditor (this, "InputSelect", "viewGUI.uidesc");
