@@ -74,19 +74,24 @@ void PlaybackController::setupCallbacks() {
 	}
 
 	if (frame_ticker_) {
+		frame_ticker_->setOnQueueEmptyCallback(nullptr);
 		frame_ticker_->setOnQueueEmptyCallback([self = shared_from_this()] {
-			if (self->is_decoding_)
-				return;
-			if (self->looping_) {
-				if (self->loader_->tryRewindToStart()) {
-					self->is_decoding_.store(true);
-					self->scheduleNextFrame();
-					self->frame_ticker_->resetTimer();
+			VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [self] {
+				if (self->is_decoding_)
 					return;
+
+				if (self->looping_) {
+					if (self->loader_->tryRewindToStart()) {
+						self->is_decoding_.store(true);
+						self->scheduleNextFrame();
+						if (self->frame_ticker_) self->frame_ticker_->resetTimer();
+						return;
+					}
 				}
-			}
-			fprintf(stderr, "Playback finished, static last frame displayed\n");
-			self->stopPipeline();
+
+				fprintf(stderr, "Playback finished, static last frame displayed (scheduled stop)\n");
+				self->stopPipeline();
+			});
 		});
 	}
 }
@@ -117,7 +122,6 @@ void PlaybackController::onParamChanged(Steinberg::Vst::ParamID paramId, float p
 			}
 			break;
 		case kParamReset:
-			// TODO: FIX Might block the main UI thread too much
 			if (paramValue > 0.5 && is_playing_) {
 				if (loader_->tryRewindToStart()) {
 					stopPipeline();

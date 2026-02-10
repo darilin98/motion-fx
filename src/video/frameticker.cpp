@@ -47,9 +47,12 @@ void FrameTicker::stopConsuming() {
 	if (!consumer_running_.exchange(false))
 		return;
 
-	if (consumer_thread_.joinable())
-		consumer_thread_.join();
 
+	if (consumer_thread_.joinable()) {
+		if (std::this_thread::get_id() != consumer_thread_.get_id()) {
+			consumer_thread_.join();
+		}
+	}
 }
 
 void FrameTicker::resetTimer() {
