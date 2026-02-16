@@ -67,6 +67,8 @@ public:
 
 	void addModulation(ModulationPoint modPoint) const;
 
+	void onVideoFinished() const;
+
 	tresult PLUGIN_API connect(IConnectionPoint* other) override;
 
 private:

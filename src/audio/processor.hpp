@@ -19,6 +19,12 @@ constexpr int FFT_SIZE = 1024;
 
 constexpr int32 kStateVersion = 1;
 
+enum class CaptureState {
+	Invalid,
+	Recording,
+	Complete
+};
+
 /**
  * @brief Main class for the audio processing part of the plugin.
  *
@@ -71,17 +77,21 @@ private:
 	void updateControlParamValues(const ProcessData& data);
 	void handleControlParam(ParamID id, ParamValue value, const ProcessData& data);
 
+	void updateOfflineDspParamValues(const ProcessData& data);
+
 	static tresult bypassProcessing(const ProcessData& data, int32_t numChannels, int32_t numSamples);
 
 	[[nodiscard]] tresult processSamples(const ProcessData& data, int32_t numChannels, int32_t numSamples) const;
 
+	CaptureState capture_state_ = CaptureState::Invalid;
 	bool is_offline_ = false;
 	bool is_video_playing_ = false;
-	TSamples epoch_start_sample_ = 0;
+	TSamples epoch_start_sample_ = -1;
+	TSamples last_project_sample_ = -1;
 	TSamples total_samples_ = 0;
 	ParamValue bypass_state_ = 0.0f;
 	ParamValue gain_ = 1.0f;
-	modulation_curve_t modulation_curve_;
+	modulation_curve_t modulation_curve_ = {};
 	std::mutex modulation_mutex_;
 };
 #endif //PROCESSOR_HPP

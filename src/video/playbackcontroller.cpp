@@ -4,6 +4,7 @@
 
 
 #include "playbackcontroller.hpp"
+#include "../controller.hpp"
 #include "videoparamlistener.hpp"
 #include "vstgui/lib/tasks.h"
 #include "../parameterdefaults.hpp"
@@ -80,6 +81,8 @@ void PlaybackController::setupCallbacks() {
 				if (self->is_decoding_)
 					return;
 
+				self->onVideoFinished();
+
 				if (self->looping_) {
 					if (self->loader_->tryRewindToStart()) {
 						self->is_decoding_.store(true);
@@ -130,6 +133,14 @@ void PlaybackController::onParamChanged(Steinberg::Vst::ParamID paramId, float p
 			}
 		default:
 			break;
+	}
+}
+
+void PlaybackController::onVideoFinished() const {
+	if (controller_) {
+		if (auto* pcont = dynamic_cast<PluginController*>(controller_)) {
+			pcont->onVideoFinished();
+		}
 	}
 }
 

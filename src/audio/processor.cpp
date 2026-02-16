@@ -51,7 +51,7 @@ tresult PLUGIN_API PluginProcessor::process(ProcessData& data)
 
     if (is_video_playing_) {
         if (is_offline_ || (data.processMode == kOffline)) {
-            // Update params using modulation vector indexed by time
+            updateOfflineDspParamValues(data);
         } else {
             updateDspParamValues(data);
         }
@@ -60,6 +60,9 @@ tresult PLUGIN_API PluginProcessor::process(ProcessData& data)
     // Choose to either apply DSP or bypass
     if (tryGetBypassState(data))
         return bypassProcessing(data, num_channels, num_samples);
+
+    if (data.processContext)
+        last_project_sample_ = data.processContext->projectTimeSamples;
 
     return processSamples(data, num_channels, num_samples);
 }
@@ -209,6 +212,12 @@ tresult PLUGIN_API PluginProcessor::notify(Steinberg::Vst::IMessage* message)
     if (!message)
         return kInvalidArgument;
 
+    if (strcmp(message->getMessageID(), "VideoFinished") == 0) {
+        if (capture_state_ == CaptureState::Recording) {
+            capture_state_ = CaptureState::Complete;
+        }
+    }
+
     return kResultOk;
 }
 
@@ -225,7 +234,9 @@ void PluginProcessor::handleControlParam(ParamID id, ParamValue value, const Pro
     switch (id) {
         case kParamPlay: {
             if (!is_video_playing_) {
+                modulation_curve_.clear();
                 epoch_start_sample_ = data.processContext ? data.processContext->projectTimeSamples : total_samples_;
+                capture_state_ = CaptureState::Recording;
                 is_video_playing_ = true;
             }
             break;
@@ -234,6 +245,7 @@ void PluginProcessor::handleControlParam(ParamID id, ParamValue value, const Pro
             if (is_video_playing_) {
                 modulation_curve_.clear();
                 epoch_start_sample_ = -1;
+                capture_state_ = CaptureState::Invalid;
                 is_video_playing_ = false;
             }
             break;
@@ -248,7 +260,9 @@ void PluginProcessor::updateDspParamValues(const ProcessData& data) {
         [&](ParamID id, ParamValue value, int32)
         {
             handleDspParam(id, value);
-            // Dangerous for now
+
+            // TODO: This is not real-time friendly yet, it allocates memory
+            //       Needs to be done on a worker
             // captureModulation(id, value, data);
         }
     );
@@ -265,24 +279,57 @@ void PluginProcessor::handleDspParam(ParamID id, ParamValue value) {
 }
 
 void PluginProcessor::captureModulation(ParamID id, ParamValue value, const ProcessData& data) {
-    if (!is_video_playing_ || epoch_start_sample_ < 0)
+    if (capture_state_ != CaptureState::Recording)
         return;
 
     if (isControlParam(id))
         return;
 
-    const auto nowSamples =
-        data.processContext ? data.processContext->projectTimeSamples : total_samples_;
+    const auto nowSamples = data.processContext ? data.processContext->projectTimeSamples : total_samples_;
+
+    if (nowSamples <= last_project_sample_) {
+        // DAW is stopped, looped, or skipped
+        capture_state_ = CaptureState::Invalid;
+        return;
+    }
 
     const auto relativeSamples = nowSamples - epoch_start_sample_;
 
-    if (modulation_curve_.empty() || modulation_curve_.back().timestamp != relativeSamples)
-    {
+    if (modulation_curve_.empty() || modulation_curve_.back().timestamp != relativeSamples) {
         modulation_curve_.push_back({relativeSamples, {}});
     }
 
     modulation_curve_.back().values.emplace_back(id, value);
 }
+
+void PluginProcessor::updateOfflineDspParamValues(const ProcessData& data) {
+    if (capture_state_ != CaptureState::Complete)
+        return;
+
+    const auto nowSamples = data.processContext ? data.processContext->projectTimeSamples : total_samples_;
+
+    static int last_index = 0;
+
+    if (!modulation_curve_.empty() && nowSamples <= modulation_curve_[last_index].timestamp + epoch_start_sample_) {
+        last_index = 0;
+        return;
+    }
+
+    // TODO: Here it should wrap around mod vector size, not just end
+    while (last_index < modulation_curve_.size()) {
+        const auto& point = modulation_curve_[last_index];
+        const auto absSample = point.timestamp + epoch_start_sample_;
+        if (absSample >= nowSamples + data.numSamples)
+            break;
+
+        for (auto& [id, value] : point.values) {
+            handleDspParam(id, value);
+        }
+
+        ++last_index;
+    }
+}
+
 
 tresult PluginProcessor::bypassProcessing(const ProcessData& data, const int32_t numChannels, const int32_t numSamples) {
     for (int32 ch = 0; ch < numChannels; ++ch)

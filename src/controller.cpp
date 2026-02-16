@@ -158,6 +158,21 @@ void PluginController::addModulation(ModulationPoint modPoint) const {
         return;
 }
 
+void PluginController::onVideoFinished() const {
+    if (!processorConnection_)
+        return;
+
+    Steinberg::Vst::IMessage* msg = allocateMessage();
+
+    if (!msg)
+        return;
+
+    msg->setMessageID("VideoFinished");
+
+    processorConnection_->notify(msg);
+}
+
+
 
 
 
