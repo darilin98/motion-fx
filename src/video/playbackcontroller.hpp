@@ -40,11 +40,9 @@ public:
 
 private:
 	void setupCallbacks();
-	void scheduleNextFrame();
 	void onVideoFinished() const;
 	std::atomic<bool> is_decoding_ = false;
 	std::atomic<bool> is_playing_ = false;
-	std::atomic<uint64_t> generation_ { 0 };
 	bool looping_ = true;
 	double rate_ = 0.0;
 	loader_t loader_;

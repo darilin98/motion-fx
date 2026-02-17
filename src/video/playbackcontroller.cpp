@@ -12,12 +12,12 @@
 PlaybackController::~PlaybackController() = default;
 
 void PlaybackController::shutdown() {
-	++generation_;
-
-	is_decoding_.store(false);
 	if (loader_) {
+		is_decoding_.store(false);
+		loader_->stopLoading();
 		loader_->onFrame = nullptr;
 	}
+
 	if (frame_ticker_) {
 		frame_ticker_->stopConsuming();
 		frame_ticker_->clearReceivers();
@@ -28,55 +28,47 @@ void PlaybackController::shutdown() {
 }
 
 void PlaybackController::startPipeline(const double playbackRate) {
-	++generation_;
-	is_decoding_ = true;
 	rate_ = playbackRate;
 	setupCallbacks();
+
+	if (loader_) {
+		is_decoding_.store(true);
+		loader_->startLoading();
+	}
+
 	if (frame_ticker_) {
 		frame_ticker_->resetTimer();
+		is_playing_.store(true);
 		frame_ticker_->startConsumingAt(25);
-		is_playing_ = true;
 	}
-	scheduleNextFrame();
 }
 
 void PlaybackController::stopPipeline() {
-	++generation_;
+	if (loader_) {
+		loader_->stopLoading();
+		is_decoding_.store(false);
+	}
 	if (frame_ticker_) {
 		frame_ticker_->stopConsuming();
-		is_playing_ = false;
+		is_playing_.store(false);
 	}
-	is_decoding_.store(false);
-}
-
-void PlaybackController::scheduleNextFrame() {
-	if (!is_decoding_) return;
-
-	const uint64_t task_generation = generation_.load();
-	// TODO: Move this to regular work thread - needs to function without GUI
-	VSTGUI::Tasks::schedule(VSTGUI::Tasks::backgroundQueue(), [self = shared_from_this(), task_generation]() {
-		if (self->generation_ != task_generation) return;
-		if (!self->is_decoding_) return;
-
-		// TODO: manage rate of requests based on speed setting
-		if(self->loader_->requestNextFrame()) {
-			self->scheduleNextFrame();
-		} else {
-			self->is_decoding_ = false;
-		}
-	});
 }
 
 void PlaybackController::setupCallbacks() {
 	if (loader_) {
 		loader_->onFrame = [this](VideoFrame&& frame) {
+			// TODO: Here we could add framerate limiting for pushing
 			frame_queue_->push(std::move(frame));
+		};
+		loader_->onVideoFinish = [this]() {
+			is_decoding_.store(false);
 		};
 	}
 
 	if (frame_ticker_) {
 		frame_ticker_->setOnQueueEmptyCallback(nullptr);
 		frame_ticker_->setOnQueueEmptyCallback([self = shared_from_this()] {
+			// TODO: the GUI task dependency could be removed by just requesting a restart higher up
 			VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [self] {
 				if (self->is_decoding_)
 					return;
@@ -86,7 +78,7 @@ void PlaybackController::setupCallbacks() {
 				if (self->looping_) {
 					if (self->loader_->tryRewindToStart()) {
 						self->is_decoding_.store(true);
-						self->scheduleNextFrame();
+						self->loader_->startLoading();
 						if (self->frame_ticker_) self->frame_ticker_->resetTimer();
 						return;
 					}

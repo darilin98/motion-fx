@@ -8,6 +8,9 @@
 #define MEDIALOADER_HPP
 
 #include <functional>
+#include <thread>
+#include <utility>
+
 #include "videoframe.hpp"
 
 class IMediaDecoder {
@@ -24,15 +27,29 @@ using decoder_t = std::unique_ptr<IMediaDecoder>;
 
 class MediaLoader {
 public:
-	explicit MediaLoader(const std::string& path);
+	explicit MediaLoader(std::string path)
+		: path_(std::move(path)) {}
 	explicit MediaLoader(decoder_t decoder)
 		: decoder_(std::move(decoder)) {}
+	~MediaLoader();
+
+	void startLoading();
+	void stopLoading();
+	bool tryRewindToStart();
+
 	std::function<void(VideoFrame&&)> onFrame;
-	[[nodiscard]] bool tryRewindToStart() const;
-	[[nodiscard]] bool requestNextFrame() const;
+	std::function<void()> onVideoFinish;
 private:
+	void workerLoop();
 	static decoder_t makeDecoder(const std::string& path);
 	decoder_t decoder_;
+	std::string path_;
+
+	std::thread worker_;
+	std::atomic_bool running_ {false};
+	std::atomic_bool requested_stop_ {false};
+
+	std::mutex seek_lock_;
 };
 
 using loader_t = std::unique_ptr<MediaLoader>;

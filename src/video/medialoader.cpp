@@ -6,10 +6,8 @@
 #include "decoders/videodecoder.hpp"
 #include "decoders/imagedecoder.hpp"
 
-MediaLoader::MediaLoader(const std::string& path) {
-	decoder_ = makeDecoder(path);
-	if (decoder_)
-		decoder_->open(path); // Should be a task
+MediaLoader::~MediaLoader() {
+	stopLoading();
 }
 
 decoder_t MediaLoader::makeDecoder(const std::string &path) {
@@ -24,19 +22,48 @@ decoder_t MediaLoader::makeDecoder(const std::string &path) {
 	return nullptr;
 }
 
-bool MediaLoader::requestNextFrame() const {
-	if (!decoder_)
-		return false;
-	if (VideoFrame frame; decoder_->decodeNext(frame)) {
-		if (onFrame)
-			onFrame(std::move(frame));
-		return true;
-	}
-	return false;
+void MediaLoader::startLoading() {
+	stopLoading();
+
+	requested_stop_ = false;
+	running_ = true;
+	worker_ = std::thread([this] { workerLoop(); });
 }
 
-bool MediaLoader::tryRewindToStart() const {
+void MediaLoader::stopLoading() {
+	requested_stop_ = true;
+
+	if (worker_.joinable())
+		worker_.join();
+
+	running_ = false;
+}
+
+void MediaLoader::workerLoop() {
+	if (!path_.empty())
+		decoder_ = makeDecoder(path_);
+	if (!decoder_)
+		return;
+	if (!decoder_->open(path_))
+		return;
+
+	while (!requested_stop_) {
+		VideoFrame frame;
+		if (!decoder_->decodeNext(frame))
+			break;
+
+		if (onFrame)
+			onFrame(std::move(frame));
+	}
+
+	running_ = false;
+	onVideoFinish();
+}
+
+bool MediaLoader::tryRewindToStart() {
 	if (!decoder_)
 		return false;
+
+	std::scoped_lock lock(seek_lock_);
 	return decoder_->seekTo(0);
 }
