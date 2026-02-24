@@ -3,18 +3,16 @@
 //
 
 #include "brightnessfeatureextractor.hpp"
-#include "vstgui/lib/tasks.h"
-#include "../../controller.hpp"
 #include <thread>
 
-void BrightnessFeatureExtractor::processFrame(const VideoFrame& videoFrame) {
+FeatureResult BrightnessFeatureExtractor::extract(const VideoFrame& videoFrame) {
 	if (videoFrame.image.rgba_data.empty())
-		return;
+		return FeatureResult{};
 
 	const auto& data = videoFrame.image.rgba_data;
 	const size_t numPixels = data.size() / 4;
 
-	if (numPixels == 0) return;
+	if (numPixels == 0) return FeatureResult{};
 
 	// Sum R,G,B channels
 	uint64_t total = 0;
@@ -24,34 +22,16 @@ void BrightnessFeatureExtractor::processFrame(const VideoFrame& videoFrame) {
 		total += static_cast<uint64_t>(data[i + 2]); // B
 	}
 
-	double normalized = static_cast<double>(total) / (numPixels * 3 * 255);
+	const double normalized = static_cast<double>(total) / (numPixels * 3 * 255);
 
-	VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [normalized, paramId = param_id_, controller = out_controller_]() {
-		if (!controller) return;
+	auto param = FeatureParamUpdate { param_id_, normalized};
+	param_arr_t parameters = { param };
 
-		if (auto* handler = controller->getComponentHandler()) {
-			handler->beginEdit(paramId);
-			handler->performEdit(paramId, normalized);
-			handler->endEdit(paramId);
-		} else {
-			controller->setParamNormalized(paramId, normalized);
-		}
-	});
+	return {parameters, videoFrame.timestamp};
 }
 
 void BrightnessFeatureExtractor::onFrame(const VideoFrame& videoFrame) {
 	frame_worker_->enqueueFrame(videoFrame);
 }
 
-void BrightnessFeatureExtractor::setOutController(const econt_t &controller) {
-	out_controller_ = controller;
-}
-
-void BrightnessFeatureExtractor::emitModulation(ModulationPoint point) {
-	if (out_controller_) {
-		if (auto* pcont = dynamic_cast<PluginController*>(out_controller_.get())) {
-			pcont->addModulation(point);
-		}
-	}
-}
 

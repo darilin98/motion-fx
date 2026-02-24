@@ -114,7 +114,7 @@ void PluginController::setupPlayback(const VSTGUI::UTF8String& path) {
     ticker->setQueue(frame_queue);
 
     feature_extractor_ = std::make_unique<BrightnessFeatureExtractor>(kParamGain);
-    feature_extractor_->setOutController(this);
+    feature_extractor_->setFeatureSink(this);
 
     playback_controller_ = std::make_shared<PlaybackController>(path.data(), std::move(frame_queue), std::move(ticker));
     playback_controller_->registerReceiver(feature_extractor_.get());
@@ -170,6 +170,28 @@ void PluginController::onVideoFinished() const {
     msg->setMessageID("VideoFinished");
 
     processorConnection_->notify(msg);
+}
+
+void PluginController::onFeatureResult(const FeatureResult& result) {
+    auto params = result.params;
+    auto timestamp = result.timestamp;
+
+    VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [params, this]() {
+        for (auto&& param : params) {
+            const auto normalized = param.normalized;
+            const auto param_id = param.id;
+
+            if (auto* handler = this->getComponentHandler()) {
+                handler->beginEdit(param_id);
+                handler->performEdit(param_id, normalized);
+                handler->endEdit(param_id);
+            } else {
+                this->setParamNormalized(param_id, normalized);
+            }
+        }
+    });
+
+    // TODO: Here we can cache the results
 }
 
 

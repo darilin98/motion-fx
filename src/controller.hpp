@@ -24,7 +24,7 @@ using namespace Steinberg;
  *
  * Manages plugin states and parameter values. Communicates with a VSTGUI instance.
  */
-class PluginController : public EditController {
+class PluginController : public EditController, IFeatureSink {
 public:
 	PluginController() = default;
 
@@ -69,7 +69,10 @@ public:
 
 	void onVideoFinished() const;
 
+	void onFeatureResult(const FeatureResult& result) override;
+
 	tresult PLUGIN_API connect(IConnectionPoint* other) override;
+
 
 private:
 	IConnectionPoint* processorConnection_{nullptr};
