@@ -18,6 +18,8 @@
 #include "parameterextraction.hpp"
 #include "../parameterdefaults.hpp"
 
+#include "daisysp.h"
+
 tresult PLUGIN_API PluginProcessor::initialize(FUnknown *context)
 {
     tresult result = AudioEffect::initialize(context);
@@ -58,43 +60,13 @@ tresult PLUGIN_API PluginProcessor::process(ProcessData& data)
     }
 
     // Choose to either apply DSP or bypass
-    if (tryGetBypassState(data))
+    if (bypass_state_ == 1.0f)
         return bypassProcessing(data, num_channels, num_samples);
 
     if (data.processContext)
         last_project_sample_ = data.processContext->projectTimeSamples;
 
     return processSamples(data, num_channels, num_samples);
-}
-
-bool PluginProcessor::tryGetBypassState(const ProcessData &data) const
-{
-    if (!data.inputParameterChanges)
-        return bypass_state_ == 1.0f;
-
-    for (int32 i = 0; i < data.inputParameterChanges->getParameterCount(); ++i)
-    {
-        auto* queue = data.inputParameterChanges->getParameterData(i);
-        if (!queue || queue->getParameterId() != kParamBypass)
-            continue;
-
-        int32 sample_offset;
-        ParamValue value;
-
-        if(queue->getPoint(queue->getPointCount() - 1, sample_offset, value) != kResultTrue)
-            continue;
-
-        bool new_bypass_state = value == 1.0f;
-
-        if (!(bypass_state_ == 1.0f) && new_bypass_state) {
-            // Flush
-        }
-
-        const_cast<PluginProcessor*>(this)->bypass_state_ = value;
-        return new_bypass_state;
-    }
-
-    return bypass_state_ == 1.0f;
 }
 
 tresult PLUGIN_API PluginProcessor::getControllerClassId(TUID classId)
@@ -232,22 +204,20 @@ void PluginProcessor::updateControlParamValues(const ProcessData& data) {
 
 void PluginProcessor::handleControlParam(ParamID id, ParamValue value, const ProcessData& data) {
     switch (id) {
-        case kParamPlay: {
+        case kParamPlay:
             if (!is_video_playing_) {
-                modulation_curve_.clear();
                 epoch_start_sample_ = data.processContext ? data.processContext->projectTimeSamples : total_samples_;
-                capture_state_ = CaptureState::Recording;
                 is_video_playing_ = true;
             }
             break;
-        }
         case kParamReset:
             if (is_video_playing_) {
-                modulation_curve_.clear();
                 epoch_start_sample_ = -1;
-                capture_state_ = CaptureState::Invalid;
                 is_video_playing_ = false;
             }
+            break;
+        case kParamBypass:
+            bypass_state_ = value;
             break;
         default:
             break;
@@ -260,10 +230,6 @@ void PluginProcessor::updateDspParamValues(const ProcessData& data) {
         [&](ParamID id, ParamValue value, int32)
         {
             handleDspParam(id, value);
-
-            // TODO: This is not real-time friendly yet, it allocates memory
-            //       Needs to be done on a worker
-            // captureModulation(id, value, data);
         }
     );
 }
@@ -276,30 +242,6 @@ void PluginProcessor::handleDspParam(ParamID id, ParamValue value) {
         default:
             break;
     }
-}
-
-void PluginProcessor::captureModulation(ParamID id, ParamValue value, const ProcessData& data) {
-    if (capture_state_ != CaptureState::Recording)
-        return;
-
-    if (isControlParam(id))
-        return;
-
-    const auto nowSamples = data.processContext ? data.processContext->projectTimeSamples : total_samples_;
-
-    if (nowSamples <= last_project_sample_) {
-        // DAW is stopped, looped, or skipped
-        capture_state_ = CaptureState::Invalid;
-        return;
-    }
-
-    const auto relativeSamples = nowSamples - epoch_start_sample_;
-
-    if (modulation_curve_.empty() || modulation_curve_.back().timestamp != relativeSamples) {
-        modulation_curve_.push_back({relativeSamples, {}});
-    }
-
-    modulation_curve_.back().values.emplace_back(id, value);
 }
 
 void PluginProcessor::updateOfflineDspParamValues(const ProcessData& data) {

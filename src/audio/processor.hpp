@@ -15,8 +15,6 @@ using namespace Steinberg;
 static const FUID PluginProcessorUID(0xd07f0f74, 0x71df4221, 0x98a7dc36, 0x845c4cf5);
 static const FUID PluginControllerUID(0x16616cb1, 0xdace4b43, 0xb29ea085, 0xa674bb2d);
 
-constexpr int FFT_SIZE = 1024;
-
 constexpr int32 kStateVersion = 1;
 
 enum class CaptureState {
@@ -63,16 +61,9 @@ public:
 	tresult PLUGIN_API notify(IMessage* message) SMTG_OVERRIDE;
 
 private:
-	/**
-	 * @brief Helper to safely get the plugin's bypass state.
-	 * @param data Parameter data
-	 * @return State boolean
-	 */
-	[[nodiscard]] bool tryGetBypassState(const ProcessData& data) const;
 
 	void updateDspParamValues(const ProcessData& data);
 	void handleDspParam(ParamID id, ParamValue value);
-	void captureModulation(ParamID id, ParamValue value, const ProcessData& data);
 
 	void updateControlParamValues(const ProcessData& data);
 	void handleControlParam(ParamID id, ParamValue value, const ProcessData& data);
