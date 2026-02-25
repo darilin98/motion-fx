@@ -75,6 +75,18 @@ FetchContent_MakeAvailable(stb_image)
 include_directories(${stb_image_SOURCE_DIR})
 
 #-------------------------------------------------------------------------------
+# Include DaisySP
+#-------------------------------------------------------------------------------
+
+FetchContent_Declare(
+        daisysp
+        GIT_REPOSITORY https://github.com/electro-smith/DaisySP.git
+        GIT_TAG master
+)
+
+FetchContent_MakeAvailable(daisysp)
+
+#-------------------------------------------------------------------------------
 # Declare sources and ext. library directories
 #-------------------------------------------------------------------------------
 
@@ -132,6 +144,7 @@ target_include_directories(motion-fx PRIVATE
 target_link_libraries(motion-fx PRIVATE
         sdk
         vstgui_support
+        DaisySP
         ${FFMPEG_LIBS_PKG}
 )
 
