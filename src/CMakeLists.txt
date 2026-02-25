@@ -99,6 +99,9 @@ set(SOURCES
         audio/processor.hpp
         audio/modulationcurve.hpp
         audio/parameterextraction.hpp
+        audio/effects/ieffect.hpp
+        audio/effects/morphfilter.cpp
+        audio/effects/morphfilter.hpp
         ui/fileselectcontroller.hpp
         ui/motionfxeditor.hpp
         ui/mediaview.cpp
