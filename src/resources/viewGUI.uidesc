@@ -27,6 +27,7 @@
 			]
 		},
 		"control-tags": {
+			"BrightnessIntensity": "103",
 			"Bypass": "101",
 			"Gain": "102",
 			"Play": "501",
@@ -54,11 +55,11 @@
 				"Version": "1"
 			},
 			"UITemplateController": {
-				"SelectedTemplate": "AudioProcessing"
+				"SelectedTemplate": "InputSelect"
 			},
 			"UIAttributesController": {},
 			"UIViewCreatorDataSource": {
-				"SelectedRow": "27"
+				"SelectedRow": "9"
 			}
 		},
 		"templates": {
@@ -77,13 +78,13 @@
 				"children": {
 					"CViewContainer": {
 						"attributes": {
-							"background-color": "~ TransparentCColor",
+							"background-color": "~ GreyCColor",
 							"background-color-draw-style": "filled and stroked",
 							"class": "CViewContainer",
 							"custom-view-name": "FileSelect",
 							"mouse-enabled": "true",
 							"opacity": "1",
-							"origin": "140, 100",
+							"origin": "240, 180",
 							"size": "280, 100",
 							"transparent": "false",
 							"wants-focus": "false"
@@ -113,6 +114,138 @@
 									"title": "Select a video file",
 									"transparent": "false",
 									"wants-focus": "true",
+									"wheel-inc-value": "0.1"
+								}
+							}
+						}
+					},
+					"CViewContainer": {
+						"attributes": {
+							"background-color": "~ GreyCColor",
+							"background-color-draw-style": "filled and stroked",
+							"class": "CViewContainer",
+							"custom-view-name": "Intensity",
+							"mouse-enabled": "true",
+							"opacity": "1",
+							"origin": "20, 20",
+							"size": "170, 260",
+							"transparent": "false",
+							"wants-focus": "false"
+						},
+						"children": {
+							"CSlider": {
+								"attributes": {
+									"bitmap-offset": "0, 0",
+									"class": "CSlider",
+									"control-tag": "BrightnessIntensity",
+									"draw-back": "true",
+									"draw-back-color": "~ WhiteCColor",
+									"draw-frame": "true",
+									"draw-frame-color": "~ BlackCColor",
+									"draw-value": "true",
+									"draw-value-color": "~ CyanCColor",
+									"draw-value-from-center": "false",
+									"draw-value-inverted": "false",
+									"frame-width": "1",
+									"handle-offset": "0, 0",
+									"mode": "use global",
+									"opacity": "1",
+									"orientation": "horizontal",
+									"origin": "30, 40",
+									"reverse-orientation": "false",
+									"size": "110, 20",
+									"transparent": "false",
+									"wants-focus": "true",
+									"wheel-inc-value": "0.1",
+									"zoom-factor": "10"
+								}
+							},
+							"CTextLabel": {
+								"attributes": {
+									"back-color": "~ TransparentCColor",
+									"background-offset": "0, 0",
+									"class": "CTextLabel",
+									"default-value": "0.5",
+									"font": "~ NormalFontBig",
+									"font-antialias": "true",
+									"font-color": "~ WhiteCColor",
+									"frame-color": "~ BlackCColor",
+									"frame-width": "1",
+									"max-value": "1",
+									"min-value": "0",
+									"mouse-enabled": "true",
+									"opacity": "1",
+									"origin": "30, 20",
+									"round-rect-radius": "6",
+									"shadow-color": "~ RedCColor",
+									"size": "110, 20",
+									"style-3D-in": "false",
+									"style-3D-out": "false",
+									"style-no-draw": "false",
+									"style-no-frame": "true",
+									"style-no-text": "false",
+									"style-round-rect": "false",
+									"style-shadow-text": "false",
+									"text-alignment": "left",
+									"text-inset": "0, 0",
+									"text-rotation": "0",
+									"text-shadow-offset": "1, 1",
+									"title": "Brightness",
+									"transparent": "false",
+									"value-precision": "2",
+									"wants-focus": "false",
+									"wheel-inc-value": "0.1"
+								}
+							}
+						}
+					},
+					"CViewContainer": {
+						"attributes": {
+							"background-color": "~ GreyCColor",
+							"background-color-draw-style": "filled and stroked",
+							"class": "CViewContainer",
+							"mouse-enabled": "true",
+							"opacity": "1",
+							"origin": "240, 20",
+							"size": "280, 140",
+							"transparent": "false",
+							"wants-focus": "false"
+						},
+						"children": {
+							"CTextLabel": {
+								"attributes": {
+									"back-color": "~ TransparentCColor",
+									"background-offset": "0, 0",
+									"class": "CTextLabel",
+									"default-value": "0.5",
+									"font": "~ NormalFontVeryBig",
+									"font-antialias": "true",
+									"font-color": "~ BlackCColor",
+									"frame-color": "~ BlackCColor",
+									"frame-width": "1",
+									"max-value": "1",
+									"min-value": "0",
+									"mouse-enabled": "true",
+									"opacity": "1",
+									"origin": "30, 30",
+									"round-rect-radius": "6",
+									"shadow-color": "~ WhiteCColor",
+									"size": "220, 80",
+									"style-3D-in": "false",
+									"style-3D-out": "false",
+									"style-no-draw": "false",
+									"style-no-frame": "false",
+									"style-no-text": "false",
+									"style-round-rect": "false",
+									"style-shadow-text": "true",
+									"text-alignment": "center",
+									"text-inset": "0, 0",
+									"text-rotation": "0",
+									"text-shadow-offset": "1, 1",
+									"title": "MotionFX",
+									"transparent": "false",
+									"value-precision": "2",
+									"wants-focus": "false",
 									"wheel-inc-value": "0.1"
 								}
 							}

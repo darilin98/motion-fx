@@ -22,6 +22,8 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
     parameters.addParameter(STR16("Play"), nullptr, 1, 0.0, ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamPlay);
     parameters.addParameter(STR16("Reset"), nullptr, 1, 0.0, ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamReset);
     parameters.addParameter(STR16("Bypass"), nullptr, 1, 0.0, ParameterInfo::kIsBypass | ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamBypass);
+
+    parameters.addParameter(STR16("BrightnessIntensity"), nullptr, 1, 0.5, ParameterInfo::kCanAutomate, kParamBrightnessIntensity);
     parameters.addParameter(STR16("Gain"), nullptr, 1, 1, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly,kParamGain);
 
     return kResultOk;
@@ -176,6 +178,8 @@ void PluginController::onFeatureResult(const FeatureResult& result) {
     auto params = result.params;
     auto timestamp = result.timestamp;
 
+    startGroupEdit();
+
     VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [params, this]() {
         for (auto&& param : params) {
             const auto normalized = param.normalized;
@@ -190,6 +194,8 @@ void PluginController::onFeatureResult(const FeatureResult& result) {
             }
         }
     });
+
+    finishGroupEdit();
 
     // TODO: Here we can cache the results
 }

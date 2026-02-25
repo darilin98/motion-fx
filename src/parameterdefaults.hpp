@@ -13,6 +13,7 @@
 enum AudioParamID : Steinberg::Vst::ParamID{
     kParamBypass = 101,
     kParamGain,
+    kParamBrightnessIntensity
 };
 
 enum ControlParamID : Steinberg::Vst::ParamID {
