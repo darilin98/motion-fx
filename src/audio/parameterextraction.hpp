@@ -5,19 +5,20 @@
 #ifndef PARAMETEREXTRACTION_HPP
 #define PARAMETEREXTRACTION_HPP
 
+#include <functional>
+#include <unordered_map>
+
 #include "vst/ivstaudioprocessor.h"
 #include "vst/ivstparameterchanges.h"
 #include "vst/vsttypes.h"
 
 template <typename Fn>
-void forEachLastParamChange(const Steinberg::Vst::ProcessData& data, Fn&& fn)
-{
+void forEachLastParamChange(const Steinberg::Vst::ProcessData& data, Fn&& fn) {
 	if (!data.inputParameterChanges)
 		return;
 
 	const Steinberg::int32 numParams = data.inputParameterChanges->getParameterCount();
-	for (Steinberg::int32 i = 0; i < numParams; ++i)
-	{
+	for (Steinberg::int32 i = 0; i < numParams; ++i) {
 		auto* queue = data.inputParameterChanges->getParameterData(i);
 		if (!queue || queue->getPointCount() == 0)
 			continue;
@@ -31,4 +32,11 @@ void forEachLastParamChange(const Steinberg::Vst::ProcessData& data, Fn&& fn)
 		fn(queue->getParameterId(), value, sample_offset);
 	}
 }
+
+struct ParameterBinding {
+	std::function<void(float)> apply;
+};
+
+using parameter_router_t = std::unordered_map<Steinberg::Vst::ParamID, std::vector<ParameterBinding>>;
+
 #endif //PARAMETEREXTRACTION_HPP
