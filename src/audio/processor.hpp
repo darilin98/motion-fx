@@ -6,6 +6,9 @@
 #define PROCESSOR_HPP
 
 #include "modulationcurve.hpp"
+#include "parameterextraction.hpp"
+#include "effects/ieffect.hpp"
+#include "effects/morphfilter.hpp"
 #include "public.sdk/source/vst/vstaudioeffect.h"
 #include "pluginterfaces/base/ustring.h"
 
@@ -61,6 +64,9 @@ public:
 	tresult PLUGIN_API notify(IMessage* message) SMTG_OVERRIDE;
 
 private:
+	void createEffects();
+	void setupEffects(ProcessSetup& setup);
+	void registerFilterBindings(MorphFilter* filter);
 
 	void updateDspParamValues(const ProcessData& data);
 	void handleDspParam(ParamID id, ParamValue value);
@@ -72,7 +78,11 @@ private:
 
 	static tresult bypassProcessing(const ProcessData& data, int32_t numChannels, int32_t numSamples);
 
-	[[nodiscard]] tresult processSamples(const ProcessData& data, int32_t numChannels, int32_t numSamples) const;
+	[[nodiscard]] tresult processSamples(const ProcessData& data, int32_t numChannels, int32_t numSamples);
+
+	parameter_router_t parameter_router_ {};
+	effect_chain_t effect_chain_;
+
 
 	CaptureState capture_state_ = CaptureState::Invalid;
 	bool is_offline_ = false;
