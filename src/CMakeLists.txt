@@ -127,6 +127,8 @@ set(SOURCES
         video/features/ifeatureextractor.hpp
         video/features/brightnessfeatureextractor.cpp
         video/features/brightnessfeatureextractor.hpp
+        video/features/depthfeatureextractor.cpp
+        video/features/depthfeatureextractor.hpp
         utils.hpp
 )
 
