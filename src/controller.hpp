@@ -12,6 +12,7 @@
 #include "video/playbackcontroller.hpp"
 #include "video/features/brightnessfeatureextractor.hpp"
 #include "audio/modulationcurve.hpp"
+#include "video/features/depthfeatureextractor.hpp"
 //#include "parameterdefaults.hpp"
 
 
@@ -65,21 +66,24 @@ public:
 
 	void unregisterReceiver(IFrameReceiver* receiver) const;
 
-	void addModulation(ModulationPoint modPoint) const;
-
 	void onVideoFinished() const;
 
 	void onFeatureResult(const FeatureResult& result) override;
 
 	tresult PLUGIN_API connect(IConnectionPoint* other) override;
 
-
 private:
+	void flushPendingParams();
+	std::mutex pending_mutex_;
+	std::vector<FeatureParamUpdate> pending_params_;
+	std::atomic<bool> flush_scheduled_{false};
+
 	IConnectionPoint* processorConnection_{nullptr};
 	bool is_video_preview_mode_ = false;
 	VSTGUI::UTF8String video_path_ = "";
 	pcont_t playback_controller_ = nullptr;
-	std::unique_ptr<BrightnessFeatureExtractor> feature_extractor_ = nullptr;
+	std::unique_ptr<BrightnessFeatureExtractor> brightness_feature_extractor_ = nullptr;
+	std::unique_ptr<DepthFeatureExtractor> depth_feature_extractor_ = nullptr;
 };
 
 using controller_t = Steinberg::Vst::EditController*;

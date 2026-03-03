@@ -23,8 +23,11 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
     parameters.addParameter(STR16("Reset"), nullptr, 1, 0.0, ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamReset);
     parameters.addParameter(STR16("Bypass"), nullptr, 1, 0.0, ParameterInfo::kIsBypass | ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamBypass);
 
-    parameters.addParameter(STR16("BrightnessIntensity"), nullptr, 1, 0.5, ParameterInfo::kCanAutomate, kParamBrightnessIntensity);
-    parameters.addParameter(STR16("Gain"), nullptr, 1, 1, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly,kParamGain);
+    parameters.addParameter(STR16("BrightnessIntensity"), nullptr, 1, kDefaults::Intensity, ParameterInfo::kCanAutomate, kParamBrightnessIntensity);
+    parameters.addParameter(STR16("Gain"), nullptr, 1, kDefaults::Brightness, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly,kParamGain);
+
+    parameters.addParameter(STR16("DepthIntensity"), nullptr, 1, kDefaults::Intensity, ParameterInfo::kCanAutomate, kParamDepthIntensity);
+    parameters.addParameter(STR16("Depth"), nullptr, 1, kDefaults::Depth, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamDepth);
 
     return kResultOk;
 }
@@ -115,11 +118,14 @@ void PluginController::setupPlayback(const VSTGUI::UTF8String& path) {
     auto ticker = std::make_unique<FrameTicker>();
     ticker->setQueue(frame_queue);
 
-    feature_extractor_ = std::make_unique<BrightnessFeatureExtractor>(kParamGain);
-    feature_extractor_->setFeatureSink(this);
+    brightness_feature_extractor_ = std::make_unique<BrightnessFeatureExtractor>(kParamGain);
+    brightness_feature_extractor_->setFeatureSink(this);
+    depth_feature_extractor_ = std::make_unique<DepthFeatureExtractor>(kParamDepth);
+    depth_feature_extractor_->setFeatureSink(this);
 
     playback_controller_ = std::make_shared<PlaybackController>(path.data(), std::move(frame_queue), std::move(ticker));
-    playback_controller_->registerReceiver(feature_extractor_.get());
+    playback_controller_->registerReceiver(brightness_feature_extractor_.get());
+    playback_controller_->registerReceiver(depth_feature_extractor_.get());
     playback_controller_->setParamListeners(this);
 
     video_path_ = path;
@@ -132,7 +138,8 @@ void PluginController::cleanUpPlayback() {
         playback_controller_.reset();
     }
     // TODO: Reset param call?
-    feature_extractor_.reset();
+    brightness_feature_extractor_.reset();
+    depth_feature_extractor_.reset();
 
     video_path_.clear();
     is_video_preview_mode_ = false;
@@ -155,11 +162,6 @@ tresult PLUGIN_API PluginController::connect(IConnectionPoint* other) {
     return kResultOk;
 }
 
-void PluginController::addModulation(ModulationPoint modPoint) const {
-    if (!processorConnection_)
-        return;
-}
-
 void PluginController::onVideoFinished() const {
     if (!processorConnection_)
         return;
@@ -178,27 +180,46 @@ void PluginController::onFeatureResult(const FeatureResult& result) {
     auto params = result.params;
     auto timestamp = result.timestamp;
 
-    startGroupEdit();
+    {
+        std::lock_guard lock(pending_mutex_);
+        pending_params_.insert(
+            pending_params_.end(),
+            result.params.begin(),
+            result.params.end()
+        );
+    }
 
-    VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [params, this]() {
-        for (auto&& param : params) {
-            const auto normalized = param.normalized;
-            const auto param_id = param.id;
-
-            if (auto* handler = this->getComponentHandler()) {
-                handler->beginEdit(param_id);
-                handler->performEdit(param_id, normalized);
-                handler->endEdit(param_id);
-            } else {
-                this->setParamNormalized(param_id, normalized);
-            }
-        }
-    });
-
-    finishGroupEdit();
+    if (!flush_scheduled_.exchange(true)) {
+        VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [this]() { flushPendingParams(); });
+    }
 
     // TODO: Here we can cache the results
 }
+
+void PluginController::flushPendingParams() {
+    std::vector<FeatureParamUpdate> local;
+
+    {
+        std::lock_guard lock(pending_mutex_);
+        local.swap(pending_params_);
+        flush_scheduled_ = false;
+    }
+
+    if (local.empty())
+        return;
+
+    if (auto* handler = getComponentHandler()) {
+        for (auto& param : local) {
+            handler->beginEdit(param.id);
+            handler->performEdit(param.id, param.normalized);
+            handler->endEdit(param.id);
+        }
+    } else {
+        for (auto& param : local)
+            setParamNormalized(param.id, param.normalized);
+    }
+}
+
 
 
 
