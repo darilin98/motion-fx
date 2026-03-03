@@ -39,10 +39,10 @@ inline bool isControlParam(Steinberg::Vst::ParamID id) noexcept {
     }
 }
 
-namespace kDefaults {
-    constexpr double Brightness = 0.5;
-    constexpr double Depth = 0.0;
-    constexpr double Intensity = 0.5;
+namespace ParamDefaults {
+    constexpr double kBrightness = 0.5;
+    constexpr double kDepth = 0.0;
+    constexpr double kIntensity = 0.5;
 }
 
 #endif //PARAMETERDEFAULTS_HPP

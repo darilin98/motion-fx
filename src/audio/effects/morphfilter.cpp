@@ -7,35 +7,36 @@
 void MorphFilter::init(Steinberg::Vst::ProcessSetup setup) {
 	sample_rate_ = setup.sampleRate;
 
-	filters_.resize(filterCountDefault, {});
+	filters_.resize(kChannelCountDefault, {});
 	for (auto& filter : filters_) {
 		filter.Init(sample_rate_);
-		filter.SetFreq(cutoffFreq);
-		filter.SetRes(res);
+		filter.SetFreq(kCutoffFreq);
+		filter.SetRes(kResonance);
 	}
 }
 
 void MorphFilter::process(float* buffer, int32_t numSamples, int32_t channel) {
+	// Lazy alloc for more channels
 	if (channel >= filters_.size()) {
 		filters_.resize(channel + 1);
 		for (auto& filter : filters_) {
 			filter.Init(sample_rate_);
-			filter.SetFreq(cutoffFreq);
-			filter.SetRes(res);
+			filter.SetFreq(kCutoffFreq);
+			filter.SetRes(kResonance);
 		}
 	}
 
 	auto& filter = filters_[channel];
 
 	for (int32_t i = 0; i < numSamples; i++) {
-		morph_smoothed_ += smoothing_ * (morph_target_ - morph_smoothed_);
+		morph_smoothed_ += kSmoothing * (morph_target_ - morph_smoothed_);
 		const float dry = buffer[i];
 
 		filter.Process(dry);
 		float low_pass  = filter.Low();
 		float high_pass = filter.High();
 
-		if(t < 0.5f) {
+		if(morph_smoothed_ < 0.5f) {
 			float crossfade = morph_smoothed_ * 2.0f;
 			float a = cosf(crossfade * 0.5f * M_PI);
 			float b = sinf(crossfade * 0.5f * M_PI);

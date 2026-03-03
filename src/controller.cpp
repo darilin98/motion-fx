@@ -23,11 +23,11 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
     parameters.addParameter(STR16("Reset"), nullptr, 1, 0.0, ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamReset);
     parameters.addParameter(STR16("Bypass"), nullptr, 1, 0.0, ParameterInfo::kIsBypass | ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamBypass);
 
-    parameters.addParameter(STR16("BrightnessIntensity"), nullptr, 1, kDefaults::Intensity, ParameterInfo::kCanAutomate, kParamBrightnessIntensity);
-    parameters.addParameter(STR16("Gain"), nullptr, 1, kDefaults::Brightness, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly,kParamGain);
+    parameters.addParameter(STR16("BrightnessIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamBrightnessIntensity);
+    parameters.addParameter(STR16("Gain"), nullptr, 1, ParamDefaults::kBrightness, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly,kParamGain);
 
-    parameters.addParameter(STR16("DepthIntensity"), nullptr, 1, kDefaults::Intensity, ParameterInfo::kCanAutomate, kParamDepthIntensity);
-    parameters.addParameter(STR16("Depth"), nullptr, 1, kDefaults::Depth, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamDepth);
+    parameters.addParameter(STR16("DepthIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamDepthIntensity);
+    parameters.addParameter(STR16("Depth"), nullptr, 1, ParamDefaults::kDepth, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamDepth);
 
     return kResultOk;
 }

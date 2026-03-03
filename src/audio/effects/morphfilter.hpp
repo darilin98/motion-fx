@@ -9,9 +9,9 @@
 
 #include "ieffect.hpp"
 
-constexpr float cutoffFreq = 800.0f;
-constexpr float res = 0.7f;
-constexpr float filterCountDefault = 2;
+constexpr float kCutoffFreq = 800.0f;
+constexpr float kResonance = 0.7f;
+constexpr float kSmoothing = 0.001f;
 
 using filters_t = std::vector<daisysp::Svf>;
 
@@ -25,7 +25,6 @@ private:
 	double sample_rate_ = 44100.0;
 	float morph_target_ = 0.0f;
 	float morph_smoothed_ = 0.0f;
-	float smoothing_ = 0.001f;
 };
 
 
