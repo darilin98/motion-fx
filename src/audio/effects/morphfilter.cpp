@@ -5,27 +5,46 @@
 #include "morphfilter.hpp"
 
 void MorphFilter::init(Steinberg::Vst::ProcessSetup setup) {
-	filter_.Init(setup.sampleRate);
-	filter_.SetFreq(pivotFreq);
-	filter_.SetRes(res);
+	sample_rate_ = setup.sampleRate;
+
+	filters_.resize(filterCountDefault, {});
+	for (auto& filter : filters_) {
+		filter.Init(sample_rate_);
+		filter.SetFreq(cutoffFreq);
+		filter.SetRes(res);
+	}
 }
 
-void MorphFilter::process(float* buffer, int32_t numSamples) {
+void MorphFilter::process(float* buffer, int32_t numSamples, int32_t channel) {
+	if (channel >= filters_.size()) {
+		filters_.resize(channel + 1);
+		for (auto& filter : filters_) {
+			filter.Init(sample_rate_);
+			filter.SetFreq(cutoffFreq);
+			filter.SetRes(res);
+		}
+	}
+
+	auto& filter = filters_[channel];
 
 	for (int32_t i = 0; i < numSamples; i++) {
 		morph_smoothed_ += smoothing_ * (morph_target_ - morph_smoothed_);
 		const float dry = buffer[i];
-		filter_.Process(dry);
 
-		float low_pass = filter_.Low();
-		float high_pass = filter_.High();
+		filter.Process(dry);
+		float low_pass  = filter.Low();
+		float high_pass = filter.High();
 
-		if (morph_smoothed_ < 0.5) {
+		if(t < 0.5f) {
 			float crossfade = morph_smoothed_ * 2.0f;
-			buffer[i] = (1.0f - crossfade) * low_pass + crossfade * dry;
+			float a = cosf(crossfade * 0.5f * M_PI);
+			float b = sinf(crossfade * 0.5f * M_PI);
+			buffer[i] = a * low_pass + b * dry;
 		} else {
 			float crossfade = (morph_smoothed_ - 0.5f) * 2.0f;
-			buffer[i] = (1.0f - crossfade) * dry + crossfade * high_pass;
+			float a = cosf(crossfade * 0.5f * M_PI);
+			float b = sinf(crossfade * 0.5f * M_PI);
+			buffer[i] = a * dry + b * high_pass;
 		}
 	}
 }

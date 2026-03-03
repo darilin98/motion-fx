@@ -85,7 +85,6 @@ tresult PLUGIN_API PluginProcessor::process(ProcessData& data) {
 
     const int32 num_channels = data.inputs[0].numChannels;
     const int32 num_samples = data.numSamples;
-    const float sample_rate = this->processSetup.sampleRate;
 
     updateControlParamValues(data);
 
@@ -335,7 +334,7 @@ tresult PluginProcessor::processSamples(const ProcessData& data, int32_t numChan
 
             std::copy(output, output + numSamples, unit.wet_buffer.data());
 
-            unit.effect->process(unit.wet_buffer.data(), numSamples);
+            unit.effect->process(unit.wet_buffer.data(), numSamples, ch);
             mixDryWet(output, unit.wet_buffer.data(), output, intensity, numSamples);
         }
     }

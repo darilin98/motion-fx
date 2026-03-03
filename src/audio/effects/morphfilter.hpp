@@ -9,16 +9,20 @@
 
 #include "ieffect.hpp"
 
-constexpr float pivotFreq = 1000.0f;
+constexpr float cutoffFreq = 800.0f;
 constexpr float res = 0.7f;
+constexpr float filterCountDefault = 2;
+
+using filters_t = std::vector<daisysp::Svf>;
 
 class MorphFilter : public IEffect {
 public:
 	void init(Steinberg::Vst::ProcessSetup setup) override;
-	void process(float* buffer, int32_t numSamples) override;
+	void process(float* buffer, int32_t numSamples, int32_t channel) override;
 	void setMorph(float morph);
 private:
-	daisysp::Svf filter_;
+	filters_t filters_;
+	double sample_rate_ = 44100.0;
 	float morph_target_ = 0.0f;
 	float morph_smoothed_ = 0.0f;
 	float smoothing_ = 0.001f;

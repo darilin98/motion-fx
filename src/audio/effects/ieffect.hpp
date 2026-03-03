@@ -14,7 +14,7 @@ class IEffect {
 public:
 	virtual ~IEffect() = default;
 	virtual void init(Steinberg::Vst::ProcessSetup setup) = 0;
-	virtual void process(float* buffer, int32_t numSamples) = 0;
+	virtual void process(float* buffer, int32_t numSamples, int32_t channel = 0) = 0;
 };
 
 struct EffectMixingUnit {
