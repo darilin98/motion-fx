@@ -13,7 +13,9 @@
 enum AudioParamID : Steinberg::Vst::ParamID{
     kParamBypass = 101,
     kParamGain,
-    kParamBrightnessIntensity
+    kParamBrightnessIntensity,
+    kParamDepth,
+    kParamDepthIntensity
 };
 
 enum ControlParamID : Steinberg::Vst::ParamID {
@@ -35,6 +37,12 @@ inline bool isControlParam(Steinberg::Vst::ParamID id) noexcept {
         default:
             return false;
     }
+}
+
+namespace kDefaults {
+    constexpr double Brightness = 0.5;
+    constexpr double Depth = 0.0;
+    constexpr double Intensity = 0.5;
 }
 
 #endif //PARAMETERDEFAULTS_HPP
