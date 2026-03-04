@@ -19,6 +19,7 @@
 #include "../parameterdefaults.hpp"
 
 #include "daisysp.h"
+#include "effects/spatialecho.hpp"
 
 tresult PLUGIN_API PluginProcessor::initialize(FUnknown *context) {
     tresult result = AudioEffect::initialize(context);
@@ -37,6 +38,10 @@ void PluginProcessor::createEffects() {
     auto& filter_unit = effect_chain_.emplace_back();
     filter_unit.effect = std::make_unique<MorphFilter>();
     filter_unit.intensity_param_id = kParamBrightnessIntensity;
+
+    auto& echo_unit = effect_chain_.emplace_back();
+    echo_unit.effect = std::make_unique<SpatialEcho>();
+    echo_unit.intensity_param_id = kParamDepthIntensity;
 }
 
 tresult PLUGIN_API PluginProcessor::setupProcessing(ProcessSetup &setup) {
@@ -66,6 +71,13 @@ void PluginProcessor::setupEffects(ProcessSetup& setup) {
 
         if (auto* filter = dynamic_cast<MorphFilter*>(unit.effect.get())) {
             registerFilterBindings(filter);
+        }
+        if (auto* echo = dynamic_cast<SpatialEcho*>(unit.effect.get())) {
+            parameter_router_[kParamDepth].push_back({
+                [echo](float value) {
+                    echo->setSpaceLevel(value);
+                }
+            });
         }
     }
 }
