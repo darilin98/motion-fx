@@ -90,6 +90,23 @@ FetchContent_MakeAvailable(daisysp)
 # Declare sources and ext. library directories
 #-------------------------------------------------------------------------------
 
+add_library(motion_fx_dsp
+        audio/effects/ieffect.hpp
+        audio/effects/morphfilter.cpp
+        audio/effects/morphfilter.hpp
+        audio/effects/spatialecho.cpp
+        audio/effects/spatialecho.hpp
+)
+
+target_include_directories(motion_fx_dsp PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${VST3_SDK_PATH}
+        ${VST3_SDK_PATH}/pluginterfaces
+        ${VST3_SDK_PATH}/public.sdk/source/vst/
+)
+
+target_link_libraries(motion_fx_dsp PUBLIC DaisySP)
+
 set(SOURCES
         controller.cpp
         controller.hpp
@@ -99,9 +116,6 @@ set(SOURCES
         audio/processor.hpp
         audio/modulationcurve.hpp
         audio/parameterextraction.hpp
-        audio/effects/ieffect.hpp
-        audio/effects/morphfilter.cpp
-        audio/effects/morphfilter.hpp
         ui/fileselectcontroller.hpp
         ui/motionfxeditor.hpp
         ui/mediaview.cpp
@@ -122,7 +136,7 @@ set(SOURCES
         video/decoders/videodecoder.cpp
         video/decoders/videodecoder.hpp
         video/decoders/imagedecoder.cpp
-        video/decoders/imagedecoder.cpp
+        video/decoders/imagedecoder.hpp
         video/features/asyncframeworker.hpp
         video/features/ifeatureextractor.hpp
         video/features/brightnessfeatureextractor.cpp
@@ -147,9 +161,9 @@ target_include_directories(motion-fx PRIVATE
 )
 
 target_link_libraries(motion-fx PRIVATE
+        motion_fx_dsp
         sdk
         vstgui_support
-        DaisySP
         ${FFMPEG_LIBS_PKG}
 )
 
