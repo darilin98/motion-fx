@@ -68,7 +68,6 @@ void PlaybackController::setupCallbacks() {
 	if (frame_ticker_) {
 		frame_ticker_->setOnQueueEmptyCallback(nullptr);
 		frame_ticker_->setOnQueueEmptyCallback([self = shared_from_this()] {
-			// TODO: the GUI task dependency could be removed by just requesting a restart higher up
 			VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [self] {
 				if (self->is_decoding_)
 					return;

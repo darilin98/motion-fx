@@ -48,8 +48,6 @@ private:
 	std::thread worker_;
 	std::atomic_bool running_ {false};
 	std::atomic_bool requested_stop_ {false};
-
-	std::mutex seek_lock_;
 };
 
 using loader_t = std::unique_ptr<MediaLoader>;

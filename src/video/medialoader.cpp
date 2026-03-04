@@ -27,6 +27,14 @@ void MediaLoader::startLoading() {
 
 	requested_stop_ = false;
 	running_ = true;
+
+	if (!path_.empty())
+		decoder_ = makeDecoder(path_);
+	if (!decoder_)
+		return;
+	if (!decoder_->open(path_))
+		return;
+
 	worker_ = std::thread([this] { workerLoop(); });
 }
 
@@ -40,12 +48,6 @@ void MediaLoader::stopLoading() {
 }
 
 void MediaLoader::workerLoop() {
-	if (!path_.empty())
-		decoder_ = makeDecoder(path_);
-	if (!decoder_)
-		return;
-	if (!decoder_->open(path_))
-		return;
 
 	while (!requested_stop_) {
 		VideoFrame frame;
@@ -64,6 +66,5 @@ bool MediaLoader::tryRewindToStart() {
 	if (!decoder_)
 		return false;
 
-	std::scoped_lock lock(seek_lock_);
 	return decoder_->seekTo(0);
 }
