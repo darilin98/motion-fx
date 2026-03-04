@@ -11,6 +11,7 @@
 #include "vst/ivstaudioprocessor.h"
 
 constexpr int32_t kChannelCountDefault = 2;
+constexpr float kSmoothing = 0.001f;
 
 class IEffect {
 public:

@@ -4,10 +4,17 @@
 
 #include "morphfilter.hpp"
 
+void MorphFilter::setMorph(float morph) {
+    morph_target_ = std::clamp(morph, 0.0f, 1.0f);
+}
+
 void MorphFilter::init(Steinberg::Vst::ProcessSetup setup) {
 	sample_rate_ = setup.sampleRate;
+	channelResizeTo(kChannelCountDefault);
+}
 
-	filters_.resize(kChannelCountDefault, {});
+void MorphFilter::channelResizeTo(size_t size) {
+	filters_.resize(size);
 	for (auto& filter : filters_) {
 		filter.Init(sample_rate_);
 		filter.SetFreq(kCutoffFreq);
@@ -16,14 +23,8 @@ void MorphFilter::init(Steinberg::Vst::ProcessSetup setup) {
 }
 
 void MorphFilter::process(float* buffer, int32_t numSamples, int32_t channel) {
-	// Lazy alloc for more channels
 	if (channel >= filters_.size()) {
-		filters_.resize(channel + 1);
-		for (auto& filter : filters_) {
-			filter.Init(sample_rate_);
-			filter.SetFreq(kCutoffFreq);
-			filter.SetRes(kResonance);
-		}
+		channelResizeTo(channel + 1);
 	}
 
 	auto& filter = filters_[channel];
@@ -50,7 +51,4 @@ void MorphFilter::process(float* buffer, int32_t numSamples, int32_t channel) {
 	}
 }
 
-void MorphFilter::setMorph(float morph) {
-    morph_target_ = std::clamp(morph, 0.0f, 1.0f);
-}
 

@@ -11,7 +11,6 @@
 
 constexpr float kCutoffFreq = 800.0f;
 constexpr float kResonance = 0.7f;
-constexpr float kSmoothing = 0.001f;
 
 using filters_t = std::vector<daisysp::Svf>;
 
@@ -21,6 +20,7 @@ public:
 	void process(float* buffer, int32_t numSamples, int32_t channel) override;
 	void setMorph(float morph);
 private:
+	void channelResizeTo(size_t size);
 	filters_t filters_;
 	double sample_rate_ = 44100.0;
 	float morph_target_ = 0.0f;
