@@ -6,7 +6,7 @@
 
 #include "imagedecoder.hpp"
 
-bool ImageDecoder::open(const std::string &path) {
+bool ImageDecoder::tryOpen(const std::string &path) {
 	int width, height, channels;
 
 	stbi_uc* stbi_data = stbi_load(path.c_str(), &width, &height, &channels, 4);
@@ -26,12 +26,12 @@ bool ImageDecoder::open(const std::string &path) {
 	return true;
 }
 
-bool ImageDecoder::seekTo(int64_t time) {
+bool ImageDecoder::trySeekTo(int64_t time) {
 	// Does not make sense to call on image decoder
 	return !has_returned_;
 }
 
-bool ImageDecoder::decodeNext(VideoFrame& outFrame) {
+bool ImageDecoder::tryDecodeNext(VideoFrame& outFrame) {
 	if (!has_returned_) {
 		outFrame = cached_frame_;
 		has_returned_ = true;

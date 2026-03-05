@@ -139,6 +139,7 @@ set(SOURCES
         video/decoders/imagedecoder.hpp
         video/features/asyncframeworker.hpp
         video/features/ifeatureextractor.hpp
+        video/features/ifeaturesink.hpp
         video/features/brightnessfeatureextractor.cpp
         video/features/brightnessfeatureextractor.hpp
         video/features/depthfeatureextractor.cpp

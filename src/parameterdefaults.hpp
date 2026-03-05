@@ -8,9 +8,9 @@
 #include "vst/vsttypes.h"
 
 /**
- * @brief Defines parameters used by the plugin
+ * @brief Audio processing parameters used by the plugin.
  */
-enum AudioParamID : Steinberg::Vst::ParamID{
+enum AudioParamID : Steinberg::Vst::ParamID {
     kParamBypass = 101,
     kParamBrightness,
     kParamBrightnessIntensity,
@@ -18,12 +18,18 @@ enum AudioParamID : Steinberg::Vst::ParamID{
     kParamDepthIntensity
 };
 
+/**
+ * @brief Video control parameters used by the plugin.
+ */
 enum ControlParamID : Steinberg::Vst::ParamID {
     kParamPlay = 501,
 	kParamReset,
 	kParamLoop,
 };
 
+/**
+ * @brief Utility parameters used by the plugin.
+ */
 enum ViewParamID : Steinberg::Vst::ParamID {
     kParamLoadVideo = 1001,
 };
@@ -39,6 +45,9 @@ inline bool isControlParam(Steinberg::Vst::ParamID id) noexcept {
     }
 }
 
+/**
+ * @brief Encapsulates the default values of plugin parameters.
+ */
 namespace ParamDefaults {
     constexpr double kBrightness = 0.5;
     constexpr double kDepth = 0.0;

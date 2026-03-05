@@ -12,18 +12,26 @@ using pcont_t = std::shared_ptr<PlaybackController>;
 using param_t = Steinberg::Vst::Parameter*;
 using controller_t = Steinberg::Vst::EditController*;
 
+/**
+ * @brief Listens for changes made by the PluginController to a selected parameter.
+ */
 class VideoParamListener : public Steinberg::FObject {
 public:
 	VideoParamListener(param_t param, pcont_t playbackController, controller_t editController);
 
 	~VideoParamListener() override;
 
+	/**
+	 * Event triggered when a change to the dependent parameter is registered.
+	 * @param changedUnknown Unused.
+	 * @param message The type of call.
+	 */
 	void PLUGIN_API update(Steinberg::FUnknown* changedUnknown, Steinberg::int32 message) override;
 
 private:
-	param_t param_;
-	pcont_t playback_controller_;
-	controller_t edit_controller_;
+	param_t param_; /// Parameter being listened for.
+	pcont_t playback_controller_; /// PlaybackController that needs to be called when a change is detected.
+	controller_t edit_controller_; /// The PluginController making changes to the parameters.
 };
 
 using listener_t = std::unique_ptr<VideoParamListener>;

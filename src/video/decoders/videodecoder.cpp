@@ -44,7 +44,7 @@ void VideoDecoder::cleanup() {
     dst_buf_.clear();
 }
 
-bool VideoDecoder::open(const std::string& path) {
+bool VideoDecoder::tryOpen(const std::string& path) {
     cleanup();
 
     fmt_ctx_ = nullptr;
@@ -133,7 +133,7 @@ bool VideoDecoder::open(const std::string& path) {
     return true;
 }
 
-bool VideoDecoder::seekTo(int64_t time_ms) {
+bool VideoDecoder::trySeekTo(int64_t time_ms) {
     if (!fmt_ctx_ || video_stream_index_ < 0)
         return false;
 
@@ -150,7 +150,7 @@ bool VideoDecoder::seekTo(int64_t time_ms) {
     return true;
 }
 
-bool VideoDecoder::decodeNext(VideoFrame& outFrame) {
+bool VideoDecoder::tryDecodeNext(VideoFrame& outFrame) {
     if (!fmt_ctx_ || !codec_ctx_ || !frame_ || !pkt_ || !sws_ctx_)
         return false;
 

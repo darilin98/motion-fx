@@ -12,6 +12,13 @@
 #include "vst/ivstparameterchanges.h"
 #include "vst/vsttypes.h"
 
+/**
+ * @brief Utility param change helper.
+ * Simplifies iteration over parameters in inputParemeterChanges.
+ *
+ * @param data Input parameter data.
+ * @param fn Function to be executed on the parameters found in changes.
+ */
 template <typename Fn>
 void forEachLastParamChange(const Steinberg::Vst::ProcessData& data, Fn&& fn) {
 	if (!data.inputParameterChanges)
@@ -33,6 +40,9 @@ void forEachLastParamChange(const Steinberg::Vst::ProcessData& data, Fn&& fn) {
 	}
 }
 
+/**
+ * @brief Holds a function to-be coupled with a ParamID
+ */
 struct ParameterBinding {
 	std::function<void(float)> apply;
 };

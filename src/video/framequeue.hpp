@@ -11,19 +11,44 @@
 
 #include "videoframe.hpp"
 
+/**
+ * @brief Data structure for storing VideoFrames.
+ *
+ * Stores frames and removes them FIFO.
+ */
 class IFrameQueue {
 public:
 	virtual ~IFrameQueue() = default;
+
+	/**
+	 * @brief Tries to remove a VideoFrame from the queue.
+	 * @param outFrame Out value VideoFrame if operation succeeded.
+	 * @return Status of operation success.
+	 */
 	virtual bool tryPop(VideoFrame& outFrame) = 0;
+
+	/**
+	 * @brief Stores a VideoFrame in the queue.
+	 * @param frame VideoFrame to be stored in the queue.
+	 */
 	virtual void push(VideoFrame&& frame) = 0;
+
+	/**
+	 * @brief Clears all entries in the queue asynchronously.
+	 */
 	virtual void clearAsync() = 0;
 };
 
+/**
+ * @brief A thread-safe implementation of the IFrameQueue contract.
+ *
+ * Supports simultaneous access from a producer and consumer.
+ */
 class FrameQueue final : public IFrameQueue {
 public:
 	FrameQueue() = default;
 
-	bool tryPop(VideoFrame &outFrame) override {
+	bool tryPop(VideoFrame& outFrame) override {
 		std::lock_guard lock(mutex_);
 		if(queue_.empty()) return false;
 		outFrame = std::move(queue_.front());
@@ -31,11 +56,16 @@ public:
 		return true;
 	}
 
-	void push(VideoFrame &&frame) override {
+	void push(VideoFrame&& frame) override {
 		std::lock_guard lock(mutex_);
 		queue_.push(std::move(frame));
 	}
 
+	/**
+	 * @brief Clears contents on a separate thread.
+	 *
+	 * Does not slow down the caller.
+	 */
 	void clearAsync() override {
 		std::queue<VideoFrame> old_queue;
 		{
@@ -52,8 +82,8 @@ public:
 	}
 
 private:
-	std::queue<VideoFrame> queue_;
-	std::mutex mutex_;
+	std::queue<VideoFrame> queue_; /// Stores VideoFrames
+	std::mutex mutex_; /// Guards the queue
 };
 
 using frame_queue_t = std::shared_ptr<IFrameQueue>;

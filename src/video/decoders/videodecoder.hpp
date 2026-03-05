@@ -19,9 +19,9 @@ class VideoDecoder final : public IMediaDecoder {
 public:
 	explicit VideoDecoder();
 	~VideoDecoder() override;
-	bool seekTo(int64_t time) override;
-	bool open(const std::string& path) override;
-	bool decodeNext(VideoFrame& outFrame) override;
+	bool trySeekTo(int64_t time) override;
+	bool tryOpen(const std::string& path) override;
+	bool tryDecodeNext(VideoFrame& outFrame) override;
 	[[nodiscard]] double frameRate() const override;
 private:
 	void cleanup();

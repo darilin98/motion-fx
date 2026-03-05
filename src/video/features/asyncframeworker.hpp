@@ -10,6 +10,10 @@
 #include <queue>
 #include <thread>
 
+/**
+ * @brief Utility helper for any class implementing IFeatureExtractor.
+ * Executes the processFrame() method on a worker thread. @see IFeatureExtractor
+ */
 class AsyncFrameWorker {
 public:
 	using FrameCallback = std::function<void(const VideoFrame&)>;

@@ -32,7 +32,7 @@ void MediaLoader::startLoading() {
 		decoder_ = makeDecoder(path_);
 	if (!decoder_)
 		return;
-	if (!decoder_->open(path_))
+	if (!decoder_->tryOpen(path_))
 		return;
 
 	worker_ = std::thread([this] { workerLoop(); });
@@ -51,7 +51,7 @@ void MediaLoader::workerLoop() {
 
 	while (!requested_stop_) {
 		VideoFrame frame;
-		if (!decoder_->decodeNext(frame))
+		if (!decoder_->tryDecodeNext(frame))
 			break;
 
 		if (onFrame)
@@ -66,5 +66,5 @@ bool MediaLoader::tryRewindToStart() {
 	if (!decoder_)
 		return false;
 
-	return decoder_->seekTo(0);
+	return decoder_->trySeekTo(0);
 }

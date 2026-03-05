@@ -11,9 +11,9 @@ class ImageDecoder final : public IMediaDecoder {
 public:
 	ImageDecoder() = default;
 	~ImageDecoder() override = default;
-	bool seekTo(int64_t time) override;
-	bool open(const std::string& path) override;
-	bool decodeNext(VideoFrame& outFrame) override;
+	bool trySeekTo(int64_t time) override;
+	bool tryOpen(const std::string& path) override;
+	bool tryDecodeNext(VideoFrame& outFrame) override;
 	[[nodiscard]] double frameRate() const override { return 0; }
 private:
 	VideoFrame cached_frame_;
