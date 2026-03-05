@@ -74,6 +74,7 @@ public:
 
 private:
 	void flushPendingParams();
+	void resetInternalParams();
 	std::mutex pending_mutex_;
 	std::vector<FeatureParamUpdate> pending_params_;
 	std::atomic<bool> flush_scheduled_{false};

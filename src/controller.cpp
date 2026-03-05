@@ -24,7 +24,7 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
     parameters.addParameter(STR16("Bypass"), nullptr, 1, 0.0, ParameterInfo::kIsBypass | ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamBypass);
 
     parameters.addParameter(STR16("BrightnessIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamBrightnessIntensity);
-    parameters.addParameter(STR16("Gain"), nullptr, 1, ParamDefaults::kBrightness, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly,kParamGain);
+    parameters.addParameter(STR16("Brightness"), nullptr, 1, ParamDefaults::kBrightness, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly,kParamBrightness);
 
     parameters.addParameter(STR16("DepthIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamDepthIntensity);
     parameters.addParameter(STR16("Depth"), nullptr, 1, ParamDefaults::kDepth, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamDepth);
@@ -105,7 +105,7 @@ IPlugView* PLUGIN_API PluginController::createView (FIDString name)
 
 tresult PLUGIN_API PluginController::setParamNormalized(ParamID tag, ParamValue value)
 {
-    if (tag == kParamGain)
+    if (tag == kParamBrightness)
     {
         // fprintf(stderr, ">>> setParamNormalized(kParamGain, %f)\n", value);
     }
@@ -118,7 +118,7 @@ void PluginController::setupPlayback(const VSTGUI::UTF8String& path) {
     auto ticker = std::make_unique<FrameTicker>();
     ticker->setQueue(frame_queue);
 
-    brightness_feature_extractor_ = std::make_unique<BrightnessFeatureExtractor>(kParamGain);
+    brightness_feature_extractor_ = std::make_unique<BrightnessFeatureExtractor>(kParamBrightness);
     brightness_feature_extractor_->setFeatureSink(this);
     depth_feature_extractor_ = std::make_unique<DepthFeatureExtractor>(kParamDepth);
     depth_feature_extractor_->setFeatureSink(this);
@@ -137,9 +137,10 @@ void PluginController::cleanUpPlayback() {
         playback_controller_->shutdown();
         playback_controller_.reset();
     }
-    // TODO: Reset param call?
+
     brightness_feature_extractor_.reset();
     depth_feature_extractor_.reset();
+    resetInternalParams();
 
     video_path_.clear();
     is_video_preview_mode_ = false;
@@ -219,6 +220,25 @@ void PluginController::flushPendingParams() {
             setParamNormalized(param.id, param.normalized);
     }
 }
+
+void PluginController::resetInternalParams() {
+    std::list<std::pair<Steinberg::Vst::ParamID, double>> params {
+        {kParamBrightness, ParamDefaults::kBrightness},
+        {kParamDepth, ParamDefaults::kDepth},
+    };
+
+    if (auto* handler = getComponentHandler()) {
+        for (auto& param : params) {
+            handler->beginEdit(param.first);
+            handler->performEdit(param.first, param.second);
+            handler->endEdit(param.first);
+        }
+    } else {
+        for (auto& param : params)
+            setParamNormalized(param.first, param.second);
+    }
+}
+
 
 
 

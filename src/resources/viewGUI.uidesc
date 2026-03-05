@@ -27,11 +27,11 @@
 			]
 		},
 		"control-tags": {
+			"Brightness": "102",
 			"BrightnessIntensity": "103",
 			"Bypass": "101",
 			"Depth": "104",
 			"DepthIntensity": "105",
-			"Gain": "102",
 			"Play": "501",
 			"Reset": "502",
 			"UiControl": "1001"
@@ -62,7 +62,7 @@
 			},
 			"UIAttributesController": {},
 			"UIViewCreatorDataSource": {
-				"SelectedRow": "8"
+				"SelectedRow": "14"
 			}
 		},
 		"templates": {
@@ -368,34 +368,6 @@
 							"background-color": "~ WhiteCColor",
 							"background-color-draw-style": "filled and stroked",
 							"class": "CViewContainer",
-							"custom-view-name": "FileSelect",
-							"mouse-enabled": "true",
-							"opacity": "1",
-							"origin": "60, 40",
-							"size": "290, 220",
-							"transparent": "false",
-							"wants-focus": "false"
-						},
-						"children": {
-							"MediaView": {
-								"attributes": {
-									"autosize": "left right top bottom ",
-									"class": "MediaView",
-									"mouse-enabled": "true",
-									"opacity": "1",
-									"origin": "0, 0",
-									"size": "290, 220",
-									"transparent": "false",
-									"wants-focus": "false"
-								}
-							}
-						}
-					},
-					"CViewContainer": {
-						"attributes": {
-							"background-color": "~ WhiteCColor",
-							"background-color-draw-style": "filled and stroked",
-							"class": "CViewContainer",
 							"mouse-enabled": "true",
 							"opacity": "1",
 							"origin": "410, 40",
@@ -437,7 +409,7 @@
 									"angle-start": "135",
 									"circle-drawing": "false",
 									"class": "CKnob",
-									"control-tag": "Gain",
+									"control-tag": "Brightness",
 									"corona-color": "~ RedCColor",
 									"corona-dash-dot": "false",
 									"corona-dash-dot-lengths": "1.26,0.1",
@@ -545,6 +517,71 @@
 									"wants-focus": "true",
 									"wheel-inc-value": "0.1",
 									"zoom-factor": "1.5"
+								}
+							}
+						}
+					},
+					"CLayeredViewContainer": {
+						"attributes": {
+							"background-color": "~ BlackCColor",
+							"background-color-draw-style": "filled and stroked",
+							"class": "CLayeredViewContainer",
+							"mouse-enabled": "true",
+							"opacity": "1",
+							"origin": "60, 40",
+							"size": "290, 220",
+							"transparent": "false",
+							"wants-focus": "false",
+							"z-index": "0"
+						},
+						"children": {
+							"CMultiLineTextLabel": {
+								"attributes": {
+									"auto-height": "false",
+									"background-offset": "0, 0",
+									"class": "CMultiLineTextLabel",
+									"default-value": "0.5",
+									"font": "~ NormalFontBig",
+									"font-antialias": "true",
+									"font-color": "~ GreyCColor",
+									"frame-width": "1",
+									"line-layout": "truncate",
+									"max-value": "1",
+									"min-value": "0",
+									"mouse-enabled": "true",
+									"opacity": "1",
+									"origin": "30, 30",
+									"round-rect-radius": "6",
+									"shadow-color": "~ RedCColor",
+									"size": "230, 160",
+									"style-3D-in": "false",
+									"style-3D-out": "false",
+									"style-no-draw": "false",
+									"style-no-frame": "false",
+									"style-no-text": "false",
+									"style-round-rect": "false",
+									"style-shadow-text": "false",
+									"text-alignment": "center",
+									"text-inset": "0, 0",
+									"text-rotation": "0",
+									"text-shadow-offset": "1, 1",
+									"title": "VIDEO READY - PRESS PLAY",
+									"transparent": "false",
+									"value-precision": "2",
+									"vertical-centered": "true",
+									"wants-focus": "false",
+									"wheel-inc-value": "0.1"
+								}
+							},
+							"MediaView": {
+								"attributes": {
+									"class": "MediaView",
+									"mouse-enabled": "true",
+									"opacity": "1",
+									"origin": "0, 0",
+									"size": "290, 220",
+									"transparent": "false",
+									"wants-focus": "false"
 								}
 							}
 						}

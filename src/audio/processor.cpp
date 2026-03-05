@@ -83,7 +83,7 @@ void PluginProcessor::setupEffects(ProcessSetup& setup) {
 }
 
 void PluginProcessor::registerFilterBindings(MorphFilter* filter) {
-    parameter_router_[kParamGain].push_back({
+    parameter_router_[kParamBrightness].push_back({
     [filter](float value) {
             filter->setMorph(value);
         }
