@@ -95,6 +95,7 @@ private:
 
 	listener_t play_listener_; /// Listener for changes to kParamPlay
 	listener_t reset_listener_; /// Listener for changes to kParamReset
+	listener_t pause_listener_; /// Listener for changes to kParamPause
 };
 
 using pcont_t = std::shared_ptr<PlaybackController>;

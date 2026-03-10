@@ -32,6 +32,7 @@
 			"Bypass": "101",
 			"Depth": "104",
 			"DepthIntensity": "105",
+			"Pause": "504",
 			"Play": "501",
 			"Reset": "502",
 			"UiControl": "1001"
@@ -59,7 +60,7 @@
 				"ViewBackground": "0"
 			},
 			"UITemplateController": {
-				"SelectedTemplate": "InputSelect"
+				"SelectedTemplate": "AudioProcessing"
 			},
 			"UIAttributesController": {},
 			"UIViewCreatorDataSource": {
@@ -492,7 +493,7 @@
 									"icon-text-margin": "0",
 									"kick-style": "true",
 									"opacity": "1",
-									"origin": "20, 90",
+									"origin": "20, 120",
 									"round-radius": "6",
 									"size": "60, 20",
 									"text-alignment": "center",
@@ -544,7 +545,7 @@
 							"CTextButton": {
 								"attributes": {
 									"class": "CTextButton",
-									"control-tag": "Bypass",
+									"control-tag": "Pause",
 									"font": "~ SystemFont",
 									"frame-color": "~ BlackCColor",
 									"frame-color-highlighted": "~ BlackCColor",
@@ -555,13 +556,13 @@
 									"icon-text-margin": "0",
 									"kick-style": "true",
 									"opacity": "1",
-									"origin": "20, 120",
+									"origin": "20, 90",
 									"round-radius": "6",
 									"size": "60, 20",
 									"text-alignment": "center",
 									"text-color": "~ BlackCColor",
 									"text-color-highlighted": "~ WhiteCColor",
-									"title": "Bypass",
+									"title": "Pause",
 									"transparent": "false",
 									"wants-focus": "true",
 									"wheel-inc-value": "0.1"
@@ -697,6 +698,7 @@
 									},
 									"CTextLabel": {
 										"attributes": {
+											"back-color": "~ TransparentCColor",
 											"background-offset": "0, 0",
 											"class": "CTextLabel",
 											"default-value": "0.5",
@@ -780,6 +782,7 @@
 									},
 									"CTextLabel": {
 										"attributes": {
+											"back-color": "~ TransparentCColor",
 											"background-offset": "0, 0",
 											"class": "CTextLabel",
 											"default-value": "0.5",

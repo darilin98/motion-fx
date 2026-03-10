@@ -25,6 +25,7 @@ enum ControlParamID : Steinberg::Vst::ParamID {
     kParamPlay = 501,
 	kParamReset,
 	kParamLoop,
+    kParamPause,
 };
 
 /**
@@ -39,6 +40,7 @@ inline bool isControlParam(Steinberg::Vst::ParamID id) noexcept {
         case kParamPlay:
         case kParamReset:
         case kParamLoop:
+        case kParamPause:
             return true;
         default:
             return false;

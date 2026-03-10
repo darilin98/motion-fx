@@ -105,6 +105,8 @@ void PlaybackController::setParamListeners(controller_t controller) {
 		controller_->getParameterObject(kParamPlay), shared_from_this(), controller_);
 	reset_listener_ = std::make_unique<VideoParamListener>(
 		controller_->getParameterObject(kParamReset), shared_from_this(), controller_);
+	pause_listener_ = std::make_unique<VideoParamListener>(
+		controller->getParameterObject(kParamPause), shared_from_this(), controller_);
 }
 
 
@@ -121,6 +123,10 @@ void PlaybackController::onParamChanged(Steinberg::Vst::ParamID paramId, float p
 					stopPipeline();
 					frame_queue_->clearAsync();
 				}
+			}
+		case kParamPause:
+			if (paramValue > 0.5 && is_playing_) {
+				stopPipeline();
 			}
 		default:
 			break;
