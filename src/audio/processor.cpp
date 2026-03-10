@@ -103,10 +103,10 @@ tresult PLUGIN_API PluginProcessor::process(ProcessData& data) {
     if (is_video_playing_) {
         if (is_offline_ || (data.processMode == kOffline)) {
             updateOfflineDspParamValues(data);
-        } else {
-            updateDspParamValues(data);
         }
     }
+
+    updateDspParamValues(data);
 
     // Choose to either apply DSP or bypass
     if (bypass_state_ == 1.0f)
@@ -150,6 +150,7 @@ tresult PluginProcessor::setState(IBStream *state) {
         return kResultFalse;
 
     // Modulation vector de-serialization
+    /*
     modulation_curve_.clear();
     uint32 numPoints = 0;
     if (!streamer.readInt32u(numPoints))
@@ -182,6 +183,7 @@ tresult PluginProcessor::setState(IBStream *state) {
 
         modulation_curve_.push_back(std::move(point));
     }
+    */
     return kResultOk;
 }
 
@@ -201,6 +203,7 @@ tresult PluginProcessor::getState(IBStream *state) {
         return kResultFalse;
 
     // Modulation vector serialization
+    /*
     auto numPoints = static_cast<uint32>(modulation_curve_.size());
     if (!streamer.writeInt32u(numPoints))
         return kResultFalse;
@@ -220,6 +223,7 @@ tresult PluginProcessor::getState(IBStream *state) {
                 return kResultFalse;
         }
     }
+    */
 
     return kResultOk;
 }
