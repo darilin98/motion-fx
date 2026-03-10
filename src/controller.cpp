@@ -39,6 +39,8 @@ tresult PLUGIN_API PluginController::terminate()
 
 tresult PLUGIN_API PluginController::setState(IBStream *state)
 {
+    resetInternalParams();
+
     if (!state)
         return kResultFalse;
 
@@ -71,6 +73,8 @@ tresult PLUGIN_API PluginController::setState(IBStream *state)
 
 tresult PLUGIN_API PluginController::getState(IBStream *state)
 {
+    if(playback_controller_) playback_controller_->stopPipeline();
+
     if (!state)
         return kResultFalse;
 
@@ -140,6 +144,7 @@ void PluginController::cleanUpPlayback() {
 
     brightness_feature_extractor_.reset();
     depth_feature_extractor_.reset();
+
     resetInternalParams();
 
     video_path_.clear();
@@ -222,6 +227,12 @@ void PluginController::flushPendingParams() {
 }
 
 void PluginController::resetInternalParams() {
+    {
+        std::lock_guard lock(pending_mutex_);
+        pending_params_.clear();
+        flush_scheduled_ = false;
+    }
+
     std::list<std::pair<Steinberg::Vst::ParamID, double>> params {
         {kParamBrightness, ParamDefaults::kBrightness},
         {kParamDepth, ParamDefaults::kDepth},
