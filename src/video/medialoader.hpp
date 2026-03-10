@@ -59,7 +59,11 @@ using decoder_t = std::unique_ptr<IMediaDecoder>;
 class MediaLoader {
 public:
 	explicit MediaLoader(std::string path)
-		: path_(std::move(path)) {}
+		: path_(std::move(path)) {
+		decoder_ = makeDecoder(path_);
+		if (decoder_)
+			decoder_->tryOpen(path_);
+	}
 	explicit MediaLoader(decoder_t decoder)
 		: decoder_(std::move(decoder)) {}
 	~MediaLoader();
