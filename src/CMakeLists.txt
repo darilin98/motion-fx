@@ -204,3 +204,65 @@ smtg_target_add_plugin_resources(motion-fx
         RESOURCES
         "resources/viewGUI.uidesc"
 )
+
+#-------------------------------------------------------------------------------
+# Bundle FFmpeg dylibs + fix rpaths (macOS Release)
+#-------------------------------------------------------------------------------
+
+if(APPLE AND CMAKE_BUILD_TYPE STREQUAL "Release")
+
+    message(STATUS "Bundling FFmpeg libraries into VST3")
+
+    set(PLUGIN_FRAMEWORK_DIR
+            $<TARGET_BUNDLE_DIR:motion-fx>/Contents/Frameworks)
+
+    # Ensure Frameworks folder exists
+    add_custom_command(TARGET motion-fx POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${PLUGIN_FRAMEWORK_DIR}
+    )
+
+    set(FFMPEG_DYLIBS
+            /opt/homebrew/opt/ffmpeg/lib/libavcodec.62.dylib
+            /opt/homebrew/opt/ffmpeg/lib/libavformat.62.dylib
+            /opt/homebrew/opt/ffmpeg/lib/libavutil.60.dylib
+            /opt/homebrew/opt/ffmpeg/lib/libswscale.9.dylib
+    )
+
+    foreach(lib ${FFMPEG_DYLIBS})
+
+        get_filename_component(lib_name ${lib} NAME)
+
+        # Copy dylib into plugin bundle
+        add_custom_command(TARGET motion-fx POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                ${lib}
+                ${PLUGIN_FRAMEWORK_DIR}/${lib_name}
+        )
+
+        # Change the internal ID of the dylib itself
+        add_custom_command(TARGET motion-fx POST_BUILD
+                COMMAND install_name_tool -id @rpath/${lib_name} ${PLUGIN_FRAMEWORK_DIR}/${lib_name}
+        )
+
+        # Update plugin binary to use bundled dylib
+        add_custom_command(TARGET motion-fx POST_BUILD
+                COMMAND install_name_tool -change ${lib} @loader_path/../Frameworks/${lib_name} $<TARGET_FILE:motion-fx>
+        )
+
+        # Optionally ad-hoc codesign the dylib to avoid Gatekeeper warnings
+        add_custom_command(TARGET motion-fx POST_BUILD
+                COMMAND codesign --force --sign - ${PLUGIN_FRAMEWORK_DIR}/${lib_name}
+        )
+
+    endforeach()
+
+    # Ensure plugin knows where to find Frameworks at runtime
+    add_custom_command(TARGET motion-fx POST_BUILD
+            COMMAND install_name_tool -add_rpath @loader_path/../Frameworks $<TARGET_FILE:motion-fx>
+    )
+
+    add_custom_command(TARGET motion-fx POST_BUILD
+            COMMAND codesign --force --deep --sign "-" $<TARGET_FILE:motion-fx>
+            COMMENT "Code-signing the VST3 bundle for Release"
+    )
+endif()
