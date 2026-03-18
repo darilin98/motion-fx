@@ -3,14 +3,7 @@
 //
 
 #include "depthfeatureextractor.hpp"
-
-inline float luminance(uint8_t r, uint8_t g, uint8_t b) {
-    return 0.2126f * r + 0.7152f * g + 0.0722f * b;
-}
-
-inline float safeDiv(float a, float b) {
-    return b > 1e-6f ? a / b : 0.0f;
-}
+#include "visionutils.hpp"
 
 FeatureResult DepthFeatureExtractor::extract(const VideoFrame& videoFrame) {
     if (videoFrame.image.rgba_data.empty())
