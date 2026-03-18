@@ -13,6 +13,7 @@
 #include "video/features/brightnessfeatureextractor.hpp"
 #include "audio/modulationcurve.hpp"
 #include "video/features/depthfeatureextractor.hpp"
+#include "video/features/motionfeatureextractor.hpp"
 //#include "parameterdefaults.hpp"
 
 
@@ -85,6 +86,7 @@ private:
 	pcont_t playback_controller_ = nullptr;
 	std::unique_ptr<BrightnessFeatureExtractor> brightness_feature_extractor_ = nullptr;
 	std::unique_ptr<DepthFeatureExtractor> depth_feature_extractor_ = nullptr;
+	std::unique_ptr<MotionFeatureExtractor> motion_feature_extractor_ = nullptr;
 };
 
 using controller_t = Steinberg::Vst::EditController*;

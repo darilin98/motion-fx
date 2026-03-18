@@ -30,6 +30,10 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
     parameters.addParameter(STR16("DepthIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamDepthIntensity);
     parameters.addParameter(STR16("Depth"), nullptr, 1, ParamDefaults::kDepth, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamDepth);
 
+    parameters.addParameter(STR16("MotionIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamMotionIntensity);
+    parameters.addParameter(STR16("MotionContinuous"), nullptr, 1, ParamDefaults::kMotion, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamMotionContinuous);
+    parameters.addParameter(STR16("MotionBurst"), nullptr, 1, ParamDefaults::kMotion, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamMotionBurst);
+
     return kResultOk;
 }
 
@@ -127,10 +131,14 @@ void PluginController::setupPlayback(const VSTGUI::UTF8String& path) {
     brightness_feature_extractor_->setFeatureSink(this);
     depth_feature_extractor_ = std::make_unique<DepthFeatureExtractor>(kParamDepth);
     depth_feature_extractor_->setFeatureSink(this);
+    motion_feature_extractor_ = std::make_unique<MotionFeatureExtractor>(kParamMotionContinuous, kParamMotionBurst);
+    motion_feature_extractor_->setFeatureSink(this);
 
     playback_controller_ = std::make_shared<PlaybackController>(path.data(), std::move(frame_queue), std::move(ticker));
+
     playback_controller_->registerReceiver(brightness_feature_extractor_.get());
     playback_controller_->registerReceiver(depth_feature_extractor_.get());
+    playback_controller_->registerReceiver(motion_feature_extractor_.get());
     playback_controller_->setParamListeners(this);
 
     video_path_ = path;
@@ -145,6 +153,7 @@ void PluginController::cleanUpPlayback() {
 
     brightness_feature_extractor_.reset();
     depth_feature_extractor_.reset();
+    motion_feature_extractor_.reset();
 
     resetInternalParams();
 
@@ -237,6 +246,8 @@ void PluginController::resetInternalParams() {
     std::list<std::pair<Steinberg::Vst::ParamID, double>> params {
         {kParamBrightness, ParamDefaults::kBrightness},
         {kParamDepth, ParamDefaults::kDepth},
+        {kParamMotionContinuous, ParamDefaults::kMotion},
+        {kParamMotionBurst, ParamDefaults::kMotion},
     };
 
     if (auto* handler = getComponentHandler()) {
