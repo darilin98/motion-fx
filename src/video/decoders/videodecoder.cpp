@@ -88,7 +88,9 @@ bool VideoDecoder::tryOpen(const std::string& path) {
         return false;
     }
 
-    codec_ctx_->thread_count = 1; // single thread for plugin stability
+    codec_ctx_->thread_count = 0;
+    codec_ctx_->thread_type = FF_THREAD_FRAME;
+    codec_ctx_->flags2 |= AV_CODEC_FLAG2_FAST;
 
     if (avcodec_open2(codec_ctx_, codec, nullptr) < 0) {
         std::cerr << "VideoDecoder: failed to open codec\n";
@@ -111,7 +113,7 @@ bool VideoDecoder::tryOpen(const std::string& path) {
         codec_ctx_->width,
         codec_ctx_->height,
         AV_PIX_FMT_RGBA,
-        SWS_BILINEAR,
+        SWS_POINT,
         nullptr,
         nullptr,
         nullptr
@@ -201,7 +203,8 @@ bool VideoDecoder::tryDecodeNext(VideoFrame& outFrame) {
             const int w = frame_->width;
             const int h = frame_->height;
             const size_t buf_size = av_image_get_buffer_size(AV_PIX_FMT_RGBA, w, h, 1);
-            dst_buf_.resize(buf_size);
+            if (dst_buf_.size() != buf_size)
+                dst_buf_.resize(buf_size);
 
             uint8_t* dst_data[4] = {dst_buf_.data(), nullptr, nullptr, nullptr};
             int dst_linesize[4] = {av_image_get_linesize(AV_PIX_FMT_RGBA, w, 0), 0, 0, 0};
