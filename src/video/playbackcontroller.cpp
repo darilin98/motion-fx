@@ -11,6 +11,8 @@
 
 PlaybackController::~PlaybackController() = default;
 
+constexpr int kMaxQueueSize = 120;
+
 void PlaybackController::shutdown() {
 	if (loader_) {
 		is_decoding_.store(false);
@@ -39,7 +41,7 @@ void PlaybackController::startPipeline(const double playbackRate) {
 	if (frame_ticker_) {
 		frame_ticker_->resetTimer();
 		is_playing_.store(true);
-		frame_ticker_->startConsumingAt(25);
+		frame_ticker_->startConsumingAt(30);
 	}
 }
 
@@ -57,8 +59,10 @@ void PlaybackController::stopPipeline() {
 void PlaybackController::setupCallbacks() {
 	if (loader_) {
 		loader_->onFrame = [this](VideoFrame&& frame) {
-			// TODO: Here we could add framerate limiting for pushing
-			frame_queue_->push(std::move(frame));
+			while (!frame_queue_->push(std::move(frame))) {
+				std::this_thread::sleep_for(std::chrono::milliseconds(2));
+				if (!is_decoding_) return;
+			}
 		};
 		loader_->onVideoFinish = [this]() {
 			is_decoding_.store(false);
