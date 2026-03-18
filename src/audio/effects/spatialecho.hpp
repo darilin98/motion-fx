@@ -23,8 +23,8 @@ private:
 	};
 
 	std::vector<ChannelState> channels_;
-	float space_level_target_;
-	float space_level_smoothed_;
+	float space_level_target_ = 0;
+	float space_level_smoothed_ = 0;
 	double sample_rate_ = 44100.0;
 };
 
