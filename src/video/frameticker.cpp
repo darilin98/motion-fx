@@ -56,21 +56,31 @@ void FrameTicker::stopConsuming() {
 
 void FrameTicker::resetTimer() {
 	std::lock_guard lock(time_mutex_);
-	consumer_start_ = std::chrono::steady_clock::now();
+	const auto now = std::chrono::steady_clock::now();
+	consumer_start_ = now;
+	next_tick_ = now;
 }
 
 void FrameTicker::consumerLoop() {
 	if (!consumer_running_) return;
 
+	// TODO: Let decoder run ahead in a cleaner way
+	//		 Queue size checking might make images and gifs not work (queue always small)
+	std::this_thread::sleep_for(std::chrono::milliseconds(15));
+
 	const double periodSec = 1.0 / fps_;
 	const auto period = std::chrono::duration<double>(periodSec);
 	{
 		std::lock_guard lock(time_mutex_);
-		consumer_start_ = std::chrono::steady_clock::now();
+		const auto now = std::chrono::steady_clock::now();
+		consumer_start_ = now;
+		next_tick_ = now;
 	}
 
 	bool firstFrame = true;
 	while (consumer_running_.load(std::memory_order_acquire)) {
+
+		std::this_thread::sleep_until(next_tick_);
 		const auto tickStart = std::chrono::steady_clock::now();
 
 		double elapsed;
@@ -83,11 +93,7 @@ void FrameTicker::consumerLoop() {
 		bool gotFrame = false;
 		VideoFrame tmp;
 
-		// Dropping any outdated frames to prevent slo-mo
-		const auto queue = frame_queue_;
-		if (!queue) return;
-
-		while (queue->tryPop(tmp)) {
+		while (frame_queue_->tryPop(tmp)) {
 			if (tmp.timestamp >= elapsed || firstFrame) {
 				latest = std::move(tmp);
 				gotFrame = true;
@@ -109,6 +115,14 @@ void FrameTicker::consumerLoop() {
 		} else {
 			onQueueEmpty();
 		}
-		std::this_thread::sleep_until(tickStart + period);
+
+		next_tick_ += std::chrono::duration_cast<std::chrono::steady_clock::duration>(period);
+
+		if (std::chrono::steady_clock::now() - next_tick_ > period * 2) {
+			std::lock_guard lock(time_mutex_);
+			const auto now = std::chrono::steady_clock::now();
+			consumer_start_ = now;
+			next_tick_ = now;
+		}
 	}
 }

@@ -117,6 +117,7 @@ private:
 
     std::mutex time_mutex_; /// Guards changes to timing.
 	std::chrono::steady_clock::time_point consumer_start_; /// Frame synchronization time point
+	std::chrono::steady_clock::time_point next_tick_;
 
     double fps_ = 25.0; /// Determines the FrameTicker's consumption speed.
 	frame_queue_t frame_queue_; /// Source of VideoFrames
