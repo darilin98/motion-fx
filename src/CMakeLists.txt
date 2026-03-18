@@ -96,6 +96,8 @@ add_library(motion_fx_dsp
         audio/effects/morphfilter.hpp
         audio/effects/spatialecho.cpp
         audio/effects/spatialecho.hpp
+        audio/effects/wavephaser.cpp
+        audio/effects/wavephaser.hpp
 )
 
 target_include_directories(motion_fx_dsp PUBLIC
@@ -144,6 +146,8 @@ set(SOURCES
         video/features/brightnessfeatureextractor.hpp
         video/features/depthfeatureextractor.cpp
         video/features/depthfeatureextractor.hpp
+        video/features/motionfeatureextractor.cpp
+        video/features/motionfeatureextractor.hpp
         utils.hpp
 )
 

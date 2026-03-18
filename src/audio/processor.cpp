@@ -20,6 +20,7 @@
 
 #include "daisysp.h"
 #include "effects/spatialecho.hpp"
+#include "effects/wavephaser.hpp"
 
 tresult PLUGIN_API PluginProcessor::initialize(FUnknown *context) {
     tresult result = AudioEffect::initialize(context);
@@ -38,6 +39,10 @@ void PluginProcessor::createEffects() {
     auto& filter_unit = effect_chain_.emplace_back();
     filter_unit.effect = std::make_unique<MorphFilter>();
     filter_unit.intensity_param_id = kParamBrightnessIntensity;
+
+    auto& phaser_unit = effect_chain_.emplace_back();
+    phaser_unit.effect = std::make_unique<WavePhaser>();
+    phaser_unit.intensity_param_id = kParamMotionIntensity;
 
     auto& echo_unit = effect_chain_.emplace_back();
     echo_unit.effect = std::make_unique<SpatialEcho>();
@@ -71,6 +76,18 @@ void PluginProcessor::setupEffects(ProcessSetup& setup) {
 
         if (auto* filter = dynamic_cast<MorphFilter*>(unit.effect.get())) {
             registerFilterBindings(filter);
+        }
+        if (auto* phaser = dynamic_cast<WavePhaser*>(unit.effect.get())) {
+            parameter_router_[kParamMotionContinuous].push_back({
+                [phaser](float value) {
+                    phaser->setContinuous(value);
+                }
+            });
+            parameter_router_[kParamMotionBurst].push_back({
+                [phaser](float value) {
+                    phaser->setBurst(value);
+                }
+            });
         }
         if (auto* echo = dynamic_cast<SpatialEcho*>(unit.effect.get())) {
             parameter_router_[kParamDepth].push_back({
