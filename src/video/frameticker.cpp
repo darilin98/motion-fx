@@ -64,10 +64,6 @@ void FrameTicker::resetTimer() {
 void FrameTicker::consumerLoop() {
 	if (!consumer_running_) return;
 
-	// TODO: Let decoder run ahead in a cleaner way
-	//		 Queue size checking might make images and gifs not work (queue always small)
-	std::this_thread::sleep_for(std::chrono::milliseconds(15));
-
 	const double periodSec = 1.0 / fps_;
 	const auto period = std::chrono::duration<double>(periodSec);
 	{
@@ -114,6 +110,7 @@ void FrameTicker::consumerLoop() {
 			}
 		} else {
 			onQueueEmpty();
+			std::this_thread::sleep_for(std::chrono::milliseconds(15));
 		}
 
 		next_tick_ += std::chrono::duration_cast<std::chrono::steady_clock::duration>(period);
