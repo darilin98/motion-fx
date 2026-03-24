@@ -59,7 +59,7 @@ void PlaybackController::stopPipeline() {
 void PlaybackController::setupCallbacks() {
 	if (loader_) {
 		loader_->onFrame = [this](VideoFrame&& frame) {
-			while (!frame_queue_->push(std::move(frame))) {
+			while (!frame_queue_->tryPush(std::move(frame))) {
 				std::this_thread::sleep_for(std::chrono::milliseconds(2));
 				if (!is_decoding_) return;
 			}
@@ -125,7 +125,7 @@ void PlaybackController::onParamChanged(Steinberg::Vst::ParamID paramId, float p
 			if (paramValue > 0.5 && is_playing_) {
 				if (loader_->tryRewindToStart()) {
 					stopPipeline();
-					frame_queue_->clearAsync();
+					frame_queue_->clear();
 				}
 			}
 		case kParamPause:

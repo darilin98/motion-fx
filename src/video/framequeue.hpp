@@ -31,16 +31,14 @@ public:
 	 * @brief Stores a VideoFrame in the queue.
 	 * @param frame VideoFrame to be stored in the queue.
 	 */
-	virtual bool push(VideoFrame&& frame) = 0;
+	virtual bool tryPush(VideoFrame&& frame) = 0;
 
 	/**
-	 * @brief Clears all entries in the queue asynchronously.
+	 * @brief Clears all entries in the queue.
 	 */
-	virtual void clearAsync() = 0;
+	virtual void clear() = 0;
 
 	virtual size_t size() = 0;
-
-	virtual bool tryPeek(VideoFrame& outFrame) = 0;
 
 };
 
@@ -55,7 +53,7 @@ public:
 		: capacity_(capacity + 1), buffer_(capacity_),
 		  head_(0), tail_(0) {}
 
-	bool push(VideoFrame&& frame) override {
+	bool tryPush(VideoFrame&& frame) override {
 		size_t nextTail = (tail_.load(std::memory_order_relaxed) + 1) % capacity_;
 		if (nextTail == head_.load(std::memory_order_acquire))
 			return false;
@@ -75,15 +73,6 @@ public:
 		return true;
 	}
 
-	bool tryPeek(VideoFrame& outFrame) override {
-		size_t head = head_.load(std::memory_order_acquire);
-		if (head == tail_.load(std::memory_order_acquire))
-			return false;
-
-		outFrame = buffer_[head];
-		return true;
-	}
-
 	size_t size() override {
 		size_t head = head_.load(std::memory_order_acquire);
 		size_t tail = tail_.load(std::memory_order_acquire);
@@ -93,7 +82,7 @@ public:
 		return capacity_ - head + tail;
 	}
 
-	void clearAsync() override {
+	void clear() override {
 		head_.store(tail_.load(std::memory_order_acquire), std::memory_order_release);
 	}
 
