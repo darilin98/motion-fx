@@ -5,11 +5,11 @@
 #include "wavephaser.hpp"
 
 void WavePhaser::setContinuous(float value) {
-	continuous_target_ = std::clamp(value, 0.0f, 1.0f);
+	continuous_.target = std::clamp(value, 0.0f, 1.0f);
 }
 
 void WavePhaser::setBurst(float value) {
-	burst_target_ = std::clamp(value, 0.0f, 1.0f);
+	burst_.target = std::clamp(value, 0.0f, 1.0f);
 }
 
 void WavePhaser::init(Steinberg::Vst::ProcessSetup setup) {
@@ -36,21 +36,26 @@ void WavePhaser::process(float* buffer, int32_t numSamples, int32_t channel) {
 
 	auto& ph = channels_[channel].phaser;
 
-
-	const float lfoFreq  = kMinLfo + continuous_smoothed_ * (kMaxLfo - kMinLfo);
-	const float lfoDepth = std::clamp(continuous_smoothed_ + burst_smoothed_, 0.0f, 1.0f);
-	const float feedback = burst_smoothed_ * 0.25f;
-
-	ph.SetLfoFreq(lfoFreq);
-	ph.SetLfoDepth(lfoDepth);
-	ph.SetFeedback(feedback);
+	auto softClip = [](float x) -> float {
+		if (x > 1.0f) return 2.0f/3.0f;
+		if (x < -1.0f) return -2.0f/3.0f;
+		return x - (x*x*x)/3.0f;
+	};
 
 	for (int32_t i = 0; i < numSamples; i++) {
-		continuous_smoothed_ += kContSmooth * (continuous_target_ - continuous_smoothed_);
-		burst_smoothed_ += kBurstSmooth * (burst_target_ - burst_smoothed_);
+		continuous_.value += kContSmooth * (continuous_.target - continuous_.value);
+		burst_.value += kBurstSmooth * (burst_.target - burst_.value);
+
+		const float lfoFreq  = kMinLfo + continuous_.value * (kMaxLfo - kMinLfo);
+		const float lfoDepth = std::clamp(continuous_.value + burst_.value, 0.0f, 1.0f);
+		const float feedback = burst_.value * 0.25f;
+
+		ph.SetLfoFreq(lfoFreq);
+		ph.SetLfoDepth(lfoDepth);
+		ph.SetFeedback(feedback);
 
 		float dry = buffer[i];
 		float wet = ph.Process(dry);
-		buffer[i] = dry * (1.0f - lfoDepth) + wet * lfoDepth;
+		buffer[i] = softClip(dry * (1.0f - lfoDepth) + wet * lfoDepth);
 	}
 }

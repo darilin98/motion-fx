@@ -11,6 +11,9 @@ constexpr float kExciterHighpassFreq = 3000.0f;
 constexpr float kExciterResonance = 0.3f;
 constexpr float kExciterDriveMax = 0.7f;
 
+using filter_t = daisysp::Svf;
+using overdrive_t = daisysp::Overdrive;
+
 class SaturationExciter : public IEffect {
 public:
 	void init(Steinberg::Vst::ProcessSetup setup) override;
@@ -18,14 +21,14 @@ public:
 	void setSaturation(float saturation);
 private:
 	void channelResizeTo(size_t size);
+	struct ChannelState {
+		filter_t filter;
+		overdrive_t overdrive;
+	};
+	std::vector<ChannelState> channels_;
 
-	std::vector<daisysp::Svf> filters_;
-	std::vector<daisysp::Overdrive> overdrives_;
-
-	double sample_rate_ = 44100.0;
-
-	struct Smoothed { float target = 0.f; float value = 0.f; };
 	Smoothed saturation_;
+	double sample_rate_ = kSampleRateDefault;
 };
 
 

@@ -14,26 +14,23 @@ void SaturationExciter::init(Steinberg::Vst::ProcessSetup setup) {
 }
 
 void SaturationExciter::channelResizeTo(size_t size) {
-	filters_.resize(size);
-	for (auto& f : filters_) {
-		f.Init(sample_rate_);
-		f.SetFreq(kExciterHighpassFreq);
-		f.SetRes(kExciterResonance);
-	}
+	channels_.resize(size);
+	for (auto& ch : channels_) {
+		ch.filter.Init(sample_rate_);
+		ch.filter.SetFreq(kExciterHighpassFreq);
+		ch.filter.SetRes(kExciterResonance);
 
-	overdrives_.resize(size);
-	for (auto& od : overdrives_) {
-		od.Init();
+		ch.overdrive.Init();
 	}
 }
 
 void SaturationExciter::process(float* buffer, int32_t numSamples, int32_t channel) {
-	if (channel >= static_cast<int32_t>(filters_.size())) {
+	if (channel >= channels_.size()) {
 		channelResizeTo(channel + 1);
 	}
 
-	auto& filter = filters_[channel];
-	auto& overdrive = overdrives_[channel];
+	auto& filter = channels_[channel].filter;
+	auto& overdrive = channels_[channel].overdrive;
 
 	for (int32_t i = 0; i < numSamples; i++) {
 		saturation_.value += kSmoothing * (saturation_.target - saturation_.value);

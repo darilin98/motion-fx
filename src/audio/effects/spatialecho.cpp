@@ -5,7 +5,7 @@
 #include "spatialecho.hpp"
 
 void SpatialEcho::setSpaceLevel(float spaceLevel) {
-	space_level_target_ = std::clamp(spaceLevel, 0.0f, 1.0f);
+	space_level_.target = std::clamp(spaceLevel, 0.0f, 1.0f);
 }
 
 void SpatialEcho::init(Steinberg::Vst::ProcessSetup setup) {
@@ -28,14 +28,14 @@ void SpatialEcho::process(float* buffer, int32_t numSamples, int32_t channel) {
 
 	auto& state = channels_[channel];
 
-	space_level_smoothed_ += kSmoothing * (space_level_target_ - space_level_smoothed_);
+	space_level_.value += kSmoothing * (space_level_.target - space_level_.value);
 
-	float delay_time = 0.02f + 0.08f * space_level_smoothed_; // Delay range: 20–100 ms
+	float delay_time = 0.02f + 0.08f * space_level_.value; // Delay range: 20–100 ms
 	float delay_samples = delay_time * sample_rate_;
 	state.delay.SetDelay(delay_samples);
 
-	float feedback = 0.5f * space_level_smoothed_;
-	float wet_amount = space_level_smoothed_;
+	float feedback = 0.5f * space_level_.value;
+	float wet_amount = space_level_.value;
 	float dry_amount = 1.0f - wet_amount;
 
 	for (int32_t i = 0; i < numSamples; ++i) {

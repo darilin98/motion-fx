@@ -12,6 +12,7 @@
 
 constexpr int32_t kChannelCountDefault = 2; /// Default count of channels (stereo).
 constexpr float kSmoothing = 0.001f; /// Default smoothing of parameter values.
+constexpr double kSampleRateDefault = 44100.0;
 
 /**
  * @brief A contract for processing buffers of audio samples.
@@ -64,4 +65,10 @@ inline void mixDryWet(float* dry, float* wet, float* out, float intensity, int n
 	for (int i = 0; i < n; ++i)
 		out[i] = dry[i] + intensity * (wet[i] - dry[i]);
 }
+
+struct Smoothed {
+	float target = 0.f;
+	float value = 0.f;
+};
+
 #endif //IEFFECT_HPP

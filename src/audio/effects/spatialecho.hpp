@@ -10,6 +10,8 @@
 
 constexpr size_t kDelayMax = 192000;
 
+using delay_t = daisysp::DelayLine<float, kDelayMax>;
+
 class SpatialEcho : public IEffect {
 public:
 	void init(Steinberg::Vst::ProcessSetup setup) override;
@@ -18,14 +20,13 @@ public:
 private:
 	void channelResizeTo(size_t size);
 	struct ChannelState {
-		daisysp::DelayLine<float, kDelayMax> delay;
+		delay_t delay;
 		float feedback_lp = 0.0f;
 	};
-
 	std::vector<ChannelState> channels_;
-	float space_level_target_ = 0;
-	float space_level_smoothed_ = 0;
-	double sample_rate_ = 44100.0;
+
+	Smoothed space_level_;
+	double sample_rate_ = kSampleRateDefault;
 };
 
 

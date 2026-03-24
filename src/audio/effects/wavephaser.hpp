@@ -8,13 +8,13 @@
 
 #include "ieffect.hpp"
 
-
-
 constexpr float kContSmooth = 0.05f;
 constexpr float kBurstSmooth = 0.1f;
 
 constexpr float kMinLfo = 0.1f;
 constexpr float kMaxLfo = 5.0f;
+
+using phaser_t = daisysp::Phaser;
 
 class WavePhaser : public IEffect{
 public:
@@ -26,17 +26,14 @@ private:
 	void channelResizeTo(size_t size);
 
 	struct ChannelState {
-		daisysp::Phaser phaser;
+		phaser_t phaser;
 		float feedback_lp = 0.0f;
 	};
 	std::vector<ChannelState> channels_;
-	float continuous_target_ = 0;
-	float continuous_smoothed_ = 0;
 
-	float burst_target_ = 0;
-	float burst_smoothed_ = 0;
-
-	double sample_rate_ = 44100.0;
+	Smoothed continuous_;
+	Smoothed burst_;
+	double sample_rate_ = kSampleRateDefault;
 };
 
 

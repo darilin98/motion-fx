@@ -14,7 +14,8 @@ constexpr float kRatioB = 2.0f; // octave
 // TODO: Might be worth to expose this? Determines the chord
 constexpr float kBaseFreq = 220.0f;
 
-using oscillators_t = std::vector<daisysp::Oscillator>;
+using oscillator_t = daisysp::Oscillator;
+
 class RingModulator : public IEffect {
 public:
 	void init(Steinberg::Vst::ProcessSetup setup) override;
@@ -25,16 +26,15 @@ public:
 	void setB(float b);
 private:
 	void channelResizeTo(size_t size);
+	struct ChannelState {
+		oscillator_t osc_r;
+		oscillator_t osc_g;
+		oscillator_t osc_b;
+	};
+	std::vector<ChannelState> channels_;
 
-	oscillators_t oscs_r_;
-	oscillators_t oscs_g_;
-	oscillators_t oscs_b_;
-
-	double sample_rate_ = 44100.0;
-
-	struct Smoothed { float target = 0.f; float value = 0.f; };
 	Smoothed r_, g_, b_;
-
+	double sample_rate_ = kSampleRateDefault;
 };
 
 

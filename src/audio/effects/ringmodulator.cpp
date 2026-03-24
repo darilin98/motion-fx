@@ -14,28 +14,30 @@ void RingModulator::init(Steinberg::Vst::ProcessSetup setup) {
 }
 
 void RingModulator::channelResizeTo(size_t size) {
-    auto initOscBundle = [&](oscillators_t& oscBundle, float ratio) {
-        oscBundle.resize(size);
-        for (auto& osc : oscBundle) {
-            osc.Init(sample_rate_);
-            osc.SetWaveform(daisysp::Oscillator::WAVE_SIN);
-            osc.SetFreq(kBaseFreq * ratio);
-            osc.SetAmp(1.0f);
-        }
+    channels_.resize(size);
+
+    auto initOsc = [&](oscillator_t& osc, float ratio) {
+        osc.Init(sample_rate_);
+        osc.SetWaveform(daisysp::Oscillator::WAVE_SIN);
+        osc.SetFreq(kBaseFreq * ratio);
+        osc.SetAmp(1.0f);
     };
-    initOscBundle(oscs_r_, kRatioR);
-    initOscBundle(oscs_g_, kRatioG);
-    initOscBundle(oscs_b_, kRatioB);
+
+    for (auto& ch : channels_) {
+        initOsc(ch.osc_r, kRatioR);
+        initOsc(ch.osc_g, kRatioG);
+        initOsc(ch.osc_b, kRatioB);
+    }
 }
 
 void RingModulator::process(float* buffer, int32_t numSamples, int32_t channel) {
-    if (channel >= static_cast<int32_t>(oscs_r_.size())) {
+    if (channel >= channels_.size()) {
         channelResizeTo(channel + 1);
     }
 
-    auto& osc_r = oscs_r_[channel];
-    auto& osc_g = oscs_g_[channel];
-    auto& osc_b = oscs_b_[channel];
+    auto& osc_r = channels_[channel].osc_r;
+    auto& osc_g = channels_[channel].osc_g;
+    auto& osc_b = channels_[channel].osc_b;
 
     for (int32_t i = 0; i < numSamples; i++) {
         r_.value += kSmoothing * (r_.target - r_.value);

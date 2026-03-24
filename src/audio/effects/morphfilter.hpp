@@ -12,7 +12,7 @@
 constexpr float kCutoffFreq = 800.0f;
 constexpr float kResonance = 0.7f;
 
-using filters_t = std::vector<daisysp::Svf>;
+using filter_t = daisysp::Svf;
 
 class MorphFilter : public IEffect {
 public:
@@ -21,10 +21,13 @@ public:
 	void setMorph(float morph);
 private:
 	void channelResizeTo(size_t size);
-	filters_t filters_;
-	double sample_rate_ = 44100.0;
-	float morph_target_ = 0.0f;
-	float morph_smoothed_ = 0.0f;
+	struct ChannelState {
+		filter_t filter;
+	};
+	std::vector<ChannelState> channels_;
+
+	Smoothed morph_;
+	double sample_rate_ = kSampleRateDefault;
 };
 
 
