@@ -20,6 +20,7 @@
 using namespace Steinberg::Vst;
 using namespace Steinberg;
 
+using extractors_t = std::vector<std::unique_ptr<IFeatureExtractor>>;
 
 /**
  * @brief Custom implementation of the VSTSDK @ref EditController
@@ -74,8 +75,14 @@ public:
 	tresult PLUGIN_API connect(IConnectionPoint* other) override;
 
 private:
+	template <typename T, typename... Args>
+	void addExtractor(Args&&... args);
+
 	void flushPendingParams();
 	void resetInternalParams();
+	void instantiateExtractors();
+	void registerExtractors() const;
+
 	std::mutex pending_mutex_;
 	std::vector<FeatureParamUpdate> pending_params_;
 	std::atomic<bool> flush_scheduled_{false};
@@ -84,9 +91,8 @@ private:
 	bool is_video_preview_mode_ = false;
 	VSTGUI::UTF8String video_path_ = "";
 	pcont_t playback_controller_ = nullptr;
-	std::unique_ptr<BrightnessFeatureExtractor> brightness_feature_extractor_ = nullptr;
-	std::unique_ptr<DepthFeatureExtractor> depth_feature_extractor_ = nullptr;
-	std::unique_ptr<MotionFeatureExtractor> motion_feature_extractor_ = nullptr;
+
+	extractors_t extractors_;
 };
 
 using controller_t = Steinberg::Vst::EditController*;

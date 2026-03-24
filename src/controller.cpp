@@ -121,24 +121,42 @@ tresult PLUGIN_API PluginController::setParamNormalized(ParamID tag, ParamValue 
     return EditController::setParamNormalized(tag, value);
 }
 
+template<typename T, typename... Args>
+void PluginController::addExtractor(Args&&... args) {
+    extractors_.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+    extractors_.back()->setFeatureSink(this);
+}
+
+void PluginController::instantiateExtractors() {
+    extractors_.clear();
+
+    addExtractor<BrightnessFeatureExtractor>(kParamBrightness);
+    addExtractor<DepthFeatureExtractor>(kParamDepth);
+    addExtractor<MotionFeatureExtractor>(kParamMotionContinuous, kParamMotionBurst);
+}
+
+void PluginController::registerExtractors() const {
+    if (!playback_controller_)
+        return;
+
+    for (const auto& extractor : extractors_) {
+        if (auto* receiver = dynamic_cast<IFrameReceiver*>(extractor.get())) {
+            playback_controller_->registerReceiver(receiver);
+        }
+    }
+}
+
 void PluginController::setupPlayback(const VSTGUI::UTF8String& path) {
     auto frame_queue = std::make_shared<FrameQueue>();
 
     auto ticker = std::make_unique<FrameTicker>();
     ticker->setQueue(frame_queue);
 
-    brightness_feature_extractor_ = std::make_unique<BrightnessFeatureExtractor>(kParamBrightness);
-    brightness_feature_extractor_->setFeatureSink(this);
-    depth_feature_extractor_ = std::make_unique<DepthFeatureExtractor>(kParamDepth);
-    depth_feature_extractor_->setFeatureSink(this);
-    motion_feature_extractor_ = std::make_unique<MotionFeatureExtractor>(kParamMotionContinuous, kParamMotionBurst);
-    motion_feature_extractor_->setFeatureSink(this);
+    instantiateExtractors();
 
     playback_controller_ = std::make_shared<PlaybackController>(path.data(), std::move(frame_queue), std::move(ticker));
 
-    playback_controller_->registerReceiver(brightness_feature_extractor_.get());
-    playback_controller_->registerReceiver(depth_feature_extractor_.get());
-    playback_controller_->registerReceiver(motion_feature_extractor_.get());
+    registerExtractors();
     playback_controller_->setParamListeners(this);
 
     video_path_ = path;
@@ -151,9 +169,7 @@ void PluginController::cleanUpPlayback() {
         playback_controller_.reset();
     }
 
-    brightness_feature_extractor_.reset();
-    depth_feature_extractor_.reset();
-    motion_feature_extractor_.reset();
+    extractors_.clear();
 
     resetInternalParams();
 
