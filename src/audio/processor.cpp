@@ -19,6 +19,8 @@
 #include "../parameterdefaults.hpp"
 
 #include "daisysp.h"
+#include "effects/ringmodulator.hpp"
+#include "effects/saturationexciter.hpp"
 #include "effects/spatialecho.hpp"
 #include "effects/wavephaser.hpp"
 
@@ -39,6 +41,14 @@ void PluginProcessor::createEffects() {
     auto& filter_unit = effect_chain_.emplace_back();
     filter_unit.effect = std::make_unique<MorphFilter>();
     filter_unit.intensity_param_id = kParamBrightnessIntensity;
+
+    auto& ring_unit = effect_chain_.emplace_back();
+    ring_unit.effect = std::make_unique<RingModulator>();
+    ring_unit.intensity_param_id = kParamColorIntensity;
+
+    auto& exciter_unit = effect_chain_.emplace_back();
+    exciter_unit.effect = std::make_unique<SaturationExciter>();
+    exciter_unit.intensity_param_id = kParamSaturationIntensity;
 
     auto& phaser_unit = effect_chain_.emplace_back();
     phaser_unit.effect = std::make_unique<WavePhaser>();
@@ -93,6 +103,30 @@ void PluginProcessor::setupEffects(ProcessSetup& setup) {
             parameter_router_[kParamDepth].push_back({
                 [echo](float value) {
                     echo->setSpaceLevel(value);
+                }
+            });
+        }
+        if (auto* ring = dynamic_cast<RingModulator*>(unit.effect.get())) {
+            parameter_router_[kParamColorRed].push_back({
+                [ring](float value) {
+                    ring->setR(value);
+                }
+            });
+            parameter_router_[kParamColorGreen].push_back({
+                [ring](float value) {
+                    ring->setG(value);
+                }
+            });
+            parameter_router_[kParamColorBlue].push_back({
+                [ring](float value) {
+                    ring->setB(value);
+                }
+            });
+        }
+        if (auto* exciter = dynamic_cast<SaturationExciter*>(unit.effect.get())) {
+            parameter_router_[kParamSaturation].push_back({
+                [exciter](float value) {
+                    exciter->setSaturation(value);
                 }
             });
         }

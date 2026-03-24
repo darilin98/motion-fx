@@ -98,6 +98,10 @@ add_library(motion_fx_dsp
         audio/effects/spatialecho.hpp
         audio/effects/wavephaser.cpp
         audio/effects/wavephaser.hpp
+        audio/effects/ringmodulator.cpp
+        audio/effects/ringmodulator.hpp
+        audio/effects/saturationexciter.cpp
+        audio/effects/saturationexciter.hpp
 )
 
 target_include_directories(motion_fx_dsp PUBLIC
