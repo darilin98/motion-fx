@@ -19,6 +19,12 @@ enum AudioParamID : Steinberg::Vst::ParamID {
     kParamMotionContinuous,
     kParamMotionBurst,
     kParamMotionIntensity,
+    kParamColorRed,
+    kParamColorGreen,
+    kParamColorBlue,
+    kParamColorIntensity,
+    kParamSaturation,
+    kParamSaturationIntensity,
 };
 
 /**
@@ -57,7 +63,10 @@ namespace ParamDefaults {
     constexpr double kBrightness = 0.5;
     constexpr double kDepth = 0.0;
     constexpr double kIntensity = 0.5;
+    constexpr double kColorIntensity = 0.0;
     constexpr double kMotion = 0.0;
+    constexpr double kColor = 0.0;
+    constexpr double kSaturation = 0.0;
 }
 
 #endif //PARAMETERDEFAULTS_HPP

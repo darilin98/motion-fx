@@ -53,7 +53,7 @@ FeatureResult MotionFeatureExtractor::extract(const VideoFrame& videoFrame) {
     prev_frame_ = rgba;
 
     float raw_motion = float(active_pixels) / float(samples);
-    raw_motion *= 2.0f;
+    raw_motion *= 3.0f;
     raw_motion = std::clamp(raw_motion, 0.0f, 1.0f);
 
     const float cont_alpha = 0.1f;

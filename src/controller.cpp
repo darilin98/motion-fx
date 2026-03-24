@@ -9,6 +9,8 @@
 #include "base/source/fstreamer.h"
 #include "vstgui/lib/vstguiinit.h"
 #include "ui/motionfxeditor.hpp"
+#include "video/features/colorfeatureextractor.hpp"
+#include "video/features/saturationfeatureextractor.hpp"
 
 tresult PLUGIN_API PluginController::initialize(FUnknown* context)
 {
@@ -34,6 +36,13 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
     parameters.addParameter(STR16("MotionContinuous"), nullptr, 1, ParamDefaults::kMotion, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamMotionContinuous);
     parameters.addParameter(STR16("MotionBurst"), nullptr, 1, ParamDefaults::kMotion, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamMotionBurst);
 
+    parameters.addParameter(STR16("ColorIntensity"), nullptr, 1, ParamDefaults::kColorIntensity, ParameterInfo::kCanAutomate, kParamColorIntensity);
+    parameters.addParameter(STR16("ColorRed"), nullptr, 1, ParamDefaults::kColor, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamColorRed);
+    parameters.addParameter(STR16("ColorGreen"), nullptr, 1, ParamDefaults::kColor, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamColorGreen);
+    parameters.addParameter(STR16("ColorBlue"), nullptr, 1, ParamDefaults::kColor, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamColorBlue);
+
+    parameters.addParameter(STR16("SaturationIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamSaturationIntensity);
+    parameters.addParameter(STR16("Saturation"), nullptr, 1, ParamDefaults::kSaturation, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamSaturation);
     return kResultOk;
 }
 
@@ -133,6 +142,8 @@ void PluginController::instantiateExtractors() {
     addExtractor<BrightnessFeatureExtractor>(kParamBrightness);
     addExtractor<DepthFeatureExtractor>(kParamDepth);
     addExtractor<MotionFeatureExtractor>(kParamMotionContinuous, kParamMotionBurst);
+    addExtractor<ColorFeatureExtractor>(kParamColorRed, kParamColorGreen, kParamColorBlue);
+    addExtractor<SaturationFeatureExtractor>(kParamSaturation);
 }
 
 void PluginController::registerExtractors() const {
@@ -264,6 +275,10 @@ void PluginController::resetInternalParams() {
         {kParamDepth, ParamDefaults::kDepth},
         {kParamMotionContinuous, ParamDefaults::kMotion},
         {kParamMotionBurst, ParamDefaults::kMotion},
+        {kParamColorRed, ParamDefaults::kColor},
+        {kParamColorGreen, ParamDefaults::kColor},
+        {kParamColorBlue, ParamDefaults::kColor},
+        {kParamSaturation, ParamDefaults::kSaturation},
     };
 
     if (auto* handler = getComponentHandler()) {

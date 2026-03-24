@@ -148,6 +148,10 @@ set(SOURCES
         video/features/depthfeatureextractor.hpp
         video/features/motionfeatureextractor.cpp
         video/features/motionfeatureextractor.hpp
+        video/features/colorfeatureextractor.cpp
+        video/features/colorfeatureextractor.hpp
+        video/features/saturationfeatureextractor.cpp
+        video/features/saturationfeatureextractor.hpp
         utils.hpp
 )
 
