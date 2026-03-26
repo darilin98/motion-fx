@@ -9,7 +9,7 @@
 
 constexpr float kExciterHighpassFreq = 3000.0f;
 constexpr float kExciterResonance = 0.3f;
-constexpr float kExciterDriveMax = 0.7f;
+constexpr float kExciterDriveMax = 0.5f;
 
 using filter_t = daisysp::Svf;
 using overdrive_t = daisysp::Overdrive;
