@@ -9,19 +9,17 @@
 #include "ieffect.hpp"
 
 constexpr float kContSmooth = 0.05f;
-constexpr float kBurstSmooth = 0.1f;
 
 constexpr float kMinLfo = 0.1f;
 constexpr float kMaxLfo = 5.0f;
 
 using phaser_t = daisysp::Phaser;
 
-class WavePhaser : public IEffect{
+class WavePhaser : public IEffect {
 public:
 	void init(Steinberg::Vst::ProcessSetup setup) override;
 	void process(float* buffer, int32_t numSamples, int32_t channel) override;
 	void setContinuous(float value);
-	void setBurst(float value);
 private:
 	void channelResizeTo(size_t size);
 
@@ -32,7 +30,6 @@ private:
 	std::vector<ChannelState> channels_;
 
 	Smoothed continuous_;
-	Smoothed burst_;
 	double sample_rate_ = kSampleRateDefault;
 };
 

@@ -8,10 +8,6 @@ void WavePhaser::setContinuous(float value) {
 	continuous_.target = std::clamp(value, 0.0f, 1.0f);
 }
 
-void WavePhaser::setBurst(float value) {
-	burst_.target = std::clamp(value, 0.0f, 1.0f);
-}
-
 void WavePhaser::init(Steinberg::Vst::ProcessSetup setup) {
 	sample_rate_ = setup.sampleRate;
 	channelResizeTo(kChannelCountDefault);
@@ -23,7 +19,7 @@ void WavePhaser::channelResizeTo(size_t size) {
 		c.phaser.Init(sample_rate_);
 		c.phaser.SetPoles(4);
 		c.phaser.SetFreq(1000.0f);
-		c.phaser.SetLfoDepth(0.0f);
+		c.phaser.SetLfoDepth(0.3f);
 		c.phaser.SetLfoFreq(0.1f);
 		c.phaser.SetFeedback(0.0f);
 	}
@@ -44,18 +40,14 @@ void WavePhaser::process(float* buffer, int32_t numSamples, int32_t channel) {
 
 	for (int32_t i = 0; i < numSamples; i++) {
 		continuous_.value += kContSmooth * (continuous_.target - continuous_.value);
-		burst_.value += kBurstSmooth * (burst_.target - burst_.value);
 
 		const float lfoFreq  = kMinLfo + continuous_.value * (kMaxLfo - kMinLfo);
-		const float lfoDepth = std::clamp(continuous_.value + burst_.value, 0.0f, 1.0f);
-		const float feedback = burst_.value * 0.25f;
+		const float phaserMix = std::clamp(continuous_.value, 0.0f, 1.0f);
 
 		ph.SetLfoFreq(lfoFreq);
-		ph.SetLfoDepth(lfoDepth);
-		ph.SetFeedback(feedback);
 
 		float dry = buffer[i];
 		float wet = ph.Process(dry);
-		buffer[i] = softClip(dry * (1.0f - lfoDepth) + wet * lfoDepth);
+		buffer[i] = softClip(dry * (1.0f - phaserMix) + wet * phaserMix);
 	}
 }
