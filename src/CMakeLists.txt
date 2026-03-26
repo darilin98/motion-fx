@@ -102,6 +102,8 @@ add_library(motion_fx_dsp
         audio/effects/ringmodulator.hpp
         audio/effects/saturationexciter.cpp
         audio/effects/saturationexciter.hpp
+        audio/effects/wavepanner.cpp
+        audio/effects/wavepanner.hpp
 )
 
 target_include_directories(motion_fx_dsp PUBLIC
