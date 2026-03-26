@@ -36,7 +36,8 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
     parameters.addParameter(STR16("MotionContinuous"), nullptr, 1, ParamDefaults::kMotion, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamMotionContinuous);
     parameters.addParameter(STR16("MotionBurst"), nullptr, 1, ParamDefaults::kMotion, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamMotionBurst);
 
-    parameters.addParameter(STR16("ColorIntensity"), nullptr, 1, ParamDefaults::kColorIntensity, ParameterInfo::kCanAutomate, kParamColorIntensity);
+    parameters.addParameter(STR16("ColorIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamColorIntensity);
+    parameters.addParameter(STR16("ColorBaseFrequency"), STR16("Hz"), 0, ParamDefaults::kColorFreq, ParameterInfo::kCanAutomate, kParamColorFrequency);
     parameters.addParameter(STR16("ColorRed"), nullptr, 1, ParamDefaults::kColor, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamColorRed);
     parameters.addParameter(STR16("ColorGreen"), nullptr, 1, ParamDefaults::kColor, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamColorGreen);
     parameters.addParameter(STR16("ColorBlue"), nullptr, 1, ParamDefaults::kColor, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamColorBlue);
@@ -292,6 +293,43 @@ void PluginController::resetInternalParams() {
             setParamNormalized(param.first, param.second);
     }
 }
+
+tresult PLUGIN_API PluginController::getParamStringByValue(const ParamID id, const ParamValue valueNormalized, String128 string)
+{
+    if (id == kParamColorFrequency) {
+        double hz = getHzFromNormalized(valueNormalized);
+
+        char buf[64];
+        if (hz >= 1000.0)
+            snprintf(buf, sizeof(buf), "%.2f kHz", hz / 1000.0);
+        else
+            snprintf(buf, sizeof(buf), "%.1f Hz", hz);
+
+        Steinberg::UString(string, 128).fromAscii(buf);
+        return kResultTrue;
+    }
+    return EditController::getParamStringByValue(id, valueNormalized, string);
+}
+
+tresult PluginController::getParamValueByString(ParamID id, TChar* string, ParamValue& valueNormalized) {
+    if (id == kParamColorFrequency) {
+        char buf[64];
+        Steinberg::UString(string, 128).toAscii(buf, sizeof(buf));
+
+        try {
+            double hz = std::stod(buf);
+            hz = std::clamp(hz, kHzLowerBound, kHzUpperBound);
+
+            valueNormalized = (std::log(hz) - std::log(kHzLowerBound)) / (std::log(kHzUpperBound) - std::log(kHzLowerBound));
+
+            return kResultTrue;
+        } catch (...) {
+            return kResultFalse;
+        }
+    }
+    return EditController::getParamValueByString(id, string, valueNormalized);
+}
+
 
 
 

@@ -22,6 +22,7 @@
 #include "effects/ringmodulator.hpp"
 #include "effects/saturationexciter.hpp"
 #include "effects/spatialecho.hpp"
+#include "effects/wavepanner.hpp"
 #include "effects/wavephaser.hpp"
 
 tresult PLUGIN_API PluginProcessor::initialize(FUnknown *context) {
@@ -38,6 +39,10 @@ tresult PLUGIN_API PluginProcessor::initialize(FUnknown *context) {
 }
 
 void PluginProcessor::createEffects() {
+    auto& panner_unit = effect_chain_.emplace_back();
+    panner_unit.effect = std::make_unique<WavePanner>();
+    panner_unit.intensity_param_id = kParamMotionIntensity;
+
     auto& filter_unit = effect_chain_.emplace_back();
     filter_unit.effect = std::make_unique<MorphFilter>();
     filter_unit.intensity_param_id = kParamBrightnessIntensity;
@@ -84,6 +89,13 @@ void PluginProcessor::setupEffects(ProcessSetup& setup) {
             }
         });
 
+        if (auto* panner = dynamic_cast<WavePanner*>(unit.effect.get())) {
+            parameter_router_[kParamMotionBurst].push_back({
+                [panner](float value) {
+                    panner->setBurst(value);
+                }
+            });
+        }
         if (auto* filter = dynamic_cast<MorphFilter*>(unit.effect.get())) {
             registerFilterBindings(filter);
         }
@@ -91,11 +103,6 @@ void PluginProcessor::setupEffects(ProcessSetup& setup) {
             parameter_router_[kParamMotionContinuous].push_back({
                 [phaser](float value) {
                     phaser->setContinuous(value);
-                }
-            });
-            parameter_router_[kParamMotionBurst].push_back({
-                [phaser](float value) {
-                    phaser->setBurst(value);
                 }
             });
         }
@@ -120,6 +127,11 @@ void PluginProcessor::setupEffects(ProcessSetup& setup) {
             parameter_router_[kParamColorBlue].push_back({
                 [ring](float value) {
                     ring->setB(value);
+                }
+            });
+            parameter_router_[kParamColorFrequency].push_back({
+                [ring](float value) {
+                    ring->setBase(value);
                 }
             });
         }

@@ -25,6 +25,7 @@ enum AudioParamID : Steinberg::Vst::ParamID {
     kParamColorIntensity,
     kParamSaturation,
     kParamSaturationIntensity,
+    kParamColorFrequency,
 };
 
 /**
@@ -56,6 +57,17 @@ inline bool isControlParam(Steinberg::Vst::ParamID id) noexcept {
     }
 }
 
+constexpr double kHzLowerBound = 55.0;
+constexpr double kHzUpperBound = 10000.0;
+
+inline double getHzFromNormalized(const double normalized) {
+    return std::exp(std::log(kHzLowerBound) + normalized * (std::log(kHzUpperBound) - std::log(kHzLowerBound)));
+}
+
+inline double getNormalizedFromHz(const double hz) {
+    return (std::log(hz) - std::log(kHzLowerBound)) / (std::log(kHzUpperBound) - std::log(kHzLowerBound));
+}
+
 /**
  * @brief Encapsulates the default values of plugin parameters.
  */
@@ -67,6 +79,8 @@ namespace ParamDefaults {
     constexpr double kMotion = 0.0;
     constexpr double kColor = 0.0;
     constexpr double kSaturation = 0.0;
+    const double kColorFreq = getNormalizedFromHz(440.0);
 }
+
 
 #endif //PARAMETERDEFAULTS_HPP

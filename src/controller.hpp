@@ -14,8 +14,6 @@
 #include "audio/modulationcurve.hpp"
 #include "video/features/depthfeatureextractor.hpp"
 #include "video/features/motionfeatureextractor.hpp"
-//#include "parameterdefaults.hpp"
-
 
 using namespace Steinberg::Vst;
 using namespace Steinberg;
@@ -60,6 +58,12 @@ public:
 
 	tresult PLUGIN_API setParamNormalized(ParamID tag, ParamValue value) SMTG_OVERRIDE;
 
+	tresult PLUGIN_API connect(IConnectionPoint* other) override;
+
+	tresult PLUGIN_API getParamStringByValue(ParamID id, ParamValue valueNormalized, String128 string) override;
+
+	tresult PLUGIN_API getParamValueByString(ParamID id, TChar* string, ParamValue& valueNormalized) override;
+
 	void setupPlayback(const VSTGUI::UTF8String& path);
 
 	void cleanUpPlayback();
@@ -71,8 +75,6 @@ public:
 	void onVideoFinished() const;
 
 	void onFeatureResult(const FeatureResult& result) override;
-
-	tresult PLUGIN_API connect(IConnectionPoint* other) override;
 
 private:
 	template <typename T, typename... Args>

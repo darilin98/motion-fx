@@ -3,10 +3,17 @@
 //
 
 #include "ringmodulator.hpp"
+#include "../../parameterdefaults.hpp"
 
 void RingModulator::setR(float r) { r_.target = std::clamp(r, 0.f, 1.f); }
 void RingModulator::setG(float g) { g_.target = std::clamp(g, 0.f, 1.f); }
 void RingModulator::setB(float b) { b_.target = std::clamp(b, 0.f, 1.f); }
+
+void RingModulator::setBase(float base) {
+    base_freq_ = getHzFromNormalized(std::clamp(base, 0.f, 1.f));
+    freq_dirty_ = true;
+}
+
 
 void RingModulator::init(Steinberg::Vst::ProcessSetup setup) {
     sample_rate_ = setup.sampleRate;
@@ -19,7 +26,7 @@ void RingModulator::channelResizeTo(size_t size) {
     auto initOsc = [&](oscillator_t& osc, float ratio) {
         osc.Init(sample_rate_);
         osc.SetWaveform(daisysp::Oscillator::WAVE_SIN);
-        osc.SetFreq(kBaseFreq * ratio);
+        osc.SetFreq(base_freq_ * ratio);
         osc.SetAmp(1.0f);
     };
 
@@ -33,6 +40,18 @@ void RingModulator::channelResizeTo(size_t size) {
 void RingModulator::process(float* buffer, int32_t numSamples, int32_t channel) {
     if (channel >= channels_.size()) {
         channelResizeTo(channel + 1);
+    }
+
+    if (freq_dirty_) {
+        auto changeFreq = [&](oscillator_t& osc, float ratio) {
+            osc.SetFreq(base_freq_ * ratio);
+        };
+        for (auto& ch : channels_) {
+            changeFreq(ch.osc_r, kRatioR);
+            changeFreq(ch.osc_g, kRatioG);
+            changeFreq(ch.osc_b, kRatioB);
+        }
+        freq_dirty_ = false;
     }
 
     auto& osc_r = channels_[channel].osc_r;
@@ -53,7 +72,8 @@ void RingModulator::process(float* buffer, int32_t numSamples, int32_t channel) 
 
         // normalize
         // TODO: possibly single color might be too quiet due to this
-        float wet = (mod_r + mod_g + mod_b) / 3.f;
+        float weight = r_.value + g_.value + b_.value;
+        float wet = (weight > 1e-6f) ? (mod_r + mod_g + mod_b) / weight : 0.0f;
 
         // Dry/Wet blend, black = dry signal
         float energy = (r_.value + g_.value + b_.value) / 3.f;

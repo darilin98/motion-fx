@@ -6,13 +6,11 @@
 #define RINGMODULATOR_HPP
 #include "ieffect.hpp"
 #include "daisysp.h"
+#include "parameterdefaults.hpp"
 
 constexpr float kRatioR = 1.5f; // perfect fifth
 constexpr float kRatioG = 1.25f; // major third
 constexpr float kRatioB = 2.0f; // octave
-
-// TODO: Might be worth to expose this? Determines the chord
-constexpr float kBaseFreq = 220.0f;
 
 using oscillator_t = daisysp::Oscillator;
 
@@ -24,6 +22,7 @@ public:
 	void setR(float r);
 	void setG(float g);
 	void setB(float b);
+	void setBase(float base);
 private:
 	void channelResizeTo(size_t size);
 	struct ChannelState {
@@ -33,6 +32,8 @@ private:
 	};
 	std::vector<ChannelState> channels_;
 
+	double base_freq_ = getHzFromNormalized(ParamDefaults::kColorFreq);
+	bool freq_dirty_ = false;
 	Smoothed r_, g_, b_;
 	double sample_rate_ = kSampleRateDefault;
 };
