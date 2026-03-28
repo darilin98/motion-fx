@@ -183,7 +183,7 @@ bool VideoDecoder::tryDecodeNext(VideoFrame& outFrame) {
         } else if (reached_eof_) {
             ret = avcodec_send_packet(codec_ctx_, nullptr);
             if (ret < 0) {
-                std::cerr << "VideoDecoder: avcodec_send_packet (flush) failed: " << av_err2str(ret) << "\n";
+                std::cerr << "VideoDecoder: avcodec_send_packet (flush) failed" << ret << "\n";
                 return false;
             }
         } else {

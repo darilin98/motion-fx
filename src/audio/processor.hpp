@@ -5,6 +5,7 @@
 #ifndef PROCESSOR_HPP
 #define PROCESSOR_HPP
 
+#include <mutex>
 #include "modulationcurve.hpp"
 #include "parameterextraction.hpp"
 #include "effects/ieffect.hpp"

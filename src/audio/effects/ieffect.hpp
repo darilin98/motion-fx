@@ -6,6 +6,7 @@
 #define IEFFECT_HPP
 #include <memory>
 #include <vector>
+#include <algorithm>
 
 #include "vst/vsttypes.h"
 #include "vst/ivstaudioprocessor.h"

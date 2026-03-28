@@ -106,13 +106,15 @@ void MediaView::frameToBitmap(const VideoFrame& frame)
 				const uint8_t b = *src++;
 				const uint8_t a = *src++;
 
-				const uint32_t val =
-					static_cast<uint32_t>(b) << 24 |
-					static_cast<uint32_t>(g) << 16 |
-					static_cast<uint32_t>(r) << 8  |
-					static_cast<uint32_t>(a);
+				auto packPixel = [](uint8_t r, uint8_t g, uint8_t b, uint8_t a) -> uint32_t {
+				#if defined(_WIN32)
+					return (uint32_t)a << 24 | (uint32_t)r << 16 | (uint32_t)g << 8 | (uint32_t)b; // BGRA
+				#else
+					return (uint32_t)b << 24 | (uint32_t)g << 16 | (uint32_t)r << 8 | (uint32_t)a; // ARGB
+				#endif
+				};
 
-				access->setValue(val);
+				access->setValue(packPixel(r, g, b, a));
 
 				++(*access);
 			}

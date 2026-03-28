@@ -5,15 +5,15 @@
 #ifndef CONTROLLER_HPP
 #define CONTROLLER_HPP
 
+#include <mutex>
 #include "base/source/fstring.h"
 #include "public.sdk/source/vst/vsteditcontroller.h"
 #include "vstgui4/vstgui/plugin-bindings/vst3editor.h"
 #include "public.sdk/source/main/moduleinit.h"
 #include "video/playbackcontroller.hpp"
-#include "video/features/brightnessfeatureextractor.hpp"
 #include "audio/modulationcurve.hpp"
-#include "video/features/depthfeatureextractor.hpp"
-#include "video/features/motionfeatureextractor.hpp"
+#include "video/features/ifeatureextractor.hpp"
+
 
 using namespace Steinberg::Vst;
 using namespace Steinberg;

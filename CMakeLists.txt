@@ -6,15 +6,29 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(FetchContent)
 
 if(WIN32)
+    set(SMTG_RUN_VST_VALIDATOR OFF CACHE BOOL "" FORCE)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/Zc:char8_t->")
+    add_compile_definitions(_USE_MATH_DEFINES)
+
+    set(MSVC_COMPAT_HEADER "${CMAKE_BINARY_DIR}/msvc_compat.h")
+    file(WRITE "${CMAKE_BINARY_DIR}/msvc_compat.h"
+            "#pragma once\n#define __attribute__(x)\n")
+    add_compile_options(/FI${MSVC_COMPAT_HEADER})
 endif()
 
+if(WIN32)
+project(motion-fx
+        VERSION 1.0.0
+        DESCRIPTION "Motion-based FX modulator"
+        LANGUAGES CXX C
+)
+else()
 project(motion-fx
         VERSION 1.0.0
         DESCRIPTION "Motion-based FX modulator"
         LANGUAGES CXX C OBJC OBJCXX
 )
+endif()
 
 FetchContent_Declare(
         Catch2

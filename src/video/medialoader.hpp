@@ -8,6 +8,7 @@
 #define MEDIALOADER_HPP
 
 #include <functional>
+#include <string>
 #include <thread>
 #include <utility>
 

@@ -10,6 +10,9 @@
 #include "vstgui/lib/vstguiinit.h"
 #include "ui/motionfxeditor.hpp"
 #include "video/features/colorfeatureextractor.hpp"
+#include "video/features/motionfeatureextractor.hpp"
+#include "video/features/brightnessfeatureextractor.hpp"
+#include "video/features/depthfeatureextractor.hpp"
 #include "video/features/saturationfeatureextractor.hpp"
 
 tresult PLUGIN_API PluginController::initialize(FUnknown* context)

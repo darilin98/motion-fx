@@ -9,6 +9,8 @@
 #include "iframereceiver.hpp"
 
 #include <thread>
+#include <mutex>
+#include <functional>
 
 /**
  * @brief The driving consumer of the video pipeline.

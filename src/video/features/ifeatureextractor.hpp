@@ -5,6 +5,7 @@
 #ifndef IFEATUREEXTRACTOR_HPP
 #define IFEATUREEXTRACTOR_HPP
 
+#include <algorithm>
 #include "ifeaturesink.hpp"
 #include "vstparameters.h"
 #include "../videoframe.hpp"

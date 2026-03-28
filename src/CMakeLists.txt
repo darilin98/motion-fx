@@ -3,6 +3,8 @@
 #-------------------------------------------------------------------------------
 
 set(SMTG_ENABLE_VST3_PLUGIN_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(SMTG_ENABLE_VST3_HOSTING_EXAMPLES ON CACHE BOOL "" FORCE)
+set(SMTG_CREATE_PLUGIN_LINK ON CACHE BOOL "" FORCE)
 
 # Fetch the VST3 SDK
 FetchContent_Declare(
@@ -16,45 +18,58 @@ set(VST3_SDK_PATH ${vst3sdk_SOURCE_DIR})
 smtg_enable_vst3_sdk()
 
 #-------------------------------------------------------------------------------
-# Find local ffmpeg installation (temporary during dev time)
+# Find local ffmpeg installation
 #-------------------------------------------------------------------------------
 
-if(DEFINED ENV{HOMEBREW_PREFIX})
-    set(HOMEBREW_PREFIX $ENV{HOMEBREW_PREFIX})
+if(WIN32)
+    set(VCPKG_APPLOCAL_DEPS OFF)
+    # vcpkg path — find_package works when CMAKE_TOOLCHAIN_FILE points to vcpkg
+    find_package(FFMPEG REQUIRED COMPONENTS avcodec avformat avutil swscale)
+    set(FFMPEG_INCLUDES  ${FFMPEG_INCLUDE_DIRS})
+    set(FFMPEG_LIB_DIRS  ${FFMPEG_LIBRARY_DIRS})
+    set(FFMPEG_LIBS_PKG  ${FFMPEG_LIBRARIES})
+
 else()
-    set(HOMEBREW_PREFIX /opt/homebrew)
+    # macOS / Linux: use pkg-config via Homebrew or system install ---
+
+    if(APPLE)
+        if(DEFINED ENV{HOMEBREW_PREFIX})
+            set(HOMEBREW_PREFIX $ENV{HOMEBREW_PREFIX})
+        else()
+            set(HOMEBREW_PREFIX /opt/homebrew)
+        endif()
+
+        set(ENV{PKG_CONFIG_PATH}
+                "$ENV{PKG_CONFIG_PATH}:${HOMEBREW_PREFIX}/lib/pkgconfig:${HOMEBREW_PREFIX}/share/pkgconfig")
+        set(ENV{PATH} "$ENV{PATH}:${HOMEBREW_PREFIX}/bin")
+    endif()
+
+    find_package(PkgConfig REQUIRED)
+
+    pkg_check_modules(AVCODEC  REQUIRED libavcodec)
+    pkg_check_modules(AVFORMAT REQUIRED libavformat)
+    pkg_check_modules(AVUTIL   REQUIRED libavutil)
+    pkg_check_modules(SWSCALE  REQUIRED libswscale)
+
+    set(FFMPEG_INCLUDES
+            ${AVCODEC_INCLUDE_DIRS}
+            ${AVFORMAT_INCLUDE_DIRS}
+            ${AVUTIL_INCLUDE_DIRS}
+            ${SWSCALE_INCLUDE_DIRS}
+    )
+    set(FFMPEG_LIBS_PKG
+            ${AVCODEC_LIBRARIES}
+            ${AVFORMAT_LIBRARIES}
+            ${AVUTIL_LIBRARIES}
+            ${SWSCALE_LIBRARIES}
+    )
+    set(FFMPEG_LIB_DIRS
+            ${AVCODEC_LIBRARY_DIRS}
+            ${AVFORMAT_LIBRARY_DIRS}
+            ${AVUTIL_LIBRARY_DIRS}
+            ${SWSCALE_LIBRARY_DIRS}
+    )
 endif()
-
-set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${HOMEBREW_PREFIX}/lib/pkgconfig:${HOMEBREW_PREFIX}/share/pkgconfig")
-set(ENV{PATH} "$ENV{PATH}:${HOMEBREW_PREFIX}/bin")
-
-find_package(PkgConfig REQUIRED)
-
-pkg_check_modules(AVCODEC REQUIRED libavcodec)
-pkg_check_modules(AVFORMAT REQUIRED libavformat)
-pkg_check_modules(AVUTIL REQUIRED libavutil)
-pkg_check_modules(SWSCALE REQUIRED libswscale)
-
-set(FFMPEG_INCLUDES
-        ${AVCODEC_INCLUDE_DIRS}
-        ${AVFORMAT_INCLUDE_DIRS}
-        ${AVUTIL_INCLUDE_DIRS}
-        ${SWSCALE_INCLUDE_DIRS}
-)
-
-set(FFMPEG_LIBS_PKG
-        ${AVCODEC_LIBRARIES}
-        ${AVFORMAT_LIBRARIES}
-        ${AVUTIL_LIBRARIES}
-        ${SWSCALE_LIBRARIES}
-)
-
-set(FFMPEG_LIB_DIRS
-        ${AVCODEC_LIBRARY_DIRS}
-        ${AVFORMAT_LIBRARY_DIRS}
-        ${AVUTIL_LIBRARY_DIRS}
-        ${SWSCALE_LIBRARY_DIRS}
-)
 
 message(STATUS "FFmpeg include dirs: ${FFMPEG_INCLUDES}")
 message(STATUS "FFmpeg library dirs: ${FFMPEG_LIB_DIRS}")
@@ -220,8 +235,45 @@ smtg_target_add_plugin_resources(motion-fx
 )
 
 #-------------------------------------------------------------------------------
-# Bundle FFmpeg dylibs + fix rpaths (macOS Release)
+# Bundle FFmpeg dylibs
 #-------------------------------------------------------------------------------
+
+if(WIN32)
+    if(MSVC)
+        target_sources(motion-fx PRIVATE windllload.cpp)
+        target_link_libraries(motion-fx PRIVATE delayimp.lib)
+        target_link_options(motion-fx PRIVATE
+                /DELAYLOAD:avcodec-62.dll
+                /DELAYLOAD:avformat-62.dll
+                /DELAYLOAD:avutil-60.dll
+                /DELAYLOAD:swscale-9.dll
+                /DELAYLOAD:swresample-6.dll
+        )
+    endif()
+
+    list(GET FFMPEG_LIB_DIRS 0 FFMPEG_LIB_DIR_RELEASE)
+    get_filename_component(VCPKG_BIN "${FFMPEG_LIB_DIR_RELEASE}/../bin" ABSOLUTE)
+    message(STATUS "VCPKG bin dir: ${VCPKG_BIN}")
+
+    file(GLOB FFMPEG_DLLS
+            "${VCPKG_BIN}/avcodec-*.dll"
+            "${VCPKG_BIN}/avformat-*.dll"
+            "${VCPKG_BIN}/avutil-*.dll"
+            "${VCPKG_BIN}/swscale-*.dll"
+            "${VCPKG_BIN}/swresample-*.dll"
+    )
+    message(STATUS "FFmpeg DLLs found: ${FFMPEG_DLLS}")
+
+    foreach(dll ${FFMPEG_DLLS})
+        add_custom_command(TARGET motion-fx POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E make_directory
+                "$<TARGET_FILE_DIR:motion-fx>/../../Frameworks"
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${dll} "$<TARGET_FILE_DIR:motion-fx>/../../Frameworks"
+                COMMENT "Copying ${dll} to Frameworks"
+        )
+    endforeach()
+endif()
 
 if(APPLE AND CMAKE_BUILD_TYPE STREQUAL "Release")
 
