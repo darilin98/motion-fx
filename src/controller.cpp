@@ -53,6 +53,7 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
 
 tresult PLUGIN_API PluginController::terminate()
 {
+    if(playback_controller_) playback_controller_->stopPipeline();
     return EditController::terminate();
 }
 
@@ -92,8 +93,6 @@ tresult PLUGIN_API PluginController::setState(IBStream *state)
 
 tresult PLUGIN_API PluginController::getState(IBStream *state)
 {
-    if(playback_controller_) playback_controller_->stopPipeline();
-
     if (!state)
         return kResultFalse;
 
