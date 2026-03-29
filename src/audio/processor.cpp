@@ -22,7 +22,7 @@
 #include "effects/ringmodulator.hpp"
 #include "effects/saturationexciter.hpp"
 #include "effects/spatialecho.hpp"
-#include "effects/wavepanner.hpp"
+#include "effects/noisemaker.hpp"
 #include "effects/wavephaser.hpp"
 
 tresult PLUGIN_API PluginProcessor::initialize(FUnknown *context) {
@@ -39,9 +39,6 @@ tresult PLUGIN_API PluginProcessor::initialize(FUnknown *context) {
 }
 
 void PluginProcessor::createEffects() {
-    auto& panner_unit = effect_chain_.emplace_back();
-    panner_unit.effect = std::make_unique<WavePanner>();
-    panner_unit.intensity_param_id = kParamMotionIntensity;
 
     auto& filter_unit = effect_chain_.emplace_back();
     filter_unit.effect = std::make_unique<MorphFilter>();
@@ -58,6 +55,11 @@ void PluginProcessor::createEffects() {
     auto& phaser_unit = effect_chain_.emplace_back();
     phaser_unit.effect = std::make_unique<WavePhaser>();
     phaser_unit.intensity_param_id = kParamMotionIntensity;
+    
+    auto& noise_unit = effect_chain_.emplace_back();
+    noise_unit.effect = std::make_unique<NoiseMaker>();
+    noise_unit.intensity_param_id = kParamMotionIntensity;
+
 
     auto& echo_unit = effect_chain_.emplace_back();
     echo_unit.effect = std::make_unique<SpatialEcho>();
@@ -89,7 +91,7 @@ void PluginProcessor::setupEffects(ProcessSetup& setup) {
             }
         });
 
-        if (auto* panner = dynamic_cast<WavePanner*>(unit.effect.get())) {
+        if (auto* panner = dynamic_cast<NoiseMaker*>(unit.effect.get())) {
             parameter_router_[kParamMotionBurst].push_back({
                 [panner](float value) {
                     panner->setBurst(value);

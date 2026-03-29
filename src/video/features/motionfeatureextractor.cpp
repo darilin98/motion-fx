@@ -62,11 +62,11 @@ FeatureResult MotionFeatureExtractor::extract(const VideoFrame& videoFrame) {
     float delta = raw_motion - previous_raw_;
     previous_raw_ = raw_motion;
 
-    float burst = std::max(0.0f, delta) * 7.0f; // boost small spikes
+    float burst = std::max(0.0f, delta) * 8.0f; // boost small spikes
     const float burst_alpha = 0.15f;
     burst_motion_ = (1.0f - burst_alpha) * burst_motion_ + burst_alpha * burst;
 
-    burst_motion_ = std::max(0.0f, burst_motion_ * 0.96f); // burst decay
+    burst_motion_ = std::max(0.0f, burst_motion_ * 0.97f); // burst decay
 
     burst_motion_ = std::clamp(burst_motion_, 0.0f, 1.0f);
     continuous_motion_ = std::clamp(continuous_motion_, 0.0f, 1.0f);
