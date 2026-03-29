@@ -19,6 +19,7 @@
 #include "../parameterdefaults.hpp"
 
 #include "daisysp.h"
+#include "utils.hpp"
 #include "effects/ringmodulator.hpp"
 #include "effects/saturationexciter.hpp"
 #include "effects/spatialecho.hpp"
@@ -60,7 +61,6 @@ void PluginProcessor::createEffects() {
     noise_unit.effect = std::make_unique<NoiseMaker>();
     noise_unit.intensity_param_id = kParamMotionIntensity;
 
-
     auto& echo_unit = effect_chain_.emplace_back();
     echo_unit.effect = std::make_unique<SpatialEcho>();
     echo_unit.intensity_param_id = kParamDepthIntensity;
@@ -71,12 +71,27 @@ tresult PLUGIN_API PluginProcessor::setupProcessing(ProcessSetup &setup) {
     if(result != kResultOk)
         return result;
 
-    is_offline_ = setup.processMode == kOffline;
-
     setupEffects(setup);
 
     return kResultOk;
 }
+
+tresult PluginProcessor::setProcessing(TBool state) {
+    if (state) {
+        is_video_playing_ = false;
+        total_samples_ = 0;
+        resetParamsToDefault();
+    }
+    return AudioEffect::setProcessing(state);
+}
+
+
+void PluginProcessor::resetParamsToDefault() {
+    for (auto& [id, defaultValue] : kParamDefaultsMap) {
+        handleDspParam(id, defaultValue);
+    }
+}
+
 
 void PluginProcessor::setupEffects(ProcessSetup& setup) {
     for(auto& unit : effect_chain_) {
@@ -91,15 +106,19 @@ void PluginProcessor::setupEffects(ProcessSetup& setup) {
             }
         });
 
-        if (auto* panner = dynamic_cast<NoiseMaker*>(unit.effect.get())) {
+        if (auto* noise = dynamic_cast<NoiseMaker*>(unit.effect.get())) {
             parameter_router_[kParamMotionBurst].push_back({
-                [panner](float value) {
-                    panner->setBurst(value);
+                [noise](float value) {
+                    noise->setBurst(value);
                 }
             });
         }
         if (auto* filter = dynamic_cast<MorphFilter*>(unit.effect.get())) {
-            registerFilterBindings(filter);
+            parameter_router_[kParamBrightness].push_back({
+            [filter](float value) {
+                    filter->setMorph(value);
+                }
+            });
         }
         if (auto* phaser = dynamic_cast<WavePhaser*>(unit.effect.get())) {
             parameter_router_[kParamMotionContinuous].push_back({
@@ -147,41 +166,7 @@ void PluginProcessor::setupEffects(ProcessSetup& setup) {
     }
 }
 
-void PluginProcessor::registerFilterBindings(MorphFilter* filter) {
-    parameter_router_[kParamBrightness].push_back({
-    [filter](float value) {
-            filter->setMorph(value);
-        }
-    });
-}
 
-tresult PLUGIN_API PluginProcessor::process(ProcessData& data) {
-    // Ensure call is not empty
-    if (!(data.numInputs > 0 && data.inputs[0].numChannels > 0))
-        return kResultOk;
-
-    const int32 num_channels = data.inputs[0].numChannels;
-    const int32 num_samples = data.numSamples;
-
-    updateControlParamValues(data);
-
-    if (is_video_playing_) {
-        if (is_offline_ || (data.processMode == kOffline)) {
-            updateOfflineDspParamValues(data);
-        }
-    }
-
-    updateDspParamValues(data);
-
-    // Choose to either apply DSP or bypass
-    if (bypass_state_ == 1.0f)
-        return bypassProcessing(data, num_channels, num_samples);
-
-    if (data.processContext)
-        last_project_sample_ = data.processContext->projectTimeSamples;
-
-    return processSamples(data, num_channels, num_samples);
-}
 
 tresult PLUGIN_API PluginProcessor::getControllerClassId(TUID classId) {
     if (!classId)
@@ -195,7 +180,7 @@ tresult PLUGIN_API PluginProcessor::terminate() {
     return AudioEffect::terminate();
 }
 
-tresult PluginProcessor::setState(IBStream *state) {
+tresult PluginProcessor::setState(IBStream* state) {
     if (!state)
         return kResultFalse;
 
@@ -215,7 +200,7 @@ tresult PluginProcessor::setState(IBStream *state) {
         return kResultFalse;
 
     // Modulation vector de-serialization
-    /*
+
     modulation_curve_.clear();
     uint32 numPoints = 0;
     if (!streamer.readInt32u(numPoints))
@@ -248,11 +233,14 @@ tresult PluginProcessor::setState(IBStream *state) {
 
         modulation_curve_.push_back(std::move(point));
     }
-    */
+
+    if (numPoints != 0)
+        modulation_cache_ready_ = true;
+
     return kResultOk;
 }
 
-tresult PluginProcessor::getState(IBStream *state) {
+tresult PluginProcessor::getState(IBStream* state) {
     if (!state)
         return kResultFalse;
 
@@ -268,7 +256,6 @@ tresult PluginProcessor::getState(IBStream *state) {
         return kResultFalse;
 
     // Modulation vector serialization
-    /*
     auto numPoints = static_cast<uint32>(modulation_curve_.size());
     if (!streamer.writeInt32u(numPoints))
         return kResultFalse;
@@ -288,8 +275,6 @@ tresult PluginProcessor::getState(IBStream *state) {
                 return kResultFalse;
         }
     }
-    */
-
     return kResultOk;
 }
 
@@ -297,40 +282,106 @@ tresult PLUGIN_API PluginProcessor::notify(Steinberg::Vst::IMessage* message) {
     if (!message)
         return kInvalidArgument;
 
-    if (strcmp(message->getMessageID(), "VideoFinished") == 0) {
-        if (capture_state_ == CaptureState::Recording) {
-            capture_state_ = CaptureState::Complete;
+    if (strcmp(message->getMessageID(), "ModulationCacheChunk") == 0) {
+        log_debug("Chunk received");
+        int64 chunkIndex, totalChunks, totalBytes;
+        message->getAttributes()->getInt("chunkIndex",chunkIndex);
+        message->getAttributes()->getInt("totalChunks",totalChunks);
+        message->getAttributes()->getInt("totalBytes",totalBytes);
+
+        const void* data; uint32 size;
+        message->getAttributes()->getBinary("data", data, size);
+
+        chunk_map_[chunkIndex] = std::vector(
+            static_cast<const uint8_t*>(data),
+            static_cast<const uint8_t*>(data) + size);
+
+        expected_total_chunks_ = totalChunks;
+        expected_total_bytes_ = totalBytes;
+
+        if ((int)chunk_map_.size() == expected_total_chunks_) {
+            // All chunks arrived
+            std::vector<uint8_t> blob;
+            blob.reserve(expected_total_bytes_);
+            for (auto& [idx, chunk] : chunk_map_)
+                blob.insert(blob.end(), chunk.begin(), chunk.end());
+
+            chunk_map_.clear();
+            deserializeModulationCache(blob.data(), blob.size());
+            modulation_cache_ready_ = true;
+            modulation_cursor_ = 0;
         }
+        return kResultOk;
     }
 
     return kResultOk;
 }
 
+void PluginProcessor::deserializeModulationCache(const uint8_t* data, uint32 size) {
+    modulation_curve_.clear();
+    const uint8_t* p = data;
+
+    uint32_t count;
+    memcpy(&count, p, sizeof(count)); p += sizeof(count);
+    modulation_curve_.reserve(count);
+
+    for (uint32_t i = 0; i < count; ++i) {
+        double seconds;
+        memcpy(&seconds, p, sizeof(seconds)); p += sizeof(seconds);
+
+        uint32_t vcount;
+        memcpy(&vcount, p, sizeof(vcount)); p += sizeof(vcount);
+
+        ModulationPoint point;
+        point.timestamp = static_cast<TSamples>(seconds * processSetup.sampleRate);
+        point.values.reserve(vcount);
+
+        for (uint32_t j = 0; j < vcount; ++j) {
+            ParamID id;
+            ParamValue value;
+            memcpy(&id, p, sizeof(id)); p += sizeof(id);
+            memcpy(&value, p, sizeof(value)); p += sizeof(value);
+            point.values.emplace_back(id, value);
+        }
+        modulation_curve_.push_back(std::move(point));
+    }
+}
+
 void PluginProcessor::updateControlParamValues(const ProcessData& data) {
     forEachLastParamChange(data,
-        [&](ParamID id, ParamValue value, int32)
+        [&](ParamID id, ParamValue value, int32 sampleOffset)
         {
-            handleControlParam(id, value, data);
+            handleControlParam(id, value, data, sampleOffset);
         }
     );
 }
 
-void PluginProcessor::handleControlParam(ParamID id, ParamValue value, const ProcessData& data) {
+void PluginProcessor::handleControlParam(ParamID id, ParamValue value, const ProcessData& data, const int32 sampleOffset) {
     switch (id) {
         case kParamPlay:
             if (!is_video_playing_) {
-                epoch_start_sample_ = data.processContext ? data.processContext->projectTimeSamples : total_samples_;
+                epoch_start_sample_ = data.processContext ?
+                    data.processContext->projectTimeSamples + sampleOffset
+                    : total_samples_ + sampleOffset;
                 is_video_playing_ = true;
+                modulation_cursor_ = 0;
             }
             break;
         case kParamReset:
             if (is_video_playing_) {
                 epoch_start_sample_ = -1;
                 is_video_playing_ = false;
+                modulation_cursor_ = 0;
             }
             break;
+        // TODO: PAUSE param
         case kParamBypass:
             bypass_state_ = value;
+            break;
+        case kParamLoadVideo:
+            modulation_cache_ready_ = false;
+            is_video_playing_ = false;
+            modulation_curve_.clear();
             break;
         default:
             break;
@@ -359,33 +410,61 @@ void PluginProcessor::handleDspParam(ParamID id, ParamValue value) {
 }
 
 void PluginProcessor::updateOfflineDspParamValues(const ProcessData& data) {
-    if (capture_state_ != CaptureState::Complete)
+    if (!modulation_cache_ready_ || modulation_curve_.empty())
         return;
 
-    const auto nowSamples = data.processContext ? data.processContext->projectTimeSamples : total_samples_;
+    const auto nowSamples = data.processContext
+        ? data.processContext->projectTimeSamples
+        : total_samples_;
 
-    static int last_index = 0;
-
-    if (!modulation_curve_.empty() && nowSamples <= modulation_curve_[last_index].timestamp + epoch_start_sample_) {
-        last_index = 0;
-        return;
+    // Reset cursor on rewind/loop
+    if (modulation_cursor_ > 0 && nowSamples < modulation_curve_[modulation_cursor_ - 1].timestamp + epoch_start_sample_) {
+        modulation_cursor_ = 0;
     }
 
-    // TODO: Here it should wrap around mod vector size, not just end
-    while (last_index < modulation_curve_.size()) {
-        const auto& point = modulation_curve_[last_index];
+    while (modulation_cursor_ < static_cast<int>(modulation_curve_.size())) {
+        const auto& point = modulation_curve_[modulation_cursor_];
         const auto absSample = point.timestamp + epoch_start_sample_;
+
         if (absSample >= nowSamples + data.numSamples)
             break;
 
-        for (auto& [id, value] : point.values) {
+        for (auto& [id, value] : point.values)
             handleDspParam(id, value);
-        }
 
-        ++last_index;
+        ++modulation_cursor_;
     }
 }
 
+tresult PLUGIN_API PluginProcessor::process(ProcessData& data) {
+    // Ensure call is not empty
+    if (!(data.numInputs > 0 && data.inputs[0].numChannels > 0))
+        return kResultOk;
+
+    is_offline_ = (data.processMode == kOffline);
+
+    const int32 num_channels = data.inputs[0].numChannels;
+    const int32 num_samples = data.numSamples;
+
+    updateControlParamValues(data);
+
+    if (is_video_playing_) {
+        if (is_offline_) {
+            updateOfflineDspParamValues(data);
+        }
+    }
+
+    if (!is_offline_)
+        updateDspParamValues(data);
+
+    // Choose to either apply DSP or bypass
+    if (bypass_state_ == 1.0f)
+        return bypassProcessing(data, num_channels, num_samples);
+
+    total_samples_ += num_samples;
+
+    return processSamples(data, num_channels, num_samples);
+}
 
 tresult PluginProcessor::bypassProcessing(const ProcessData& data, const int32_t numChannels, const int32_t numSamples) {
     for (int32 ch = 0; ch < numChannels; ++ch) {
