@@ -6,6 +6,7 @@
 #define PARAMETERDEFAULTS_HPP
 
 #include "vst/vsttypes.h"
+#include <vector>
 
 /**
  * @brief Audio processing parameters used by the plugin.
@@ -82,5 +83,15 @@ namespace ParamDefaults {
     const double kColorFreq = getNormalizedFromHz(440.0);
 }
 
+static const std::vector<std::pair<Steinberg::Vst::ParamID, double>> kParamDefaultsMap {
+            {kParamBrightness, ParamDefaults::kBrightness},
+            {kParamDepth, ParamDefaults::kDepth},
+            {kParamMotionContinuous, ParamDefaults::kMotion},
+            {kParamMotionBurst, ParamDefaults::kMotion},
+            {kParamColorRed, ParamDefaults::kColor},
+            {kParamColorGreen, ParamDefaults::kColor},
+            {kParamColorBlue, ParamDefaults::kColor},
+            {kParamSaturation, ParamDefaults::kSaturation},
+};
 
 #endif //PARAMETERDEFAULTS_HPP
