@@ -209,7 +209,7 @@ tresult PLUGIN_API PluginController::connect(IConnectionPoint* other) {
     return kResultOk;
 }
 
-void PluginController::onVideoFinished() const {
+void PluginController::onVideoFinished() {
     if (!processorConnection_)
         return;
 
@@ -219,8 +219,52 @@ void PluginController::onVideoFinished() const {
         return;
 
     msg->setMessageID("VideoFinished");
-
     processorConnection_->notify(msg);
+
+    sendModulationCacheChunked();
+}
+
+
+void PluginController::sendModulationCacheChunked() {
+    std::vector<uint8_t> blob;
+    {
+        std::lock_guard lock(cache_mutex_);
+
+        uint32_t count = modulation_cache_.size();
+        auto append = [&](const void* data, size_t n) {
+            auto* p = static_cast<const uint8_t*>(data);
+            blob.insert(blob.end(), p, p + n);
+        };
+
+        append(&count, sizeof(count));
+        for (auto& point : modulation_cache_) {
+            append(&point.timestamp, sizeof(point.timestamp));
+            uint32_t vcount = point.values.size();
+            append(&vcount, sizeof(vcount));
+            for (auto& [id, value] : point.values) {
+                append(&id, sizeof(id));
+                append(&value, sizeof(value));
+            }
+        }
+    }
+
+    int totalChunks = (blob.size() + kChunkSize - 1) / kChunkSize;
+
+    for (int i = 0; i < totalChunks; ++i) {
+        size_t offset = i * kChunkSize;
+        size_t len = std::min(kChunkSize, blob.size() - offset);
+
+        auto* msg = allocateMessage();
+        msg->setMessageID("ModulationCacheChunk");
+        msg->getAttributes()->setInt("chunkIndex",  i);
+        msg->getAttributes()->setInt("totalChunks", totalChunks);
+        msg->getAttributes()->setInt("totalBytes",  (int64)blob.size());
+        msg->getAttributes()->setBinary("data", blob.data() + offset, len);
+        processorConnection_->notify(msg);
+        msg->release();
+    }
+
+    modulation_cache_.clear();
 }
 
 void PluginController::onFeatureResult(const FeatureResult& result) {
@@ -240,7 +284,14 @@ void PluginController::onFeatureResult(const FeatureResult& result) {
         VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [this]() { flushPendingParams(); });
     }
 
-    // TODO: Here we can cache the results
+    {
+        std::lock_guard lock(cache_mutex_);
+        ModulationPointTime point;
+        point.timestamp = result.timestamp;
+        for (auto& [id, value] : result.params)
+            point.values.emplace_back(id, value);
+        modulation_cache_.push_back(std::move(point));
+    }
 }
 
 void PluginController::flushPendingParams() {
@@ -274,25 +325,14 @@ void PluginController::resetInternalParams() {
         flush_scheduled_ = false;
     }
 
-    std::list<std::pair<Steinberg::Vst::ParamID, double>> params {
-        {kParamBrightness, ParamDefaults::kBrightness},
-        {kParamDepth, ParamDefaults::kDepth},
-        {kParamMotionContinuous, ParamDefaults::kMotion},
-        {kParamMotionBurst, ParamDefaults::kMotion},
-        {kParamColorRed, ParamDefaults::kColor},
-        {kParamColorGreen, ParamDefaults::kColor},
-        {kParamColorBlue, ParamDefaults::kColor},
-        {kParamSaturation, ParamDefaults::kSaturation},
-    };
-
     if (auto* handler = getComponentHandler()) {
-        for (auto& param : params) {
+        for (auto& param : kParamDefaultsMap) {
             handler->beginEdit(param.first);
             handler->performEdit(param.first, param.second);
             handler->endEdit(param.first);
         }
     } else {
-        for (auto& param : params)
+        for (auto& param : kParamDefaultsMap)
             setParamNormalized(param.first, param.second);
     }
 }

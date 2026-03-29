@@ -72,7 +72,7 @@ public:
 
 	void unregisterReceiver(IFrameReceiver* receiver) const;
 
-	void onVideoFinished() const;
+	void onVideoFinished();
 
 	void onFeatureResult(const FeatureResult& result) override;
 
@@ -84,10 +84,15 @@ private:
 	void resetInternalParams();
 	void instantiateExtractors();
 	void registerExtractors() const;
+	void sendModulationCacheChunked();
 
 	std::mutex pending_mutex_;
 	std::vector<FeatureParamUpdate> pending_params_;
 	std::atomic<bool> flush_scheduled_{false};
+
+	std::mutex cache_mutex_;
+	modulation_time_curve_t modulation_cache_;
+	static constexpr size_t kChunkSize = 512 * 1024;
 
 	IConnectionPoint* processorConnection_{nullptr};
 	bool is_video_preview_mode_ = false;
