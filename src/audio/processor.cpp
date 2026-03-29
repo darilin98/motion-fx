@@ -19,7 +19,6 @@
 #include "../parameterdefaults.hpp"
 
 #include "daisysp.h"
-#include "utils.hpp"
 #include "effects/ringmodulator.hpp"
 #include "effects/saturationexciter.hpp"
 #include "effects/spatialecho.hpp"
@@ -283,7 +282,6 @@ tresult PLUGIN_API PluginProcessor::notify(Steinberg::Vst::IMessage* message) {
         return kInvalidArgument;
 
     if (strcmp(message->getMessageID(), "ModulationCacheChunk") == 0) {
-        log_debug("Chunk received");
         int64 chunkIndex, totalChunks, totalBytes;
         message->getAttributes()->getInt("chunkIndex",chunkIndex);
         message->getAttributes()->getInt("totalChunks",totalChunks);
