@@ -35,7 +35,8 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
     parameters.addParameter(STR16("DepthIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamDepthIntensity);
     parameters.addParameter(STR16("Depth"), nullptr, 1, ParamDefaults::kDepth, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamDepth);
 
-    parameters.addParameter(STR16("MotionIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamMotionIntensity);
+    parameters.addParameter(STR16("MotionContIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamMotionContIntensity);
+    parameters.addParameter(STR16("MotionBurstIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamMotionBurstIntensity);
     parameters.addParameter(STR16("MotionContinuous"), nullptr, 1, ParamDefaults::kMotion, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamMotionContinuous);
     parameters.addParameter(STR16("MotionBurst"), nullptr, 1, ParamDefaults::kMotion, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamMotionBurst);
 

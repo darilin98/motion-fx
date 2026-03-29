@@ -19,14 +19,15 @@ enum AudioParamID : Steinberg::Vst::ParamID {
     kParamDepthIntensity,
     kParamMotionContinuous,
     kParamMotionBurst,
-    kParamMotionIntensity,
+    kParamMotionContIntensity,
+    kParamMotionBurstIntensity,
+    kParamColorFrequency,
     kParamColorRed,
     kParamColorGreen,
     kParamColorBlue,
     kParamColorIntensity,
     kParamSaturation,
     kParamSaturationIntensity,
-    kParamColorFrequency,
 };
 
 /**

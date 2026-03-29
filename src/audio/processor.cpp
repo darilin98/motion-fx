@@ -55,11 +55,11 @@ void PluginProcessor::createEffects() {
 
     auto& phaser_unit = effect_chain_.emplace_back();
     phaser_unit.effect = std::make_unique<WavePhaser>();
-    phaser_unit.intensity_param_id = kParamMotionIntensity;
+    phaser_unit.intensity_param_id = kParamMotionContIntensity;
     
     auto& noise_unit = effect_chain_.emplace_back();
     noise_unit.effect = std::make_unique<NoiseMaker>();
-    noise_unit.intensity_param_id = kParamMotionIntensity;
+    noise_unit.intensity_param_id = kParamMotionBurstIntensity;
 
     auto& echo_unit = effect_chain_.emplace_back();
     echo_unit.effect = std::make_unique<SpatialEcho>();
