@@ -53,8 +53,18 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
 
 tresult PLUGIN_API PluginController::terminate()
 {
-    if(playback_controller_) playback_controller_->stopPipeline();
+    if (playback_controller_) {
+        playback_controller_->shutdown();
+        playback_controller_.reset();
+    }
+    extractors_.clear();
     return EditController::terminate();
+}
+
+tresult PluginController::disconnect(IConnectionPoint* other) {
+    if (playback_controller_) { playback_controller_->stopPipeline(); }
+    processorConnection_ = nullptr;
+    return EditController::disconnect(other);
 }
 
 tresult PLUGIN_API PluginController::setState(IBStream *state)
@@ -93,6 +103,16 @@ tresult PLUGIN_API PluginController::setState(IBStream *state)
 
 tresult PLUGIN_API PluginController::getState(IBStream *state)
 {
+    // Ugly hack, but it fixes weird Waveform exit behavior
+    auto now = std::chrono::steady_clock::now();
+    auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_get_state_time_).count();
+    last_get_state_time_ = now;
+
+    if (delta < 100 && playback_controller_) {
+        log_debug("Rapid getState detected, stopping pipeline");
+        playback_controller_->stopPipeline();
+    }
+
     if (!state)
         return kResultFalse;
 

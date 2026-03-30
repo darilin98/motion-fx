@@ -24,7 +24,11 @@ public:
 	}
 
 	~AsyncFrameWorker() {
-		running_.store(false);
+		{
+			std::lock_guard lock(frame_mutex_);
+			running_.store(false);
+			new_frame_enqueued_.store(false);
+		}
 		cv_.notify_all();
 		if (worker_.joinable())
 			worker_.join();
@@ -53,6 +57,8 @@ private:
 			}
 
 			callback_(frame);
+
+			if (!running_) break;
 		}
 	}
 

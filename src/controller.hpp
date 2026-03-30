@@ -60,6 +60,8 @@ public:
 
 	tresult PLUGIN_API connect(IConnectionPoint* other) override;
 
+	tresult PLUGIN_API disconnect(IConnectionPoint* other) override;
+
 	tresult PLUGIN_API getParamStringByValue(ParamID id, ParamValue valueNormalized, String128 string) override;
 
 	tresult PLUGIN_API getParamValueByString(ParamID id, TChar* string, ParamValue& valueNormalized) override;
@@ -99,6 +101,7 @@ private:
 	VSTGUI::UTF8String video_path_ = "";
 	pcont_t playback_controller_ = nullptr;
 
+	std::chrono::time_point<std::chrono::steady_clock> last_get_state_time_;
 	extractors_t extractors_;
 };
 
