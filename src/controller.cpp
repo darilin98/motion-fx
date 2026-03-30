@@ -29,25 +29,25 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
     parameters.addParameter(STR16("Pause"), nullptr, 1, 0.0, ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamPause);
     parameters.addParameter(STR16("Bypass"), nullptr, 1, 0.0, ParameterInfo::kIsBypass | ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamBypass);
 
-    parameters.addParameter(STR16("BrightnessIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamBrightnessIntensity);
+    parameters.addParameter(STR16("BrightnessIntensity"), nullptr, 0, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamBrightnessIntensity);
     parameters.addParameter(STR16("Brightness"), nullptr, 1, ParamDefaults::kBrightness, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly,kParamBrightness);
 
-    parameters.addParameter(STR16("DepthIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamDepthIntensity);
-    parameters.addParameter(STR16("Depth"), nullptr, 1, ParamDefaults::kDepth, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamDepth);
+    parameters.addParameter(STR16("DepthIntensity"), nullptr, 0, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamDepthIntensity);
+    parameters.addParameter(STR16("Depth"), nullptr, 0, ParamDefaults::kDepth, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamDepth);
 
-    parameters.addParameter(STR16("MotionContIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamMotionContIntensity);
-    parameters.addParameter(STR16("MotionBurstIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamMotionBurstIntensity);
-    parameters.addParameter(STR16("MotionContinuous"), nullptr, 1, ParamDefaults::kMotion, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamMotionContinuous);
-    parameters.addParameter(STR16("MotionBurst"), nullptr, 1, ParamDefaults::kMotion, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamMotionBurst);
+    parameters.addParameter(STR16("MotionContIntensity"), nullptr, 0, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamMotionContIntensity);
+    parameters.addParameter(STR16("MotionBurstIntensity"), nullptr, 0, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamMotionBurstIntensity);
+    parameters.addParameter(STR16("MotionContinuous"), nullptr, 0, ParamDefaults::kMotion, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamMotionContinuous);
+    parameters.addParameter(STR16("MotionBurst"), nullptr, 0, ParamDefaults::kMotion, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamMotionBurst);
 
-    parameters.addParameter(STR16("ColorIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamColorIntensity);
+    parameters.addParameter(STR16("ColorIntensity"), nullptr, 0, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamColorIntensity);
     parameters.addParameter(STR16("ColorBaseFrequency"), STR16("Hz"), 0, ParamDefaults::kColorFreq, ParameterInfo::kCanAutomate, kParamColorFrequency);
-    parameters.addParameter(STR16("ColorRed"), nullptr, 1, ParamDefaults::kColor, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamColorRed);
-    parameters.addParameter(STR16("ColorGreen"), nullptr, 1, ParamDefaults::kColor, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamColorGreen);
-    parameters.addParameter(STR16("ColorBlue"), nullptr, 1, ParamDefaults::kColor, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamColorBlue);
+    parameters.addParameter(STR16("ColorRed"), nullptr, 0, ParamDefaults::kColor, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamColorRed);
+    parameters.addParameter(STR16("ColorGreen"), nullptr, 0, ParamDefaults::kColor, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamColorGreen);
+    parameters.addParameter(STR16("ColorBlue"), nullptr, 0, ParamDefaults::kColor, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamColorBlue);
 
-    parameters.addParameter(STR16("SaturationIntensity"), nullptr, 1, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamSaturationIntensity);
-    parameters.addParameter(STR16("Saturation"), nullptr, 1, ParamDefaults::kSaturation, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamSaturation);
+    parameters.addParameter(STR16("SaturationIntensity"), nullptr, 0, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamSaturationIntensity);
+    parameters.addParameter(STR16("Saturation"), nullptr, 0, ParamDefaults::kSaturation, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamSaturation);
     return kResultOk;
 }
 
@@ -326,15 +326,15 @@ void PluginController::flushPendingParams() {
     if (local.empty())
         return;
 
+    for (auto& param : local)
+            setParamNormalized(param.id, param.normalized);
+
     if (auto* handler = getComponentHandler()) {
         for (auto& param : local) {
             handler->beginEdit(param.id);
             handler->performEdit(param.id, param.normalized);
             handler->endEdit(param.id);
         }
-    } else {
-        for (auto& param : local)
-            setParamNormalized(param.id, param.normalized);
     }
 }
 
@@ -345,15 +345,15 @@ void PluginController::resetInternalParams() {
         flush_scheduled_ = false;
     }
 
+    for (auto& param : kParamDefaultsMap)
+            setParamNormalized(param.first, param.second);
+
     if (auto* handler = getComponentHandler()) {
         for (auto& param : kParamDefaultsMap) {
             handler->beginEdit(param.first);
             handler->performEdit(param.first, param.second);
             handler->endEdit(param.first);
         }
-    } else {
-        for (auto& param : kParamDefaultsMap)
-            setParamNormalized(param.first, param.second);
     }
 }
 
