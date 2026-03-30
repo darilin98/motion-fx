@@ -118,11 +118,11 @@
 				"ViewBackground": "0"
 			},
 			"UITemplateController": {
-				"SelectedTemplate": "InputSelect"
+				"SelectedTemplate": "AudioProcessing"
 			},
 			"UIAttributesController": {},
 			"UIViewCreatorDataSource": {
-				"SelectedRow": "5"
+				"SelectedRow": "28"
 			},
 			"UIFontsDataSource": {
 				"SelectedRow": "1"
@@ -963,42 +963,6 @@
 													"wants-focus": "false"
 												},
 												"children": {
-													"CTextEdit": {
-														"attributes": {
-															"back-color": "~ TransparentCColor",
-															"background-offset": "0, 0",
-															"class": "CTextEdit",
-															"control-tag": "ColorBaseFrequency",
-															"font": "header-normal",
-															"font-antialias": "true",
-															"font-color": "~ BlackCColor",
-															"frame-color": "~ TransparentCColor",
-															"frame-width": "1",
-															"immediate-text-change": "false",
-															"opacity": "1",
-															"origin": "20, 30",
-															"round-rect-radius": "6",
-															"secure-style": "false",
-															"shadow-color": "~ RedCColor",
-															"size": "120, 20",
-															"style-3D-in": "false",
-															"style-3D-out": "false",
-															"style-doubleclick": "true",
-															"style-no-draw": "false",
-															"style-no-frame": "false",
-															"style-no-text": "false",
-															"style-round-rect": "true",
-															"style-shadow-text": "false",
-															"text-alignment": "center",
-															"text-inset": "0, 0",
-															"text-rotation": "0",
-															"text-shadow-offset": "1, 1",
-															"transparent": "false",
-															"value-precision": "2",
-															"wants-focus": "false",
-															"wheel-inc-value": "0.1"
-														}
-													},
 													"CTextLabel": {
 														"attributes": {
 															"back-color": "~ TransparentCColor",
@@ -1096,6 +1060,42 @@
 															"transparent": "false",
 															"value-precision": "2",
 															"wants-focus": "false",
+															"wheel-inc-value": "0.1"
+														}
+													},
+													"CTextEdit": {
+														"attributes": {
+															"back-color": "~ TransparentCColor",
+															"background-offset": "0, 0",
+															"class": "CTextEdit",
+															"control-tag": "ColorBaseFrequency",
+															"font": "header-normal",
+															"font-antialias": "true",
+															"font-color": "~ BlackCColor",
+															"frame-color": "~ BlackCColor",
+															"frame-width": "1",
+															"immediate-text-change": "false",
+															"opacity": "1",
+															"origin": "30, 30",
+															"round-rect-radius": "6",
+															"secure-style": "false",
+															"shadow-color": "~ RedCColor",
+															"size": "100, 20",
+															"style-3D-in": "false",
+															"style-3D-out": "false",
+															"style-doubleclick": "false",
+															"style-no-draw": "false",
+															"style-no-frame": "true",
+															"style-no-text": "false",
+															"style-round-rect": "false",
+															"style-shadow-text": "false",
+															"text-alignment": "center",
+															"text-inset": "0, 0",
+															"text-rotation": "0",
+															"text-shadow-offset": "1, 1",
+															"transparent": "false",
+															"value-precision": "2",
+															"wants-focus": "true",
 															"wheel-inc-value": "0.1"
 														}
 													}
@@ -1762,42 +1762,6 @@
 													"wants-focus": "false"
 												},
 												"children": {
-													"CTextEdit": {
-														"attributes": {
-															"back-color": "~ TransparentCColor",
-															"background-offset": "0, 0",
-															"class": "CTextEdit",
-															"control-tag": "ColorBaseFrequency",
-															"font": "header-normal",
-															"font-antialias": "true",
-															"font-color": "~ BlackCColor",
-															"frame-color": "~ TransparentCColor",
-															"frame-width": "1",
-															"immediate-text-change": "false",
-															"opacity": "1",
-															"origin": "20, 30",
-															"round-rect-radius": "6",
-															"secure-style": "false",
-															"shadow-color": "~ RedCColor",
-															"size": "120, 20",
-															"style-3D-in": "false",
-															"style-3D-out": "false",
-															"style-doubleclick": "true",
-															"style-no-draw": "false",
-															"style-no-frame": "false",
-															"style-no-text": "false",
-															"style-round-rect": "true",
-															"style-shadow-text": "false",
-															"text-alignment": "center",
-															"text-inset": "0, 0",
-															"text-rotation": "0",
-															"text-shadow-offset": "1, 1",
-															"transparent": "false",
-															"value-precision": "2",
-															"wants-focus": "false",
-															"wheel-inc-value": "0.1"
-														}
-													},
 													"CTextLabel": {
 														"attributes": {
 															"back-color": "~ TransparentCColor",
@@ -1895,6 +1859,42 @@
 															"transparent": "false",
 															"value-precision": "2",
 															"wants-focus": "false",
+															"wheel-inc-value": "0.1"
+														}
+													},
+													"CTextEdit": {
+														"attributes": {
+															"back-color": "~ TransparentCColor",
+															"background-offset": "0, 0",
+															"class": "CTextEdit",
+															"control-tag": "ColorBaseFrequency",
+															"font": "header-normal",
+															"font-antialias": "true",
+															"font-color": "~ BlackCColor",
+															"frame-color": "~ BlackCColor",
+															"frame-width": "1",
+															"immediate-text-change": "false",
+															"opacity": "1",
+															"origin": "30, 30",
+															"round-rect-radius": "6",
+															"secure-style": "false",
+															"shadow-color": "~ RedCColor",
+															"size": "100, 20",
+															"style-3D-in": "false",
+															"style-3D-out": "false",
+															"style-doubleclick": "false",
+															"style-no-draw": "false",
+															"style-no-frame": "true",
+															"style-no-text": "false",
+															"style-round-rect": "false",
+															"style-shadow-text": "false",
+															"text-alignment": "center",
+															"text-inset": "0, 0",
+															"text-rotation": "0",
+															"text-shadow-offset": "1, 1",
+															"transparent": "false",
+															"value-precision": "2",
+															"wants-focus": "true",
 															"wheel-inc-value": "0.1"
 														}
 													}
