@@ -15,6 +15,8 @@
 
 #include "videoparamlistener.hpp"
 
+enum class CompletionSignal { None, Handle, Shutdown };
+
 /**
  * @brief Controls the state of the video pipeline.
  *
@@ -73,6 +75,8 @@ public:
 	void setParamListeners(controller_t controller);
 	void onParamChanged(Steinberg::Vst::ParamID paramId, float paramValue);
 
+	void completionLoop();
+
 private:
 	/**
 	 * @brief Sets all necessary callbacks for loader_ and frame_ticker_
@@ -83,6 +87,11 @@ private:
 	 * @brief Event triggered when a video has been fully decoded and consumed.
 	 */
 	void onVideoFinished() const;
+
+	std::atomic<CompletionSignal> completion_signal_{ CompletionSignal::None };
+	std::condition_variable completion_cv_;
+	std::thread completion_thread_;
+	std::mutex completion_mutex_;
 
 	std::atomic<bool> is_decoding_ = false; /// loader_ is active.
 	std::atomic<bool> is_playing_ = false; /// frame_ticker_ is active.

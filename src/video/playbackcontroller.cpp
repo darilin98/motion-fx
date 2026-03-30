@@ -14,23 +14,34 @@ PlaybackController::~PlaybackController() = default;
 constexpr int kMaxQueueSize = 120;
 
 void PlaybackController::shutdown() {
-	if (loader_) {
-		is_decoding_.store(false);
-		loader_->stopLoading();
-		loader_->onFrame = nullptr;
-	}
+	stopPipeline();
 
-	if (frame_ticker_) {
-		frame_ticker_->stopConsuming();
-		frame_ticker_->clearReceivers();
+	frame_queue_->clear();
+
+	{
+		std::lock_guard lock(completion_mutex_);
+		completion_signal_.store(CompletionSignal::Shutdown);
 	}
+	completion_cv_.notify_all();
+
+	if (completion_thread_.joinable())
+		completion_thread_.join();
+
+	if (frame_ticker_)
+		frame_ticker_->clearReceivers();
 
 	play_listener_.reset();
 	reset_listener_.reset();
+	pause_listener_.reset();
 }
 
 void PlaybackController::startPipeline(const double playbackRate) {
 	rate_ = playbackRate;
+
+	if (!completion_thread_.joinable()) {
+		completion_thread_ = std::thread([this] { completionLoop(); });
+	}
+
 	setupCallbacks();
 
 	if (loader_) {
@@ -46,10 +57,16 @@ void PlaybackController::startPipeline(const double playbackRate) {
 }
 
 void PlaybackController::stopPipeline() {
+	if (frame_ticker_) {
+        frame_ticker_->setOnQueueEmptyCallback(nullptr);
+    }
+
 	if (loader_) {
-		loader_->stopLoading();
 		is_decoding_.store(false);
+		loader_->stopLoading();
+		loader_->onFrame = nullptr;
 	}
+
 	if (frame_ticker_) {
 		frame_ticker_->stopConsuming();
 		is_playing_.store(false);
@@ -70,27 +87,38 @@ void PlaybackController::setupCallbacks() {
 	}
 
 	if (frame_ticker_) {
-		frame_ticker_->setOnQueueEmptyCallback(nullptr);
-		frame_ticker_->setOnQueueEmptyCallback([self = shared_from_this()] {
-			VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [self] {
-				if (self->is_decoding_)
-					return;
-
-				self->onVideoFinished();
-
-				if (self->looping_) {
-					if (self->loader_->tryRewindToStart()) {
-						self->is_decoding_.store(true);
-						self->loader_->startLoading();
-						if (self->frame_ticker_) self->frame_ticker_->resetTimer();
-						return;
-					}
-				}
-
-				fprintf(stderr, "Playback finished, static last frame displayed (scheduled stop)\n");
-				self->stopPipeline();
-			});
+		frame_ticker_->setOnQueueEmptyCallback([this] {
+			if (!is_decoding_.load()) {
+				std::lock_guard lock(completion_mutex_);
+				completion_signal_.store(CompletionSignal::Handle);
+				completion_cv_.notify_one();
+			}
 		});
+	}
+}
+
+void PlaybackController::completionLoop() {
+	while (true) {
+		std::unique_lock lock(completion_mutex_);
+		completion_cv_.wait(lock, [this] {
+			return completion_signal_.load() != CompletionSignal::None;
+		});
+
+		auto signal = completion_signal_.exchange(CompletionSignal::None);
+		lock.unlock();
+
+		if (signal == CompletionSignal::Shutdown) return;
+
+		onVideoFinished();
+
+		if (looping_ && loader_ && loader_->tryRewindToStart()) {
+			is_decoding_.store(true);
+			loader_->startLoading();
+			if (frame_ticker_) frame_ticker_->resetTimer();
+			continue;
+		}
+
+		stopPipeline();
 	}
 }
 
