@@ -25,7 +25,7 @@ private:
 
 	struct ChannelState {
 		phaser_t phaser;
-		float feedback_lp = 0.0f;
+		float last_lfo_freq = 0.0f;
 	};
 	std::vector<ChannelState> channels_;
 

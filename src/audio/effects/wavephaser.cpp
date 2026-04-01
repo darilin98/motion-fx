@@ -18,10 +18,10 @@ void WavePhaser::channelResizeTo(size_t size) {
 	for (auto& c : channels_) {
 		c.phaser.Init(sample_rate_);
 		c.phaser.SetPoles(4);
-		c.phaser.SetFreq(1000.0f);
+		c.phaser.SetFreq(800.0f);
 		c.phaser.SetLfoDepth(0.3f);
 		c.phaser.SetLfoFreq(0.1f);
-		c.phaser.SetFeedback(0.0f);
+		c.phaser.SetFeedback(0.2f);
 	}
 }
 
@@ -42,9 +42,12 @@ void WavePhaser::process(float* buffer, int32_t numSamples, int32_t channel) {
 		continuous_.value += kContSmooth * (continuous_.target - continuous_.value);
 
 		const float lfoFreq  = kMinLfo + continuous_.value * (kMaxLfo - kMinLfo);
-		const float phaserMix = std::clamp(continuous_.value, 0.0f, 1.0f);
+		const float phaserMix = std::clamp(continuous_.value, 0.0f, 0.90f);
 
-		ph.SetLfoFreq(lfoFreq);
+		if (std::abs(lfoFreq - channels_[channel].last_lfo_freq) > 0.0001f) {
+			ph.SetLfoFreq(lfoFreq);
+			channels_[channel].last_lfo_freq = lfoFreq;
+		}
 
 		float dry = buffer[i];
 		float wet = ph.Process(dry);
