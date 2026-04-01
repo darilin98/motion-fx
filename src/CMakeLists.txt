@@ -328,7 +328,7 @@ if(APPLE AND CMAKE_BUILD_TYPE STREQUAL "Release")
     )
 
     add_custom_command(TARGET motion-fx POST_BUILD
-            COMMAND codesign --force --deep --sign "-" $<TARGET_FILE:motion-fx>
+            COMMAND codesign --force --sign "-" $<TARGET_FILE:motion-fx>
             COMMENT "Code-signing the VST3 bundle for Release"
     )
 endif()
