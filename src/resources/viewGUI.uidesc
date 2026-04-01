@@ -118,7 +118,7 @@
 				"ViewBackground": "0"
 			},
 			"UITemplateController": {
-				"SelectedTemplate": "AudioProcessing"
+				"SelectedTemplate": "InputSelect"
 			},
 			"UIAttributesController": {},
 			"UIViewCreatorDataSource": {
@@ -233,7 +233,7 @@
 											"text-inset": "0, 0",
 											"text-rotation": "0",
 											"text-shadow-offset": "1, 1",
-											"title": "Musion Fx",
+											"title": "Visimusic",
 											"transparent": "false",
 											"value-precision": "2",
 											"wants-focus": "false",
