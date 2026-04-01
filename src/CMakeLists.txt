@@ -256,11 +256,7 @@ if(WIN32)
     message(STATUS "VCPKG bin dir: ${VCPKG_BIN}")
 
     file(GLOB FFMPEG_DLLS
-            "${VCPKG_BIN}/avcodec-*.dll"
-            "${VCPKG_BIN}/avformat-*.dll"
-            "${VCPKG_BIN}/avutil-*.dll"
-            "${VCPKG_BIN}/swscale-*.dll"
-            "${VCPKG_BIN}/swresample-*.dll"
+            "${VCPKG_BIN}/*.dll"
     )
     message(STATUS "FFmpeg DLLs found: ${FFMPEG_DLLS}")
 

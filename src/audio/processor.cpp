@@ -484,6 +484,8 @@ tresult PluginProcessor::processSamples(const ProcessData& data, int32_t numChan
         if(!input || !output)
             continue;
 
+        std::copy(input, input + numSamples, output);
+
         for (auto& unit : effect_chain_) {
             const float intensity = unit.intensity;
 
