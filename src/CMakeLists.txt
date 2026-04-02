@@ -231,6 +231,7 @@ endif()
 
 smtg_target_add_plugin_resources(motion-fx
         RESOURCES
+        "resources/button_bypass_37x37.png"
         "resources/viewGUI.uidesc"
 )
 
