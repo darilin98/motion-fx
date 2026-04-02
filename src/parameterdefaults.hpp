@@ -15,8 +15,8 @@ enum AudioParamID : Steinberg::Vst::ParamID {
     kParamBypass = 101,
     kParamBrightness,
     kParamBrightnessIntensity,
-    kParamDepth,
-    kParamDepthIntensity,
+    kParamSpace,
+    kParamSpaceIntensity,
     kParamMotionContinuous,
     kParamMotionBurst,
     kParamMotionContIntensity,
@@ -86,7 +86,7 @@ namespace ParamDefaults {
 
 static const std::vector<std::pair<Steinberg::Vst::ParamID, double>> kParamDefaultsMap {
             {kParamBrightness, ParamDefaults::kBrightness},
-            {kParamDepth, ParamDefaults::kDepth},
+            {kParamSpace, ParamDefaults::kDepth},
             {kParamMotionContinuous, ParamDefaults::kMotion},
             {kParamMotionBurst, ParamDefaults::kMotion},
             {kParamColorRed, ParamDefaults::kColor},

@@ -32,8 +32,8 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
     parameters.addParameter(STR16("BrightnessIntensity"), nullptr, 0, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamBrightnessIntensity);
     parameters.addParameter(STR16("Brightness"), nullptr, 1, ParamDefaults::kBrightness, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly,kParamBrightness);
 
-    parameters.addParameter(STR16("DepthIntensity"), nullptr, 0, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamDepthIntensity);
-    parameters.addParameter(STR16("Depth"), nullptr, 0, ParamDefaults::kDepth, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamDepth);
+    parameters.addParameter(STR16("SpaceIntensity"), nullptr, 0, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamSpaceIntensity);
+    parameters.addParameter(STR16("Space"), nullptr, 0, ParamDefaults::kDepth, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly, kParamSpace);
 
     parameters.addParameter(STR16("MotionContIntensity"), nullptr, 0, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamMotionContIntensity);
     parameters.addParameter(STR16("MotionBurstIntensity"), nullptr, 0, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamMotionBurstIntensity);
@@ -164,7 +164,7 @@ void PluginController::instantiateExtractors() {
     extractors_.clear();
 
     addExtractor<BrightnessFeatureExtractor>(kParamBrightness);
-    addExtractor<DepthFeatureExtractor>(kParamDepth);
+    addExtractor<DepthFeatureExtractor>(kParamSpace);
     addExtractor<MotionFeatureExtractor>(kParamMotionContinuous, kParamMotionBurst);
     addExtractor<ColorFeatureExtractor>(kParamColorRed, kParamColorGreen, kParamColorBlue);
     addExtractor<SaturationFeatureExtractor>(kParamSaturation);

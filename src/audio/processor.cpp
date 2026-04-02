@@ -62,7 +62,7 @@ void PluginProcessor::createEffects() {
 
     auto& echo_unit = effect_chain_.emplace_back();
     echo_unit.effect = std::make_unique<SpatialEcho>();
-    echo_unit.intensity_param_id = kParamDepthIntensity;
+    echo_unit.intensity_param_id = kParamSpaceIntensity;
 }
 
 tresult PLUGIN_API PluginProcessor::setupProcessing(ProcessSetup &setup) {
@@ -127,7 +127,7 @@ void PluginProcessor::setupEffects(ProcessSetup& setup) {
             });
         }
         if (auto* echo = dynamic_cast<SpatialEcho*>(unit.effect.get())) {
-            parameter_router_[kParamDepth].push_back({
+            parameter_router_[kParamSpace].push_back({
                 [echo](float value) {
                     echo->setSpaceLevel(value);
                 }
