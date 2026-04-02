@@ -2,11 +2,8 @@
 	"vstgui-ui-description": {
 		"version": "1",
 		"bitmaps": {
-			"tree-glass": {
-				"path": "/Users/darek/Downloads/tree-glass.png"
-			},
-			"water-drop": {
-				"path": "/Users/darek/Downloads/water-drop.png"
+			"button_bypass_37x37": {
+				"path": "button_bypass_37x37.png"
 			}
 		},
 		"fonts": {
@@ -82,8 +79,6 @@
 			"ColorGreen": "112",
 			"ColorIntensity": "114",
 			"ColorRed": "111",
-			"Depth": "104",
-			"DepthIntensity": "105",
 			"MotionBurst": "107",
 			"MotionBurstIntensity": "109",
 			"MotionContIntensity": "108",
@@ -93,6 +88,8 @@
 			"Reset": "502",
 			"Saturation": "115",
 			"SaturationIntensity": "116",
+			"Space": "104",
+			"SpaceIntensity": "105",
 			"UiControl": "1001"
 		},
 		"custom": {
@@ -113,16 +110,16 @@
 				"SplitViewSize_1_1": "0.5098265895953757453895605067373253405094",
 				"SplitViewSize_2_0": "0.5680272108843537059996720017807092517614",
 				"SplitViewSize_2_1": "0.4285714285714285476380780437466455623507",
-				"TabSwitchValue": "6",
+				"TabSwitchValue": "4",
 				"Version": "1",
 				"ViewBackground": "0"
 			},
 			"UITemplateController": {
-				"SelectedTemplate": "InputSelect"
+				"SelectedTemplate": "AudioProcessing"
 			},
 			"UIAttributesController": {},
 			"UIViewCreatorDataSource": {
-				"SelectedRow": "28"
+				"SelectedRow": "15"
 			},
 			"UIFontsDataSource": {
 				"SelectedRow": "1"
@@ -137,7 +134,7 @@
 				"SelectedRow": "2"
 			},
 			"UIBitmapsDataSource": {
-				"SelectedRow": "1"
+				"SelectedRow": "0"
 			}
 		},
 		"templates": {
@@ -401,7 +398,7 @@
 											"text-inset": "0, 0",
 											"text-rotation": "0",
 											"text-shadow-offset": "1, 1",
-											"title": "Effect Intensity",
+											"title": "Effect Intensity Control",
 											"transparent": "false",
 											"value-precision": "2",
 											"wants-focus": "false",
@@ -537,6 +534,39 @@
 															"wheel-inc-value": "0.1",
 															"zoom-factor": "10"
 														}
+													},
+													"CParamDisplay": {
+														"attributes": {
+															"back-color": "~ TransparentCColor",
+															"background-offset": "0, 0",
+															"class": "CParamDisplay",
+															"control-tag": "BrightnessIntensity",
+															"font": "label-small",
+															"font-antialias": "true",
+															"font-color": "~ WhiteCColor",
+															"frame-color": "~ TransparentCColor",
+															"frame-width": "1",
+															"opacity": "1",
+															"origin": "120, 0",
+															"round-rect-radius": "6",
+															"shadow-color": "~ TransparentCColor",
+															"size": "30, 20",
+															"style-3D-in": "false",
+															"style-3D-out": "false",
+															"style-no-draw": "false",
+															"style-no-frame": "false",
+															"style-no-text": "false",
+															"style-round-rect": "false",
+															"style-shadow-text": "false",
+															"text-alignment": "right",
+															"text-inset": "0, 0",
+															"text-rotation": "0",
+															"text-shadow-offset": "1, 1",
+															"transparent": "false",
+															"value-precision": "2",
+															"wants-focus": "false",
+															"wheel-inc-value": "0.1"
+														}
 													}
 												}
 											},
@@ -585,7 +615,7 @@
 															"text-inset": "0, 0",
 															"text-rotation": "0",
 															"text-shadow-offset": "1, 1",
-															"title": "Depth",
+															"title": "Space",
 															"transparent": "false",
 															"value-precision": "2",
 															"wants-focus": "false",
@@ -597,7 +627,7 @@
 															"autosize": "left right ",
 															"bitmap-offset": "0, 0",
 															"class": "CSlider",
-															"control-tag": "DepthIntensity",
+															"control-tag": "SpaceIntensity",
 															"draw-back": "true",
 															"draw-back-color": "~ BlackCColor",
 															"draw-frame": "true",
@@ -618,6 +648,39 @@
 															"wants-focus": "true",
 															"wheel-inc-value": "0.1",
 															"zoom-factor": "10"
+														}
+													},
+													"CParamDisplay": {
+														"attributes": {
+															"back-color": "~ TransparentCColor",
+															"background-offset": "0, 0",
+															"class": "CParamDisplay",
+															"control-tag": "SpaceIntensity",
+															"font": "label-small",
+															"font-antialias": "true",
+															"font-color": "~ WhiteCColor",
+															"frame-color": "~ TransparentCColor",
+															"frame-width": "1",
+															"opacity": "1",
+															"origin": "120, 0",
+															"round-rect-radius": "6",
+															"shadow-color": "~ TransparentCColor",
+															"size": "30, 20",
+															"style-3D-in": "false",
+															"style-3D-out": "false",
+															"style-no-draw": "false",
+															"style-no-frame": "false",
+															"style-no-text": "false",
+															"style-round-rect": "false",
+															"style-shadow-text": "false",
+															"text-alignment": "right",
+															"text-inset": "0, 0",
+															"text-rotation": "0",
+															"text-shadow-offset": "1, 1",
+															"transparent": "false",
+															"value-precision": "2",
+															"wants-focus": "false",
+															"wheel-inc-value": "0.1"
 														}
 													}
 												}
@@ -701,6 +764,39 @@
 															"wheel-inc-value": "0.1",
 															"zoom-factor": "10"
 														}
+													},
+													"CParamDisplay": {
+														"attributes": {
+															"back-color": "~ TransparentCColor",
+															"background-offset": "0, 0",
+															"class": "CParamDisplay",
+															"control-tag": "MotionContIntensity",
+															"font": "label-small",
+															"font-antialias": "true",
+															"font-color": "~ WhiteCColor",
+															"frame-color": "~ TransparentCColor",
+															"frame-width": "1",
+															"opacity": "1",
+															"origin": "120, 0",
+															"round-rect-radius": "6",
+															"shadow-color": "~ TransparentCColor",
+															"size": "30, 20",
+															"style-3D-in": "false",
+															"style-3D-out": "false",
+															"style-no-draw": "false",
+															"style-no-frame": "false",
+															"style-no-text": "false",
+															"style-round-rect": "false",
+															"style-shadow-text": "false",
+															"text-alignment": "right",
+															"text-inset": "0, 0",
+															"text-rotation": "0",
+															"text-shadow-offset": "1, 1",
+															"transparent": "false",
+															"value-precision": "2",
+															"wants-focus": "false",
+															"wheel-inc-value": "0.1"
+														}
 													}
 												}
 											},
@@ -782,6 +878,39 @@
 															"wants-focus": "true",
 															"wheel-inc-value": "0.1",
 															"zoom-factor": "10"
+														}
+													},
+													"CParamDisplay": {
+														"attributes": {
+															"back-color": "~ TransparentCColor",
+															"background-offset": "0, 0",
+															"class": "CParamDisplay",
+															"control-tag": "MotionBurstIntensity",
+															"font": "label-small",
+															"font-antialias": "true",
+															"font-color": "~ WhiteCColor",
+															"frame-color": "~ TransparentCColor",
+															"frame-width": "1",
+															"opacity": "1",
+															"origin": "120, 0",
+															"round-rect-radius": "6",
+															"shadow-color": "~ TransparentCColor",
+															"size": "30, 20",
+															"style-3D-in": "false",
+															"style-3D-out": "false",
+															"style-no-draw": "false",
+															"style-no-frame": "false",
+															"style-no-text": "false",
+															"style-round-rect": "false",
+															"style-shadow-text": "false",
+															"text-alignment": "right",
+															"text-inset": "0, 0",
+															"text-rotation": "0",
+															"text-shadow-offset": "1, 1",
+															"transparent": "false",
+															"value-precision": "2",
+															"wants-focus": "false",
+															"wheel-inc-value": "0.1"
 														}
 													}
 												}
@@ -865,6 +994,39 @@
 															"wheel-inc-value": "0.1",
 															"zoom-factor": "10"
 														}
+													},
+													"CParamDisplay": {
+														"attributes": {
+															"back-color": "~ TransparentCColor",
+															"background-offset": "0, 0",
+															"class": "CParamDisplay",
+															"control-tag": "SaturationIntensity",
+															"font": "label-small",
+															"font-antialias": "true",
+															"font-color": "~ WhiteCColor",
+															"frame-color": "~ TransparentCColor",
+															"frame-width": "1",
+															"opacity": "1",
+															"origin": "120, 0",
+															"round-rect-radius": "6",
+															"shadow-color": "~ TransparentCColor",
+															"size": "30, 20",
+															"style-3D-in": "false",
+															"style-3D-out": "false",
+															"style-no-draw": "false",
+															"style-no-frame": "false",
+															"style-no-text": "false",
+															"style-round-rect": "false",
+															"style-shadow-text": "false",
+															"text-alignment": "right",
+															"text-inset": "0, 0",
+															"text-rotation": "0",
+															"text-shadow-offset": "1, 1",
+															"transparent": "false",
+															"value-precision": "2",
+															"wants-focus": "false",
+															"wheel-inc-value": "0.1"
+														}
 													}
 												}
 											},
@@ -946,6 +1108,39 @@
 															"wants-focus": "true",
 															"wheel-inc-value": "0.1",
 															"zoom-factor": "10"
+														}
+													},
+													"CParamDisplay": {
+														"attributes": {
+															"back-color": "~ TransparentCColor",
+															"background-offset": "0, 0",
+															"class": "CParamDisplay",
+															"control-tag": "ColorIntensity",
+															"font": "label-small",
+															"font-antialias": "true",
+															"font-color": "~ WhiteCColor",
+															"frame-color": "~ TransparentCColor",
+															"frame-width": "1",
+															"opacity": "1",
+															"origin": "120, 0",
+															"round-rect-radius": "6",
+															"shadow-color": "~ TransparentCColor",
+															"size": "30, 20",
+															"style-3D-in": "false",
+															"style-3D-out": "false",
+															"style-no-draw": "false",
+															"style-no-frame": "false",
+															"style-no-text": "false",
+															"style-round-rect": "false",
+															"style-shadow-text": "false",
+															"text-alignment": "right",
+															"text-inset": "0, 0",
+															"text-rotation": "0",
+															"text-shadow-offset": "1, 1",
+															"transparent": "false",
+															"value-precision": "2",
+															"wants-focus": "false",
+															"wheel-inc-value": "0.1"
 														}
 													}
 												}
@@ -1044,7 +1239,7 @@
 															"origin": "10, 10",
 															"round-rect-radius": "6",
 															"shadow-color": "~ RedCColor",
-															"size": "120, 20",
+															"size": "140, 20",
 															"style-3D-in": "false",
 															"style-3D-out": "false",
 															"style-no-draw": "false",
@@ -1056,7 +1251,7 @@
 															"text-inset": "0, 0",
 															"text-rotation": "0",
 															"text-shadow-offset": "1, 1",
-															"title": "Base Frequency",
+															"title": "Color Base Frequency",
 															"transparent": "false",
 															"value-precision": "2",
 															"wants-focus": "false",
@@ -1200,7 +1395,7 @@
 											"text-inset": "0, 0",
 											"text-rotation": "0",
 											"text-shadow-offset": "1, 1",
-											"title": "Effect Intensity",
+											"title": "Effect Intensity Control",
 											"transparent": "false",
 											"value-precision": "2",
 											"wants-focus": "false",
@@ -1336,6 +1531,39 @@
 															"wheel-inc-value": "0.1",
 															"zoom-factor": "10"
 														}
+													},
+													"CParamDisplay": {
+														"attributes": {
+															"back-color": "~ TransparentCColor",
+															"background-offset": "0, 0",
+															"class": "CParamDisplay",
+															"control-tag": "BrightnessIntensity",
+															"font": "label-small",
+															"font-antialias": "true",
+															"font-color": "~ WhiteCColor",
+															"frame-color": "~ TransparentCColor",
+															"frame-width": "1",
+															"opacity": "1",
+															"origin": "120, 0",
+															"round-rect-radius": "6",
+															"shadow-color": "~ TransparentCColor",
+															"size": "30, 20",
+															"style-3D-in": "false",
+															"style-3D-out": "false",
+															"style-no-draw": "false",
+															"style-no-frame": "false",
+															"style-no-text": "false",
+															"style-round-rect": "false",
+															"style-shadow-text": "false",
+															"text-alignment": "right",
+															"text-inset": "0, 0",
+															"text-rotation": "0",
+															"text-shadow-offset": "1, 1",
+															"transparent": "false",
+															"value-precision": "2",
+															"wants-focus": "false",
+															"wheel-inc-value": "0.1"
+														}
 													}
 												}
 											},
@@ -1384,7 +1612,7 @@
 															"text-inset": "0, 0",
 															"text-rotation": "0",
 															"text-shadow-offset": "1, 1",
-															"title": "Depth",
+															"title": "Space",
 															"transparent": "false",
 															"value-precision": "2",
 															"wants-focus": "false",
@@ -1396,7 +1624,7 @@
 															"autosize": "left right ",
 															"bitmap-offset": "0, 0",
 															"class": "CSlider",
-															"control-tag": "DepthIntensity",
+															"control-tag": "SpaceIntensity",
 															"draw-back": "true",
 															"draw-back-color": "~ BlackCColor",
 															"draw-frame": "true",
@@ -1417,6 +1645,39 @@
 															"wants-focus": "true",
 															"wheel-inc-value": "0.1",
 															"zoom-factor": "10"
+														}
+													},
+													"CParamDisplay": {
+														"attributes": {
+															"back-color": "~ TransparentCColor",
+															"background-offset": "0, 0",
+															"class": "CParamDisplay",
+															"control-tag": "SpaceIntensity",
+															"font": "label-small",
+															"font-antialias": "true",
+															"font-color": "~ WhiteCColor",
+															"frame-color": "~ TransparentCColor",
+															"frame-width": "1",
+															"opacity": "1",
+															"origin": "120, 0",
+															"round-rect-radius": "6",
+															"shadow-color": "~ TransparentCColor",
+															"size": "30, 20",
+															"style-3D-in": "false",
+															"style-3D-out": "false",
+															"style-no-draw": "false",
+															"style-no-frame": "false",
+															"style-no-text": "false",
+															"style-round-rect": "false",
+															"style-shadow-text": "false",
+															"text-alignment": "right",
+															"text-inset": "0, 0",
+															"text-rotation": "0",
+															"text-shadow-offset": "1, 1",
+															"transparent": "false",
+															"value-precision": "2",
+															"wants-focus": "false",
+															"wheel-inc-value": "0.1"
 														}
 													}
 												}
@@ -1500,6 +1761,39 @@
 															"wheel-inc-value": "0.1",
 															"zoom-factor": "10"
 														}
+													},
+													"CParamDisplay": {
+														"attributes": {
+															"back-color": "~ TransparentCColor",
+															"background-offset": "0, 0",
+															"class": "CParamDisplay",
+															"control-tag": "MotionContIntensity",
+															"font": "label-small",
+															"font-antialias": "true",
+															"font-color": "~ WhiteCColor",
+															"frame-color": "~ TransparentCColor",
+															"frame-width": "1",
+															"opacity": "1",
+															"origin": "120, 0",
+															"round-rect-radius": "6",
+															"shadow-color": "~ TransparentCColor",
+															"size": "30, 20",
+															"style-3D-in": "false",
+															"style-3D-out": "false",
+															"style-no-draw": "false",
+															"style-no-frame": "false",
+															"style-no-text": "false",
+															"style-round-rect": "false",
+															"style-shadow-text": "false",
+															"text-alignment": "right",
+															"text-inset": "0, 0",
+															"text-rotation": "0",
+															"text-shadow-offset": "1, 1",
+															"transparent": "false",
+															"value-precision": "2",
+															"wants-focus": "false",
+															"wheel-inc-value": "0.1"
+														}
 													}
 												}
 											},
@@ -1581,6 +1875,39 @@
 															"wants-focus": "true",
 															"wheel-inc-value": "0.1",
 															"zoom-factor": "10"
+														}
+													},
+													"CParamDisplay": {
+														"attributes": {
+															"back-color": "~ TransparentCColor",
+															"background-offset": "0, 0",
+															"class": "CParamDisplay",
+															"control-tag": "MotionBurstIntensity",
+															"font": "label-small",
+															"font-antialias": "true",
+															"font-color": "~ WhiteCColor",
+															"frame-color": "~ TransparentCColor",
+															"frame-width": "1",
+															"opacity": "1",
+															"origin": "120, 0",
+															"round-rect-radius": "6",
+															"shadow-color": "~ TransparentCColor",
+															"size": "30, 20",
+															"style-3D-in": "false",
+															"style-3D-out": "false",
+															"style-no-draw": "false",
+															"style-no-frame": "false",
+															"style-no-text": "false",
+															"style-round-rect": "false",
+															"style-shadow-text": "false",
+															"text-alignment": "right",
+															"text-inset": "0, 0",
+															"text-rotation": "0",
+															"text-shadow-offset": "1, 1",
+															"transparent": "false",
+															"value-precision": "2",
+															"wants-focus": "false",
+															"wheel-inc-value": "0.1"
 														}
 													}
 												}
@@ -1664,6 +1991,39 @@
 															"wheel-inc-value": "0.1",
 															"zoom-factor": "10"
 														}
+													},
+													"CParamDisplay": {
+														"attributes": {
+															"back-color": "~ TransparentCColor",
+															"background-offset": "0, 0",
+															"class": "CParamDisplay",
+															"control-tag": "SaturationIntensity",
+															"font": "label-small",
+															"font-antialias": "true",
+															"font-color": "~ WhiteCColor",
+															"frame-color": "~ TransparentCColor",
+															"frame-width": "1",
+															"opacity": "1",
+															"origin": "120, 0",
+															"round-rect-radius": "6",
+															"shadow-color": "~ TransparentCColor",
+															"size": "30, 20",
+															"style-3D-in": "false",
+															"style-3D-out": "false",
+															"style-no-draw": "false",
+															"style-no-frame": "false",
+															"style-no-text": "false",
+															"style-round-rect": "false",
+															"style-shadow-text": "false",
+															"text-alignment": "right",
+															"text-inset": "0, 0",
+															"text-rotation": "0",
+															"text-shadow-offset": "1, 1",
+															"transparent": "false",
+															"value-precision": "2",
+															"wants-focus": "false",
+															"wheel-inc-value": "0.1"
+														}
 													}
 												}
 											},
@@ -1745,6 +2105,39 @@
 															"wants-focus": "true",
 															"wheel-inc-value": "0.1",
 															"zoom-factor": "10"
+														}
+													},
+													"CParamDisplay": {
+														"attributes": {
+															"back-color": "~ TransparentCColor",
+															"background-offset": "0, 0",
+															"class": "CParamDisplay",
+															"control-tag": "ColorIntensity",
+															"font": "label-small",
+															"font-antialias": "true",
+															"font-color": "~ WhiteCColor",
+															"frame-color": "~ TransparentCColor",
+															"frame-width": "1",
+															"opacity": "1",
+															"origin": "120, 0",
+															"round-rect-radius": "6",
+															"shadow-color": "~ TransparentCColor",
+															"size": "30, 20",
+															"style-3D-in": "false",
+															"style-3D-out": "false",
+															"style-no-draw": "false",
+															"style-no-frame": "false",
+															"style-no-text": "false",
+															"style-round-rect": "false",
+															"style-shadow-text": "false",
+															"text-alignment": "right",
+															"text-inset": "0, 0",
+															"text-rotation": "0",
+															"text-shadow-offset": "1, 1",
+															"transparent": "false",
+															"value-precision": "2",
+															"wants-focus": "false",
+															"wheel-inc-value": "0.1"
 														}
 													}
 												}
@@ -1843,7 +2236,7 @@
 															"origin": "10, 10",
 															"round-rect-radius": "6",
 															"shadow-color": "~ RedCColor",
-															"size": "120, 20",
+															"size": "140, 20",
 															"style-3D-in": "false",
 															"style-3D-out": "false",
 															"style-no-draw": "false",
@@ -1855,7 +2248,7 @@
 															"text-inset": "0, 0",
 															"text-rotation": "0",
 															"text-shadow-offset": "1, 1",
-															"title": "Base Frequency",
+															"title": "Color Base Frequency",
 															"transparent": "false",
 															"value-precision": "2",
 															"wants-focus": "false",
@@ -2420,7 +2813,7 @@
 															"angle-start": "135",
 															"circle-drawing": "false",
 															"class": "CKnob",
-															"control-tag": "Depth",
+															"control-tag": "Space",
 															"corona-color": "indicator",
 															"corona-dash-dot": "false",
 															"corona-dash-dot-lengths": "1.26,0.1",
@@ -2476,7 +2869,7 @@
 															"text-inset": "0, 0",
 															"text-rotation": "0",
 															"text-shadow-offset": "1, 1",
-															"title": "Depth",
+															"title": "Space",
 															"transparent": "false",
 															"value-precision": "2",
 															"wants-focus": "false",
@@ -2965,7 +3358,7 @@
 											"text-alignment": "center",
 											"text-color": "~ BlackCColor",
 											"text-color-highlighted": "~ WhiteCColor",
-											"title": "Return",
+											"title": "Exit",
 											"transparent": "false",
 											"wants-focus": "true",
 											"wheel-inc-value": "0.1"
@@ -3083,6 +3476,19 @@
 											"text-color": "~ BlackCColor",
 											"text-color-highlighted": "~ WhiteCColor",
 											"title": "Pause",
+											"transparent": "false",
+											"wants-focus": "true",
+											"wheel-inc-value": "0.1"
+										}
+									},
+									"COnOffButton": {
+										"attributes": {
+											"bitmap": "button_bypass_37x37",
+											"class": "COnOffButton",
+											"control-tag": "Bypass",
+											"opacity": "1",
+											"origin": "32, 160",
+											"size": "37, 37",
 											"transparent": "false",
 											"wants-focus": "true",
 											"wheel-inc-value": "0.1"
