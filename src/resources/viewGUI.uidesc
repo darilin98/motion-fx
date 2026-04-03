@@ -115,7 +115,7 @@
 				"ViewBackground": "0"
 			},
 			"UITemplateController": {
-				"SelectedTemplate": "AudioProcessing"
+				"SelectedTemplate": "InputSelect"
 			},
 			"UIAttributesController": {},
 			"UIViewCreatorDataSource": {
@@ -578,7 +578,7 @@
 													"class": "CViewContainer",
 													"mouse-enabled": "true",
 													"opacity": "1",
-													"origin": "0, 60",
+													"origin": "0, 260",
 													"size": "160, 50",
 													"transparent": "false",
 													"wants-focus": "false"
@@ -693,7 +693,7 @@
 													"class": "CViewContainer",
 													"mouse-enabled": "true",
 													"opacity": "1",
-													"origin": "0, 110",
+													"origin": "0, 210",
 													"size": "160, 50",
 													"transparent": "false",
 													"wants-focus": "false"
@@ -730,7 +730,7 @@
 															"text-inset": "0, 0",
 															"text-rotation": "0",
 															"text-shadow-offset": "1, 1",
-															"title": "Motion Cont",
+															"title": "Motion Average",
 															"transparent": "false",
 															"value-precision": "2",
 															"wants-focus": "false",
@@ -808,7 +808,7 @@
 													"class": "CViewContainer",
 													"mouse-enabled": "true",
 													"opacity": "1",
-													"origin": "0, 160",
+													"origin": "0, 60",
 													"size": "160, 50",
 													"transparent": "false",
 													"wants-focus": "false"
@@ -923,7 +923,7 @@
 													"class": "CViewContainer",
 													"mouse-enabled": "true",
 													"opacity": "1",
-													"origin": "0, 210",
+													"origin": "0, 160",
 													"size": "160, 50",
 													"transparent": "false",
 													"wants-focus": "false"
@@ -1038,7 +1038,7 @@
 													"class": "CViewContainer",
 													"mouse-enabled": "true",
 													"opacity": "1",
-													"origin": "0, 260",
+													"origin": "0, 110",
 													"size": "160, 50",
 													"transparent": "false",
 													"wants-focus": "false"
@@ -1575,7 +1575,7 @@
 													"class": "CViewContainer",
 													"mouse-enabled": "true",
 													"opacity": "1",
-													"origin": "0, 60",
+													"origin": "0, 260",
 													"size": "160, 50",
 													"transparent": "false",
 													"wants-focus": "false"
@@ -1690,7 +1690,7 @@
 													"class": "CViewContainer",
 													"mouse-enabled": "true",
 													"opacity": "1",
-													"origin": "0, 110",
+													"origin": "0, 210",
 													"size": "160, 50",
 													"transparent": "false",
 													"wants-focus": "false"
@@ -1727,7 +1727,7 @@
 															"text-inset": "0, 0",
 															"text-rotation": "0",
 															"text-shadow-offset": "1, 1",
-															"title": "Motion Cont",
+															"title": "Motion Average",
 															"transparent": "false",
 															"value-precision": "2",
 															"wants-focus": "false",
@@ -1805,7 +1805,7 @@
 													"class": "CViewContainer",
 													"mouse-enabled": "true",
 													"opacity": "1",
-													"origin": "0, 160",
+													"origin": "0, 60",
 													"size": "160, 50",
 													"transparent": "false",
 													"wants-focus": "false"
@@ -1920,7 +1920,7 @@
 													"class": "CViewContainer",
 													"mouse-enabled": "true",
 													"opacity": "1",
-													"origin": "0, 210",
+													"origin": "0, 160",
 													"size": "160, 50",
 													"transparent": "false",
 													"wants-focus": "false"
@@ -2035,7 +2035,7 @@
 													"class": "CViewContainer",
 													"mouse-enabled": "true",
 													"opacity": "1",
-													"origin": "0, 260",
+													"origin": "0, 110",
 													"size": "160, 50",
 													"transparent": "false",
 													"wants-focus": "false"
@@ -2973,7 +2973,7 @@
 															"text-inset": "0, 0",
 															"text-rotation": "0",
 															"text-shadow-offset": "1, 1",
-															"title": "MotionCont",
+															"title": "MotionAvg",
 															"transparent": "false",
 															"value-precision": "2",
 															"wants-focus": "false",
