@@ -44,6 +44,10 @@ void PluginProcessor::createEffects() {
     filter_unit.effect = std::make_unique<MorphFilter>();
     filter_unit.intensity_param_id = kParamBrightnessIntensity;
 
+    auto& noise_unit = effect_chain_.emplace_back();
+    noise_unit.effect = std::make_unique<NoiseMaker>();
+    noise_unit.intensity_param_id = kParamMotionBurstIntensity;
+
     auto& ring_unit = effect_chain_.emplace_back();
     ring_unit.effect = std::make_unique<RingModulator>();
     ring_unit.intensity_param_id = kParamColorIntensity;
@@ -55,10 +59,6 @@ void PluginProcessor::createEffects() {
     auto& phaser_unit = effect_chain_.emplace_back();
     phaser_unit.effect = std::make_unique<WavePhaser>();
     phaser_unit.intensity_param_id = kParamMotionContIntensity;
-    
-    auto& noise_unit = effect_chain_.emplace_back();
-    noise_unit.effect = std::make_unique<NoiseMaker>();
-    noise_unit.intensity_param_id = kParamMotionBurstIntensity;
 
     auto& echo_unit = effect_chain_.emplace_back();
     echo_unit.effect = std::make_unique<SpatialEcho>();
