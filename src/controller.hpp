@@ -95,8 +95,9 @@ private:
 	std::mutex cache_mutex_;
 	modulation_time_curve_t modulation_cache_;
 	static constexpr size_t kChunkSize = 512 * 1024;
+	static constexpr size_t kMaxCacheSize = 100'000;
 
-	IConnectionPoint* processorConnection_{nullptr};
+	IConnectionPoint* processor_connection_{nullptr};
 	bool is_video_preview_mode_ = false;
 	VSTGUI::UTF8String video_path_ = "";
 	pcont_t playback_controller_ = nullptr;

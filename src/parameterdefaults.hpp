@@ -45,6 +45,7 @@ enum ControlParamID : Steinberg::Vst::ParamID {
  */
 enum ViewParamID : Steinberg::Vst::ParamID {
     kParamLoadVideo = 1001,
+    kParamExport,
 };
 
 inline bool isControlParam(Steinberg::Vst::ParamID id) noexcept {
@@ -93,6 +94,15 @@ static const std::vector<std::pair<Steinberg::Vst::ParamID, double>> kParamDefau
             {kParamColorGreen, ParamDefaults::kColor},
             {kParamColorBlue, ParamDefaults::kColor},
             {kParamSaturation, ParamDefaults::kSaturation},
+};
+
+static const std::vector<Steinberg::Vst::ParamID> kParamIntensities {
+    kParamBrightnessIntensity,
+    kParamSpaceIntensity,
+    kParamColorIntensity,
+    kParamMotionBurstIntensity,
+    kParamSaturationIntensity,
+    kParamMotionContIntensity,
 };
 
 #endif //PARAMETERDEFAULTS_HPP

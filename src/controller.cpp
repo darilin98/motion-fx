@@ -28,6 +28,7 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
     parameters.addParameter(STR16("Reset"), nullptr, 1, 0.0, ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamReset);
     parameters.addParameter(STR16("Pause"), nullptr, 1, 0.0, ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamPause);
     parameters.addParameter(STR16("Bypass"), nullptr, 1, 0.0, ParameterInfo::kIsBypass | ParameterInfo::kCanAutomate | ParameterInfo::kIsList, kParamBypass);
+    parameters.addParameter(STR16("Export"), nullptr, 1, 0.0, ParameterInfo::kIsHidden |ParameterInfo::kIsReadOnly, kParamExport);
 
     parameters.addParameter(STR16("BrightnessIntensity"), nullptr, 0, ParamDefaults::kIntensity, ParameterInfo::kCanAutomate, kParamBrightnessIntensity);
     parameters.addParameter(STR16("Brightness"), nullptr, 1, ParamDefaults::kBrightness, ParameterInfo::kIsHidden | ParameterInfo::kIsReadOnly,kParamBrightness);
@@ -63,7 +64,7 @@ tresult PLUGIN_API PluginController::terminate()
 
 tresult PluginController::disconnect(IConnectionPoint* other) {
     if (playback_controller_) { playback_controller_->stopPipeline(); }
-    processorConnection_ = nullptr;
+    processor_connection_ = nullptr;
     return EditController::disconnect(other);
 }
 
@@ -85,6 +86,11 @@ tresult PLUGIN_API PluginController::setState(IBStream *state)
         return kResultFalse;
     setParamNormalized(kParamBypass, bypass_state);
 
+    double export_state = 0.0;
+    if (!streamer.readDouble(export_state))
+        return kResultFalse;
+    setParamNormalized(kParamExport, export_state);
+
     if (char* path = streamer.readStr8()) {
         video_path_ = VSTGUI::UTF8String(path);
         delete[] path;
@@ -97,6 +103,13 @@ tresult PLUGIN_API PluginController::setState(IBStream *state)
 
     if (!video_path_.empty() && is_video_preview_mode_)
         setupPlayback(video_path_);
+
+    for (auto& id : kParamIntensities) {
+        double value;
+        if (!streamer.readDouble(value))
+            return kResultFalse;
+        setParamNormalized(id, value);
+    }
 
     return kResultOk;
 }
@@ -124,12 +137,23 @@ tresult PLUGIN_API PluginController::getState(IBStream *state)
     if (!streamer.writeDouble(bypass_state))
         return kResultFalse;
 
+    double export_state = getParamNormalized(kParamExport);
+    if (!streamer.writeDouble(export_state))
+        return kResultFalse;
+
     const std::string pathUtf8 = video_path_.getString();
     if (!streamer.writeStr8(pathUtf8.c_str()))
         return kResultFalse;
 
     if (!streamer.writeBool(is_video_preview_mode_))
         return kResultFalse;
+
+    for (auto& id : kParamIntensities) {
+        double value = getParamNormalized(id);
+        if (!streamer.writeDouble(value))
+            return kResultFalse;
+    }
+
 
     return kResultOk;
 }
@@ -210,6 +234,9 @@ void PluginController::cleanUpPlayback() {
 
     video_path_.clear();
     is_video_preview_mode_ = false;
+
+    double export_invalid = 0.0;
+    setParamNormalized(kParamExport, export_invalid);
 }
 
 void PluginController::registerReceiver(IFrameReceiver* receiver) const {
@@ -225,12 +252,12 @@ void PluginController::unregisterReceiver(IFrameReceiver* receiver) const {
 }
 
 tresult PLUGIN_API PluginController::connect(IConnectionPoint* other) {
-    processorConnection_ = other;
+    processor_connection_ = other;
     return kResultOk;
 }
 
 void PluginController::onVideoFinished() {
-    if (!processorConnection_)
+    if (!processor_connection_)
         return;
 
     Steinberg::Vst::IMessage* msg = allocateMessage();
@@ -239,9 +266,13 @@ void PluginController::onVideoFinished() {
         return;
 
     msg->setMessageID("VideoFinished");
-    processorConnection_->notify(msg);
+    processor_connection_->notify(msg);
 
     sendModulationCacheChunked();
+
+    // not using bool here in order to communicate the fact through a parameter
+    double export_ready = 1.0;
+    setParamNormalized(kParamExport, export_ready);
 }
 
 
@@ -280,7 +311,7 @@ void PluginController::sendModulationCacheChunked() {
         msg->getAttributes()->setInt("totalChunks", totalChunks);
         msg->getAttributes()->setInt("totalBytes",  (int64)blob.size());
         msg->getAttributes()->setBinary("data", blob.data() + offset, len);
-        processorConnection_->notify(msg);
+        processor_connection_->notify(msg);
         msg->release();
     }
 
@@ -306,11 +337,14 @@ void PluginController::onFeatureResult(const FeatureResult& result) {
 
     {
         std::lock_guard lock(cache_mutex_);
-        ModulationPointTime point;
-        point.timestamp = result.timestamp;
-        for (auto& [id, value] : result.params)
-            point.values.emplace_back(id, value);
-        modulation_cache_.push_back(std::move(point));
+
+        if (modulation_cache_.size() < kMaxCacheSize) {
+            ModulationPointTime point;
+            point.timestamp = result.timestamp;
+            for (auto& [id, value] : result.params)
+                point.values.emplace_back(id, value);
+            modulation_cache_.push_back(std::move(point));
+        }
     }
 }
 

@@ -236,6 +236,15 @@ tresult PluginProcessor::setState(IBStream* state) {
     if (numPoints != 0)
         modulation_cache_ready_ = true;
 
+    if (!effect_chain_.empty()) {
+        for (auto& effect_unit : effect_chain_) {
+            double value;
+            if (!streamer.readDouble(value))
+                return kResultFalse;
+            handleDspParam(effect_unit.intensity_param_id, value);
+        }
+    }
+
     return kResultOk;
 }
 
@@ -272,6 +281,15 @@ tresult PluginProcessor::getState(IBStream* state) {
                 return kResultFalse;
             if (!streamer.writeDouble(value))
                 return kResultFalse;
+        }
+    }
+
+    if (!effect_chain_.empty()) {
+        for (auto& effect_unit : effect_chain_) {
+            double value = effect_unit.intensity;
+            if (!streamer.writeDouble(value))
+                return kResultFalse;
+            handleDspParam(effect_unit.intensity_param_id, value);
         }
     }
     return kResultOk;
