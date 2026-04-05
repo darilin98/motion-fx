@@ -4,6 +4,9 @@
 		"bitmaps": {
 			"button_bypass_37x37": {
 				"path": "button_bypass_37x37.png"
+			},
+			"on_off_button_20x20": {
+				"path": "on_off_button_20x20.png"
 			}
 		},
 		"fonts": {
@@ -79,6 +82,7 @@
 			"ColorGreen": "112",
 			"ColorIntensity": "114",
 			"ColorRed": "111",
+			"Export": "1002",
 			"MotionBurst": "107",
 			"MotionBurstIntensity": "109",
 			"MotionContIntensity": "108",
@@ -110,12 +114,12 @@
 				"SplitViewSize_1_1": "0.5098265895953757453895605067373253405094",
 				"SplitViewSize_2_0": "0.5680272108843537059996720017807092517614",
 				"SplitViewSize_2_1": "0.4285714285714285476380780437466455623507",
-				"TabSwitchValue": "4",
+				"TabSwitchValue": "0",
 				"Version": "1",
 				"ViewBackground": "0"
 			},
 			"UITemplateController": {
-				"SelectedTemplate": "InputSelect"
+				"SelectedTemplate": "AudioProcessing"
 			},
 			"UIAttributesController": {},
 			"UIViewCreatorDataSource": {
@@ -134,7 +138,7 @@
 				"SelectedRow": "2"
 			},
 			"UIBitmapsDataSource": {
-				"SelectedRow": "0"
+				"SelectedRow": "1"
 			}
 		},
 		"templates": {
@@ -2151,6 +2155,7 @@
 													"opacity": "1",
 													"origin": "0, 320",
 													"size": "160, 80",
+													"tooltip": "Change base frequency for color oscillator intervals",
 													"transparent": "false",
 													"wants-focus": "false"
 												},
@@ -3094,6 +3099,7 @@
 											"opacity": "1",
 											"origin": "280, 60",
 											"size": "210, 90",
+											"tooltip": "Oscillators at different freqs mapped to each color channel",
 											"transparent": "false",
 											"wants-focus": "false",
 											"z-index": "0"
@@ -3487,8 +3493,23 @@
 											"class": "COnOffButton",
 											"control-tag": "Bypass",
 											"opacity": "1",
-											"origin": "32, 160",
+											"origin": "32, 170",
 											"size": "37, 37",
+											"tooltip": "Toggle bypass",
+											"transparent": "false",
+											"wants-focus": "true",
+											"wheel-inc-value": "0.1"
+										}
+									},
+									"COnOffButton": {
+										"attributes": {
+											"bitmap": "on_off_button_20x20",
+											"class": "COnOffButton",
+											"control-tag": "Export",
+											"opacity": "1",
+											"origin": "40, 150",
+											"size": "20, 20",
+											"tooltip": "Light on: Offline export ready",
 											"transparent": "false",
 											"wants-focus": "true",
 											"wheel-inc-value": "0.1"
