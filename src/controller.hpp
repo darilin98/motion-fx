@@ -87,10 +87,13 @@ private:
 	void instantiateExtractors();
 	void registerExtractors() const;
 	void sendModulationCacheChunked();
+	void invalidateScheduledTasks();
 
 	std::mutex pending_mutex_;
 	std::vector<FeatureParamUpdate> pending_params_;
 	std::atomic<bool> flush_scheduled_{false};
+	std::shared_ptr<std::atomic<bool>> schedule_token_ = std::make_shared<std::atomic<bool>>(true);
+	std::atomic<bool> vstgui_scheduling_active_ { true };
 
 	std::mutex cache_mutex_;
 	modulation_time_curve_t modulation_cache_;

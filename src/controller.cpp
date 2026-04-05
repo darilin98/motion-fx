@@ -6,6 +6,7 @@
 
 #include "parameterdefaults.hpp"
 #include "utils.hpp"
+#include "../cmake-build-debug/_deps/vst3sdk-src/vstgui4/vstgui/standalone/include/iasync.h"
 #include "base/source/fstreamer.h"
 #include "vstgui/lib/vstguiinit.h"
 #include "ui/motionfxeditor.hpp"
@@ -17,8 +18,6 @@
 
 tresult PLUGIN_API PluginController::initialize(FUnknown* context)
 {
-    auto moduleHandle = getPlatformModuleHandle();
-    fprintf(stderr, "Module handle: %p\n", moduleHandle);
     tresult result = EditController::initialize(context);
     if (result != kResultOk)
         return result;
@@ -54,16 +53,25 @@ tresult PLUGIN_API PluginController::initialize(FUnknown* context)
 
 tresult PLUGIN_API PluginController::terminate()
 {
+    vstgui_scheduling_active_.store(false);
+
+    invalidateScheduledTasks();
+
+    releaseSerialQueue(VSTGUI::Tasks::mainQueue());
+
     if (playback_controller_) {
         playback_controller_->shutdown();
         playback_controller_.reset();
     }
+
     extractors_.clear();
+
     return EditController::terminate();
 }
 
 tresult PluginController::disconnect(IConnectionPoint* other) {
     if (playback_controller_) { playback_controller_->stopPipeline(); }
+    vstgui_scheduling_active_.store(false);
     processor_connection_ = nullptr;
     return EditController::disconnect(other);
 }
@@ -116,16 +124,6 @@ tresult PLUGIN_API PluginController::setState(IBStream *state)
 
 tresult PLUGIN_API PluginController::getState(IBStream *state)
 {
-    // Ugly hack, but it fixes weird Waveform exit behavior
-    auto now = std::chrono::steady_clock::now();
-    auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_get_state_time_).count();
-    last_get_state_time_ = now;
-
-    if (delta < 100 && playback_controller_) {
-        log_debug("Rapid getState detected, stopping pipeline");
-        playback_controller_->stopPipeline();
-    }
-
     if (!state)
         return kResultFalse;
 
@@ -168,6 +166,17 @@ IPlugView* PLUGIN_API PluginController::createView (FIDString name)
     }
     return nullptr;
 }
+
+void PluginController::invalidateScheduledTasks() {
+    schedule_token_->store(false);
+    schedule_token_ = std::make_shared<std::atomic<bool>>(true);
+
+    flush_scheduled_.store(true);
+
+    std::lock_guard lock(pending_mutex_);
+    pending_params_.clear();
+}
+
 
 tresult PLUGIN_API PluginController::setParamNormalized(ParamID tag, ParamValue value)
 {
@@ -271,8 +280,10 @@ void PluginController::onVideoFinished() {
     sendModulationCacheChunked();
 
     // not using bool here in order to communicate the fact through a parameter
-    double export_ready = 1.0;
-    setParamNormalized(kParamExport, export_ready);
+    VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [this]() {
+        double export_ready = 1.0;
+        setParamNormalized(kParamExport, export_ready);
+    });
 }
 
 
@@ -319,8 +330,8 @@ void PluginController::sendModulationCacheChunked() {
 }
 
 void PluginController::onFeatureResult(const FeatureResult& result) {
-    auto params = result.params;
-    auto timestamp = result.timestamp;
+    if (!vstgui_scheduling_active_.load())
+        return;
 
     {
         std::lock_guard lock(pending_mutex_);
@@ -332,7 +343,11 @@ void PluginController::onFeatureResult(const FeatureResult& result) {
     }
 
     if (!flush_scheduled_.exchange(true)) {
-        VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [this]() { flushPendingParams(); });
+        auto token = schedule_token_;
+        VSTGUI::Tasks::schedule(VSTGUI::Tasks::mainQueue(), [this, token]() {
+            if (!token->load()) return;
+            flushPendingParams();
+        });
     }
 
     {
