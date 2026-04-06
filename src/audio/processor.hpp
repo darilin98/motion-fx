@@ -80,7 +80,7 @@ private:
 	[[nodiscard]] tresult processSamples(const ProcessData& data, int32_t numChannels, int32_t numSamples);
 
 	parameter_router_t parameter_router_ {};
-	effect_chain_t effect_chain_;
+	effect_chain_t effect_chain_ {};
 
 	bool is_offline_ = false;
 	bool is_video_playing_ = false;

@@ -241,7 +241,7 @@ tresult PluginProcessor::setState(IBStream* state) {
             double value;
             if (!streamer.readDouble(value))
                 return kResultFalse;
-            handleDspParam(effect_unit.intensity_param_id, value);
+            effect_unit.intensity = value;
         }
     }
 
@@ -289,7 +289,6 @@ tresult PluginProcessor::getState(IBStream* state) {
             double value = effect_unit.intensity;
             if (!streamer.writeDouble(value))
                 return kResultFalse;
-            handleDspParam(effect_unit.intensity_param_id, value);
         }
     }
     return kResultOk;
