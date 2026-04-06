@@ -22,7 +22,7 @@ jobs:
 
 
       - name: Set up Doxygen
-        run: sudo apt-get install doxygen graphviz
+        run: sudo apt-get install -y doxygen graphviz
 
       - name: Generate Doxygen documentation
         run: doxygen ./docs/doxygen/Doxyfile
@@ -31,9 +31,9 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Upload Pages artifact        
-        uses: actions/upload-pages-artifact@v1        
-        with:         
-          path: ./docs/doxygen/html
+        uses: actions/upload-pages-artifact@v3
 
       - name: Deploy to GitHub Pages 
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
+        with:
+          path: ./docs/doxygen/html
