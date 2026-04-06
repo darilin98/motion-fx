@@ -9,7 +9,7 @@
 #include "../cmake-build-debug/_deps/vst3sdk-src/vstgui4/vstgui/standalone/include/iasync.h"
 #include "base/source/fstreamer.h"
 #include "vstgui/lib/vstguiinit.h"
-#include "ui/motionfxeditor.hpp"
+#include "ui/visimusiceditor.hpp"
 #include "video/features/colorfeatureextractor.hpp"
 #include "video/features/motionfeatureextractor.hpp"
 #include "video/features/brightnessfeatureextractor.hpp"
@@ -161,8 +161,8 @@ IPlugView* PLUGIN_API PluginController::createView (FIDString name)
     if (strcmp (name, ViewType::kEditor) == 0)
     {
         if (is_video_preview_mode_)
-            return new MotionFxEditor (this, "AudioProcessing", "viewGUI.uidesc");
-        return new MotionFxEditor (this, "InputSelect", "viewGUI.uidesc");
+            return new VisiMusicEditor (this, "AudioProcessing", "viewGUI.uidesc");
+        return new VisiMusicEditor (this, "InputSelect", "viewGUI.uidesc");
     }
     return nullptr;
 }

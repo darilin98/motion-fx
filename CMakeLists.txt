@@ -17,15 +17,15 @@ if(WIN32)
 endif()
 
 if(WIN32)
-project(motion-fx
+project(visimusic
         VERSION 1.0.0
-        DESCRIPTION "Motion-based FX modulator"
+        DESCRIPTION "Vision-based FX modulator"
         LANGUAGES CXX C
 )
 else()
-project(motion-fx
+project(visimusic
         VERSION 1.0.0
-        DESCRIPTION "Motion-based FX modulator"
+        DESCRIPTION "Vision-based FX modulator"
         LANGUAGES CXX C OBJC OBJCXX
 )
 endif()

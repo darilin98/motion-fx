@@ -8,13 +8,13 @@ add_executable(wavephaser_tests
 
 target_link_libraries(morphfilter_tests
         PRIVATE
-        motion_fx_dsp
+        visimusic_dsp
         Catch2::Catch2WithMain
 )
 
 target_link_libraries(wavephaser_tests
         PRIVATE
-        motion_fx_dsp
+        visimusic_dsp
         Catch2::Catch2WithMain
 )
 

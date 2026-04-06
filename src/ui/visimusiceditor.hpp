@@ -12,10 +12,10 @@
 
 class MediaView;
 
-class MotionFxEditor : public VSTGUI::VST3Editor
+class VisiMusicEditor : public VSTGUI::VST3Editor
 {
 public:
-	MotionFxEditor(Steinberg::Vst::EditController* controller,
+	VisiMusicEditor(Steinberg::Vst::EditController* controller,
 			 const char* templateName, const char* xmlFile)
 		: VST3Editor(controller, templateName, xmlFile) {}
 

@@ -28,7 +28,7 @@ BEGIN_FACTORY_DEF("Darek Rudiš",
     DEF_CLASS2(INLINE_UID_FROM_FUID(PluginProcessorUID),
                PClassInfo::kManyInstances, // multiple instances allowed
                kVstAudioEffectClass,       // Component category
-               "Motion Fx",      // Plugin name
+               "VisiMusic",      // Plugin name
                Vst::kDistributable,        // Distributable attribute
                "Fx|Synth",                 // Subcategories
                "1.0.0",                     // Version
@@ -39,7 +39,7 @@ BEGIN_FACTORY_DEF("Darek Rudiš",
     DEF_CLASS2(INLINE_UID_FROM_FUID(PluginControllerUID),
                PClassInfo::kManyInstances,
                kVstComponentControllerClass,
-               "Motion Fx Controller",
+               "VisiMusic Controller",
                0,
                "",
                "1.0.0",

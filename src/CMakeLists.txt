@@ -105,7 +105,7 @@ FetchContent_MakeAvailable(daisysp)
 # Declare sources and ext. library directories
 #-------------------------------------------------------------------------------
 
-add_library(motion_fx_dsp
+add_library(visimusic_dsp
         audio/effects/ieffect.hpp
         audio/effects/morphfilter.cpp
         audio/effects/morphfilter.hpp
@@ -121,14 +121,14 @@ add_library(motion_fx_dsp
         audio/effects/NoiseMaker.hpp
 )
 
-target_include_directories(motion_fx_dsp PUBLIC
+target_include_directories(visimusic_dsp PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${VST3_SDK_PATH}
         ${VST3_SDK_PATH}/pluginterfaces
         ${VST3_SDK_PATH}/public.sdk/source/vst/
 )
 
-target_link_libraries(motion_fx_dsp PUBLIC DaisySP)
+target_link_libraries(visimusic_dsp PUBLIC DaisySP)
 
 set(SOURCES
         controller.cpp
@@ -140,7 +140,7 @@ set(SOURCES
         audio/modulationcurve.hpp
         audio/parameterextraction.hpp
         ui/fileselectcontroller.hpp
-        ui/motionfxeditor.hpp
+        ui/VisiMusicEditor.hpp
         ui/mediaview.cpp
         ui/mediaview.hpp
         ui/mediaviewcreator.cpp
@@ -176,13 +176,13 @@ set(SOURCES
         utils.hpp
 )
 
-smtg_add_vst3plugin(motion-fx ${SOURCES})
+smtg_add_vst3plugin(visimusic ${SOURCES})
 
-target_link_directories(motion-fx PRIVATE
+target_link_directories(visimusic PRIVATE
         ${FFMPEG_LIB_DIRS}
 )
 
-target_include_directories(motion-fx PRIVATE
+target_include_directories(visimusic PRIVATE
         ${VST3_SDK_PATH}
         ${VST3_SDK_PATH}/pluginterfaces
         ${VST3_SDK_PATH}/public.sdk/source/vst/
@@ -190,8 +190,8 @@ target_include_directories(motion-fx PRIVATE
         ${FFMPEG_INCLUDES}
 )
 
-target_link_libraries(motion-fx PRIVATE
-        motion_fx_dsp
+target_link_libraries(visimusic PRIVATE
+        visimusic_dsp
         sdk
         vstgui_support
         ${FFMPEG_LIBS_PKG}
@@ -201,23 +201,23 @@ target_link_libraries(motion-fx PRIVATE
 # Configure plugin output format
 #-------------------------------------------------------------------------------
 
-smtg_target_configure_version_file(motion-fx)
+smtg_target_configure_version_file(visimusic)
 
 # Specify the plugin format, version, etc.
 if (APPLE)
-    smtg_target_set_bundle(motion-fx
-            BUNDLE_IDENTIFIER "github.com/darilin98/motion-fx"
+    smtg_target_set_bundle(visimusic
+            BUNDLE_IDENTIFIER "github.com/darilin98/visimusic"
             COMPANY_NAME "Darek Rudiš"
     )
 elseif (WIN32)
-    target_sources(motion-fx
+    target_sources(visimusic
             PRIVATE
             resources/win32resource.rc
     )
     if(MSVC)
-        set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT motion-fx)
+        set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT visimusic)
 
-        smtg_target_set_debug_executable(motion-fx
+        smtg_target_set_debug_executable(visimusic
                 "$(ProgramW6432)/Steinberg/VST3PluginTestHost/VST3PluginTestHost.exe"
                 "--pluginfolder \"$(OutDir)/\""
         )
@@ -229,7 +229,7 @@ endif()
 # Auto-copy view files
 #-------------------------------------------------------------------------------
 
-smtg_target_add_plugin_resources(motion-fx
+smtg_target_add_plugin_resources(visimusic
         RESOURCES
         "resources/button_bypass_37x37.png"
         "resources/on_off_button_20x20.png"
@@ -242,9 +242,9 @@ smtg_target_add_plugin_resources(motion-fx
 
 if(WIN32)
     if(MSVC)
-        target_sources(motion-fx PRIVATE windllload.cpp)
-        target_link_libraries(motion-fx PRIVATE delayimp.lib)
-        target_link_options(motion-fx PRIVATE
+        target_sources(visimusic PRIVATE windllload.cpp)
+        target_link_libraries(visimusic PRIVATE delayimp.lib)
+        target_link_options(visimusic PRIVATE
                 /DELAYLOAD:avcodec-62.dll
                 /DELAYLOAD:avformat-62.dll
                 /DELAYLOAD:avutil-60.dll
@@ -263,20 +263,20 @@ if(WIN32)
     message(STATUS "FFmpeg DLLs found: ${FFMPEG_DLLS}")
 
     foreach(dll ${FFMPEG_DLLS})
-        add_custom_command(TARGET motion-fx POST_BUILD
+        add_custom_command(TARGET visimusic POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E make_directory
-                "$<TARGET_FILE_DIR:motion-fx>/../../Frameworks"
+                "$<TARGET_FILE_DIR:visimusic>/../../Frameworks"
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${dll} "$<TARGET_FILE_DIR:motion-fx>/../../Frameworks"
+                ${dll} "$<TARGET_FILE_DIR:visimusic>/../../Frameworks"
                 COMMENT "Copying ${dll} to Frameworks"
         )
     endforeach()
 endif()
 
 if(APPLE AND CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_custom_command(TARGET motion-fx POST_BUILD
+    add_custom_command(TARGET visimusic POST_BUILD
             COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../release.sh
-            $<TARGET_BUNDLE_DIR:motion-fx>
+            $<TARGET_BUNDLE_DIR:visimusic>
             COMMENT "Bundling dylibs, signing, and creating DMG..."
     )
 endif()
