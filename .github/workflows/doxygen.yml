@@ -32,8 +32,8 @@ jobs:
 
       - name: Upload Pages artifact        
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs/doxygen/html
 
       - name: Deploy to GitHub Pages 
         uses: actions/deploy-pages@v4
-        with:
-          path: ./docs/doxygen/html
