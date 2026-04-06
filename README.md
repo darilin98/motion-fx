@@ -24,5 +24,5 @@ This creates unique soundscapes connected to visual content.
 ## Help & Documentation
 
 - Detailed user guide
-- Full project documentation
+- [Full project documentation](https://darilin98.github.io/motion-fx/index.html)
 - Thesis full pdf
