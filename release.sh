@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BUNDLE="$1"
-BINARY="$BUNDLE/Contents/MacOS/motion-fx"
+BINARY="$BUNDLE/Contents/MacOS/visimusic"
 FRAMEWORKS="$BUNDLE/Contents/Frameworks"
 
 mkdir -p "$FRAMEWORKS"
