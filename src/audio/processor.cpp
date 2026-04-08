@@ -79,6 +79,7 @@ tresult PluginProcessor::setProcessing(TBool state) {
     if (state) {
         is_video_playing_ = false;
         total_samples_ = 0;
+        modulation_cursor_ = 0;
         resetParamsToDefault();
     }
     return AudioEffect::setProcessing(state);
@@ -379,7 +380,6 @@ void PluginProcessor::handleControlParam(ParamID id, ParamValue value, const Pro
                     data.processContext->projectTimeSamples + sampleOffset
                     : total_samples_ + sampleOffset;
                 is_video_playing_ = true;
-                modulation_cursor_ = 0;
             }
             break;
         case kParamReset:
@@ -389,7 +389,11 @@ void PluginProcessor::handleControlParam(ParamID id, ParamValue value, const Pro
                 modulation_cursor_ = 0;
             }
             break;
-        // TODO: PAUSE param
+        case kParamPause:
+            if (is_video_playing_) {
+                is_video_playing_ = false;
+            }
+            break;
         case kParamBypass:
             bypass_state_ = value;
             break;
