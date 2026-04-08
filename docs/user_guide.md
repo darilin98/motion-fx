@@ -8,14 +8,14 @@ First, make sure that you have [installed the plugin](build_guide.md) and your D
 
 Once you add the plugin to a track and open the interface, you will be prompted with the following layout
 
-<img src="resources/screen_input_first.png" alt="input" width="500"/>
+<img src="resources/screen_input_first.png" alt="input" width="600"/>
 
 Click the *"Select a video file"* button. This will prompt you with a file explorer window (native to the operating system).
 Only media formats supported by the plugin can be selected. 
 
 Once you select a video of your liking the plugin will switch to a second layout.
 
-![processing](resources/screen_processing_first.png)
+<img src="resources/screen_processing_first.png" alt="processing" width="600"/>
 
 ### Controls
 
@@ -24,14 +24,14 @@ See the part highlighted in orange, this is the plugin's dedicated bypass button
 
 ### Effect Intensity Control
 
-![intensity](resources/screen_processing_intensity.png)
+<img src="resources/screen_processing_intensity.png" alt="intensity" width="600"/>
 
 ### Vision Feature Values
 
-![feature](resources/screen_processing_playing.png)
+<img src="resources/screen_processing_playing.png" alt="playing" width="600"/>
 
 ## Exporting
 
-![export](resources/screen_processing_export_on.png)
+<img src="resources/screen_processing_export_on.png" alt="export" width="600"/>
 
 ### Automation

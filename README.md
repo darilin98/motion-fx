@@ -4,7 +4,9 @@ Vision-based effect modulation VST plugin
 
 This project was created as part of a **Bachelor's thesis at Charles University**, titled: *"A VST plugin for video-controlled audio manipulation"*.
 
-![preview](docs/resources/preview_bird.gif)
+<p align="center" width="100%">
+    <img src="docs/resources/preview_bird.gif" alt="preview-bird" width="600"/>
+</p>
 
 ## Concept & Functionality
 
@@ -17,7 +19,9 @@ This creates unique soundscapes connected to visual content.
 - Contains multiple signal processing effects, each mapped to a different visual feature
 - Open source, with easy extendability & documentation on how to detect more features or add more effects
 
-![preview](docs/resources/preview_sunset.gif)
+<p align="center" width="100%">
+    <img src="docs/resources/preview_sunset.gif" alt="preview-sunset" width="600"/>
+</p>
 
 ---
 
