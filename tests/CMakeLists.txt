@@ -1,22 +1,17 @@
-add_executable(morphfilter_tests
+add_executable(effect_tests
+        test_ieffectcommon.cpp
         test_morphfilter.cpp
+        test_ringmodulator.cpp
+        test_saturationexciter.cpp
+        testinghelpers.hpp
+        test_noisemaker.cpp
 )
 
-add_executable(wavephaser_tests
-        test_wavephaser.cpp
-)
-
-target_link_libraries(morphfilter_tests
-        PRIVATE
-        visimusic_dsp
-        Catch2::Catch2WithMain
-)
-
-target_link_libraries(wavephaser_tests
+target_link_libraries(effect_tests
         PRIVATE
         visimusic_dsp
         Catch2::Catch2WithMain
 )
 
 include(Catch)
-catch_discover_tests(morphfilter_tests)
+catch_discover_tests(effect_tests)
