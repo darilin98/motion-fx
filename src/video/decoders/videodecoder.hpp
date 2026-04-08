@@ -20,6 +20,9 @@ extern "C" {
 #include <libavutil/avutil.h>
 }
 
+/**
+ * @brief Decodes video file formats.
+ */
 class VideoDecoder final : public IMediaDecoder {
 public:
 	explicit VideoDecoder();

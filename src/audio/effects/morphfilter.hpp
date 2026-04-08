@@ -20,6 +20,7 @@ constexpr float kResonance = 0.7f; /// Boost around cutoff frequency
 using filter_t = daisysp::Svf; /// Type of filter used
 
 /**
+ * @class MorphFilter
  * @brief A low/high pass filter implementation.
  *
  * Changes what frequencies get cut based on the value of a parameter.

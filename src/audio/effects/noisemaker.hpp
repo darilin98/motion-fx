@@ -28,6 +28,7 @@ constexpr float kSwishHighpassFreq = 3000.0f; /// Sets amount of airy swish
 constexpr float kSwishResonance = 0.3f; /// Boosts swish
 
 /**
+ * @class NoiseMaker
  * @brief Creates layers of noise.
  *
  * Mixes in layers of white noise inside the input signal.

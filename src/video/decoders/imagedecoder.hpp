@@ -12,6 +12,9 @@
 
 #include "../medialoader.hpp"
 
+/**
+ * @brief Decodes image file formats.
+ */
 class ImageDecoder final : public IMediaDecoder {
 public:
 	ImageDecoder() = default;

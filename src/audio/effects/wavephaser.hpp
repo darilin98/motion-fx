@@ -19,6 +19,9 @@ constexpr float kMaxLfo = 5.0f; /// Maximum speed of phaser
 
 using phaser_t = daisysp::Phaser;
 
+/**
+ * @brief Adds phasing at a controllable frequency to the input signal.
+ */
 class WavePhaser : public IEffect {
 public:
 	void init(Steinberg::Vst::ProcessSetup setup) override;
