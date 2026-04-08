@@ -10,6 +10,9 @@
 #include "vst/vsttypes.h"
 
 
+/**
+ * @brief Extracts an estimation of saturation of a VideoFrame.
+ */
 class SaturationFeatureExtractor : public IFrameReceiver, public IFeatureExtractor {
 public:
 	explicit SaturationFeatureExtractor(const Steinberg::Vst::ParamID pid) : param_id_(pid) {

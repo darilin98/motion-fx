@@ -42,8 +42,6 @@ public:
 	 */
 	virtual bool tryDecodeNext(VideoFrame& outFrame) = 0;
 
-	// TODO: possibly for reverse: virtual bool decodePrev(VideoFrame& outFrame) = 0;
-
 	/**
 	 * @return Framerate of the media file being decoded.
 	 */

@@ -1,6 +1,12 @@
 //
 // Created by Darek Rudiš on 28.11.2025.
 //
+
+/**
+ * @file mediaviewcreator.cpp
+ * @brief Defines the media view initialization method.
+ */
+
 #include "mediaview.hpp"
 #include "visimusiceditor.hpp"
 

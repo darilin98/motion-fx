@@ -2,6 +2,11 @@
 // Created by Darek Rudiš on 08.11.2025.
 //
 
+/**
+ * @file videodecoder.hpp
+ * @brief Declares the VideoDecoder IMediaDecoder implementation.
+ */
+
 #ifndef VIDEODECODER_HPP
 #define VIDEODECODER_HPP
 

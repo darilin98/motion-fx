@@ -2,6 +2,11 @@
 // Created by Darek Rudiš on 25.02.2026.
 //
 
+/**
+ * @file ieffect.hpp
+ * @brief Declares interfaces and helpers for Effect implementations.
+ */
+
 #ifndef IEFFECT_HPP
 #define IEFFECT_HPP
 #include <memory>
@@ -13,7 +18,7 @@
 
 constexpr int32_t kChannelCountDefault = 2; /// Default count of channels (stereo).
 constexpr float kSmoothing = 0.001f; /// Default smoothing of parameter values.
-constexpr double kSampleRateDefault = 44100.0;
+constexpr double kSampleRateDefault = 44100.0; /// Default sample rate (before calling init())
 
 /**
  * @brief A contract for processing buffers of audio samples.
@@ -67,9 +72,14 @@ inline void mixDryWet(float* dry, float* wet, float* out, float intensity, int n
 		out[i] = dry[i] + intensity * (wet[i] - dry[i]);
 }
 
+/**
+ * @brief Helper datatype for storing actual values and target values.
+ *
+ * Intended for parameter smoothing.
+ */
 struct Smoothed {
-	float target = 0.f;
-	float value = 0.f;
+	float target = 0.f; /// Target parameter value
+	float value = 0.f; /// Current parameter value
 };
 
 #endif //IEFFECT_HPP

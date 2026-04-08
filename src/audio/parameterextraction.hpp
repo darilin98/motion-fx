@@ -2,6 +2,12 @@
 // Created by Darek Rudiš on 06.02.2026.
 //
 
+/**
+ * @file parameterextraction.hpp
+ * @brief Declares and defines helpers used in extracting inputParameterChanges.
+ *
+ */
+
 #ifndef PARAMETEREXTRACTION_HPP
 #define PARAMETEREXTRACTION_HPP
 

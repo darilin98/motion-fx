@@ -2,6 +2,11 @@
 // Created by Darek Rudiš on 25.01.2026.
 //
 
+/**
+ * @file asyncframeworker.hpp
+ * @brief Offers the async worker helper implementation.
+ */
+
 #ifndef ASYNCFRAMEWORKER_HPP
 #define ASYNCFRAMEWORKER_HPP
 

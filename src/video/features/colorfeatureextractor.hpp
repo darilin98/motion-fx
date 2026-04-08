@@ -9,7 +9,9 @@
 #include "video/iframereceiver.hpp"
 #include "vst/vsttypes.h"
 
-
+/**
+ * @brief Extracts the RGB color composition out of a VideoFrame.
+ */
 class ColorFeatureExtractor : public IFrameReceiver, public IFeatureExtractor {
 public:
 	explicit ColorFeatureExtractor(const Steinberg::Vst::ParamID red, const Steinberg::Vst::ParamID green, const Steinberg::Vst::ParamID blue)

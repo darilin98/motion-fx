@@ -2,11 +2,21 @@
 // Created by Darek Rudiš on 24.10.2025.
 //
 
+/**
+ * @file fileselectcontroller.hpp
+ * @brief Declares & defines the FileSelectController
+ */
+
 #ifndef FILESELECTCONTROLLER_HPP
 #define FILESELECTCONTROLLER_HPP
 
 #include "vstgui4/vstgui/uidescription/delegationcontroller.h"
 
+/**
+ * @brief Creates a file explorer window on request.
+ *
+ * Returns the selected file path.
+ */
 class FileSelectController : public VSTGUI::DelegationController
 {
 public:

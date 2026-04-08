@@ -9,6 +9,9 @@
 #include "video/iframereceiver.hpp"
 
 
+/**
+ * @brief Extracts types of motion detected between VideoFrames.
+ */
 class MotionFeatureExtractor : public IFrameReceiver, public IFeatureExtractor {
 public:
 	explicit MotionFeatureExtractor(const Steinberg::Vst::ParamID continuous_pid,

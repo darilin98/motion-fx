@@ -1,6 +1,12 @@
 //
 // Created by Darek on 28.03.2026.
 //
+
+/**
+ * @file windllload.cpp
+ * @brief Contains a hook for rewiring the included dlls on the Windows platform.
+ */
+
 #if defined(_WIN32)
 #include <windows.h>
 #include <delayimp.h>

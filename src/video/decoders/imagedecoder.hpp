@@ -2,6 +2,11 @@
 // Created by Darek Rudiš on 08.11.2025.
 //
 
+/**
+ * @file imagedecoder.hpp
+ * @brief Declares the ImageDecoder IMediaDecoder implementation.
+ */
+
 #ifndef IMAGEDECODER_HPP
 #define IMAGEDECODER_HPP
 

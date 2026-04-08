@@ -2,6 +2,11 @@
 // Created by Darek Rudiš on 08.02.2026.
 //
 
+/**
+ * @file parameterdefaults.hpp
+ * @brief Defines constants for parameters, and helpers with default parameter values.
+ */
+
 #ifndef PARAMETERDEFAULTS_HPP
 #define PARAMETERDEFAULTS_HPP
 

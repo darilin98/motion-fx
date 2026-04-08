@@ -10,6 +10,9 @@
 #include "vstparameters.h"
 #include "../iframereceiver.hpp"
 
+/**
+ * @brief Extracts the brightness value out of a VideoFrame.
+ */
 class BrightnessFeatureExtractor : public IFrameReceiver, public IFeatureExtractor {
 public:
 	explicit BrightnessFeatureExtractor(const Steinberg::Vst::ParamID pid) : param_id_(pid) {
@@ -21,7 +24,6 @@ public:
 private:
 	FeatureResult extract(const VideoFrame& videoFrame) override;
 
-	std::atomic<bool> busy_{false};
 	std::unique_ptr<AsyncFrameWorker> frame_worker_;
 	Steinberg::Vst::ParamID param_id_;
 };

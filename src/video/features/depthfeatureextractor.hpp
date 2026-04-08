@@ -9,7 +9,9 @@
 #include "ifeatureextractor.hpp"
 #include "../iframereceiver.hpp"
 
-
+/**
+ * @brief Extracts the perceived scene depth out of a VideoFrame.
+ */
 class DepthFeatureExtractor : public IFrameReceiver, public IFeatureExtractor {
 public:
 	explicit DepthFeatureExtractor(const Steinberg::Vst::ParamID pid) : param_id_(pid) {

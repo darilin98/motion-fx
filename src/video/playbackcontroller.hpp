@@ -15,6 +15,9 @@
 
 #include "videoparamlistener.hpp"
 
+/**
+ * @brief Makes a distinction between completion being natural or forced due to a teardown.
+ */
 enum class CompletionSignal { None, Handle, Shutdown };
 
 /**
@@ -53,15 +56,11 @@ public:
 	 */
 	void startPipeline(double playbackRate);
 
-	// void pausePipeline();
-
 	/**
 	 * @brief Stops the full video pipeline.
 	 * The video pipeline can be restarted by calling startPipeline().
 	 */
 	void stopPipeline();
-
-	// void setPlaybackRate(double playbackRate);
 
 	/**
 	 * @brief Cleans up after the video pipeline.
@@ -75,6 +74,10 @@ public:
 	void setParamListeners(controller_t controller);
 	void onParamChanged(Steinberg::Vst::ParamID paramId, float paramValue);
 
+	/**
+	 * @brief Handles empty queue detected events.
+	 * Runs in a separate thread to avoid self-joins.
+	 */
 	void completionLoop();
 
 private:
@@ -88,10 +91,10 @@ private:
 	 */
 	void onVideoFinished() const;
 
-	std::atomic<CompletionSignal> completion_signal_{ CompletionSignal::None };
-	std::condition_variable completion_cv_;
-	std::thread completion_thread_;
-	std::mutex completion_mutex_;
+	std::atomic<CompletionSignal> completion_signal_{ CompletionSignal::None }; /// State of completion
+	std::condition_variable completion_cv_; /// Signal wakes completion_thread_
+	std::thread completion_thread_; /// Background completion handler thread
+	std::mutex completion_mutex_; /// Completion state safeguard
 
 	std::atomic<bool> is_decoding_ = false; /// loader_ is active.
 	std::atomic<bool> is_playing_ = false; /// frame_ticker_ is active.

@@ -2,6 +2,11 @@
 // Created by Darek Rudiš on 15.03.2026.
 //
 
+/**
+ * @file visionutils.hpp
+ * @brief Contains small inline helpers used by IFeatureExtractor implementations.
+ */
+
 #ifndef VISIONUTILS_HPP
 #define VISIONUTILS_HPP
 

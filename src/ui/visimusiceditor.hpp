@@ -1,6 +1,12 @@
 //
 // Created by Darek Rudiš on 24.10.2025.
 //
+
+/**
+ * @file visimusiceditor.hpp
+ * @brief Declares the plugin's editor
+ */
+
 #ifndef MOTIONFXEDITOR_HPP
 #define MOTIONFXEDITOR_HPP
 
@@ -12,6 +18,9 @@
 
 class MediaView;
 
+/**
+ * @brief The origin view class holding all other view elements.
+ */
 class VisiMusicEditor : public VSTGUI::VST3Editor
 {
 public:
