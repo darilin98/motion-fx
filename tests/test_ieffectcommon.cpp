@@ -7,6 +7,8 @@
 #include "audio/effects/noisemaker.hpp"
 #include "audio/effects/ringmodulator.hpp"
 #include "audio/effects/saturationexciter.hpp"
+#include "audio/effects/spatialecho.hpp"
+#include "audio/effects/wavephaser.hpp"
 #include "catch2/catch_test_macros.hpp"
 
 template<typename T>
@@ -58,12 +60,19 @@ void testInterfaceContract(T& fx) {
 TEST_CASE("IEffect interface contract — MorphFilter") {
 	MorphFilter fx; testInterfaceContract(fx);
 }
-TEST_CASE("IEffect interface contract — RingModulator") {
-	RingModulator fx; testInterfaceContract(fx);
-}
-TEST_CASE("IEffect interface contract — Exciter") {
-	SaturationExciter fx; testInterfaceContract(fx);
-}
 TEST_CASE("IEffect interface contract — NoiseMaker") {
 	NoiseMaker fx; testInterfaceContract(fx);
 }
+TEST_CASE("IEffect interface contract — RingModulator") {
+	RingModulator fx; testInterfaceContract(fx);
+}
+TEST_CASE("IEffect interface contract — WavePhaser") {
+	WavePhaser fx; testInterfaceContract(fx);
+}
+TEST_CASE("IEffect interface contract — SaturationExciter") {
+	SaturationExciter fx; testInterfaceContract(fx);
+}
+TEST_CASE("IEffect interface contract — SpatialEcho") {
+	SpatialEcho fx; testInterfaceContract(fx);
+}
+
