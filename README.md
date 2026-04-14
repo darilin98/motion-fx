@@ -31,8 +31,15 @@ This creates unique soundscapes connected to visual content.
 - **macOS**: Apple Silicon (ARM64) macOS 11 or later
 - 64-bit DAW with VST3 support
 
+## Installing the plugin
+
+Binaries for both Windows and macOS are available for download in the *Releases* section.
+
+For a description of the installation process and troubleshooting help visit [this page.](docs/build_guide.md)
+
 ## Help & Documentation
 
 - [Detailed user guide](docs/user_guide.md)
+- [Installation guide](docs/build_guide.md)
 - [Full project documentation](https://darilin98.github.io/motion-fx/index.html)
-- Thesis full pdf
+- Thesis full text pdf
