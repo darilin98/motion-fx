@@ -1,0 +1,292 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="943.75" height="822.5">
+  <!--Made with Vexlio-->
+  <defs>
+    <style>@font-face {
+  font-family: 'Roboto_regular';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  src: url(https://fonts.gstatic.com/l/font?kit=KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbWmQggvWlkwn7Uc88zo0qYKGArmmDnBqYpjQgsF88GPiaRX1xxV8jmt2chaY6-qawqQj&amp;skey=a0a0114a1dcab3ac&amp;v=v51) format('woff');
+}
+@font-face {
+  font-family: 'Roboto_italic';
+  font-style: italic;
+  font-weight: 400;
+  font-stretch: 100%;
+  src: url(https://fonts.gstatic.com/l/font?kit=KFOKCnqEu92Fr1Mu53ZEC9_Vu3r1gIhOszmOClHrs6ljXfMMLoHQiAz0klQmz24EwVsxjKSkIJmGLk5UQLn3o-Jr6g&amp;skey=c608c610063635f9&amp;v=v51) format('woff');
+}
+@font-face {
+  font-family: 'Roboto_700';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  src: url(https://fonts.gstatic.com/l/font?kit=KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuYjammQggvWlkwn7XM881Y2roOFA7mmDm50YpjQgvZ-92nrYhzi3A1k&amp;skey=a0a0114a1dcab3ac&amp;v=v51) format('woff');
+}
+</style>
+  </defs>
+  <g transform="translate(-5.25 19.5)">
+    <g>
+      <line x1="-0" y1="-411.25" x2="0" y2="411.25" transform="translate(621.5 391.75)" style="fill:none;stroke:#767777;stroke-width:2;"/>
+      <rect x="-266" y="-245.25" width="532" height="490.5" rx="12" transform="translate(337 345)" style="fill:#ecf0ff;stroke:#000000;stroke-width:4;"/>
+      <g transform="translate(337 345)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-258 -237.25)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(0 16.605)">PluginController</text>
+          </g>
+        </g>
+      </g>
+      <rect x="-95.25" y="-273.5" width="190.5" height="547" rx="12" transform="translate(406.25 260.5)" style="fill:#caffbb;stroke:#3276d4;stroke-width:2;"/>
+      <g transform="translate(406.25 260.5)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-87.25 -265.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(0 16.605)">Video Pipeline</text>
+          </g>
+        </g>
+      </g>
+      <ellipse rx="69.5" ry="36" transform="translate(406.5 355.938)" style="fill:#ffce4e;stroke:#000000;stroke-width:2;"/>
+      <g transform="translate(406.5 355.938)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-61.5 -10.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(10.545 16.605)">FrameQueue</text>
+          </g>
+        </g>
+      </g>
+      <rect x="-61.75" y="-27.5" width="123.5" height="55" rx="12" transform="translate(406.5 240.625)" style="fill:#ffffff;stroke:#000000;stroke-width:2;"/>
+      <g transform="translate(406.5 240.625)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-53.75 -10.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(1.187 16.605)">MediaLoader</text>
+          </g>
+        </g>
+      </g>
+      <rect x="-59.5" y="-33" width="119" height="66" rx="12" transform="translate(406.5 476.75)" style="fill:#ffffff;stroke:#000000;stroke-width:2;"/>
+      <g transform="translate(406.5 476.75)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-51.5 -10.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(1.64 16.605)">FrameTicker</text>
+          </g>
+        </g>
+      </g>
+      <rect x="-91" y="-27.5" width="182" height="55" rx="12" transform="translate(175.25 240.625)" style="fill:#7bacff;stroke:#000000;stroke-width:2;"/>
+      <g transform="translate(175.25 240.625)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-83 -10.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(7.625 16.605)">PlaybackController</text>
+          </g>
+        </g>
+      </g>
+      <rect x="-53.25" y="-27.5" width="106.5" height="55" rx="12" transform="translate(406.5 144.75)" style="fill:#ffffff;stroke:#000000;stroke-width:2;"/>
+      <g transform="translate(406.5 144.75)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-45.25 -10.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(9.382 16.605)">IDecoder</text>
+          </g>
+        </g>
+      </g>
+      <ellipse rx="65.5" ry="27" transform="translate(406.5 51)" style="fill:#ffce4e;stroke:#000000;stroke-width:2;"/>
+      <g transform="translate(406.5 51)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-57.5 -10.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(16.354 16.605)">Media File</text>
+          </g>
+        </g>
+      </g>
+      <rect x="-109.5" y="-153" width="219" height="306" rx="12" transform="translate(125.5 488.938)" style="fill:#ffedeb;stroke:#df3339;stroke-width:2;"/>
+      <g transform="translate(125.5 488.938)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-101.5 -145)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(0 16.605)">IFrameReceiver</text>
+          </g>
+        </g>
+      </g>
+      <rect x="-108" y="-67.5" width="216" height="135" rx="12" transform="translate(114.25 607.75)" style="fill:#ffefd1;stroke:#242626;stroke-width:2;"/>
+      <g transform="translate(114.25 607.75)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-100 -59.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(0 16.605)">VST GUI</text>
+          </g>
+        </g>
+      </g>
+      <rect x="-78.25" y="-28.5" width="156.5" height="57" rx="12" transform="translate(114.25 607.75)" style="fill:#ffffff;stroke:#000000;stroke-width:2;"/>
+      <g transform="translate(114.25 607.75)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-70.25 -10.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(26.006 16.605)">MediaView</text>
+          </g>
+        </g>
+      </g>
+      <rect x="-78.25" y="-28.5" width="156.5" height="57" rx="12" transform="translate(125.5 413)" style="fill:#ffffff;stroke:#000000;stroke-width:2;"/>
+      <g transform="translate(125.5 413)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-70.25 -10.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(1.563 16.605)">IFeatureExtractor</text>
+          </g>
+        </g>
+      </g>
+      <rect x="-143.5" y="-164.125" width="287" height="328.25" rx="12" transform="translate(783 413)" style="fill:#ecf0ff;stroke:#000000;stroke-width:4;"/>
+      <g transform="translate(783 413)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-135.5 -156.125)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(0 16.605)">PluginProcessor</text>
+          </g>
+        </g>
+      </g>
+      <line x1="0" y1="-25.906" x2="0" y2="25.906" transform="translate(406.5 294.031)" style="fill:none;stroke:#000000;stroke-width:2;"/>
+      <g transform="translate(406.5 294.031)">
+        <path d="M-2.924 -6c2.599 3.578 2.599 8.422 0 12l12 -6l-12 -6Z" transform="matrix(0 1 -1 0 0 14.831)" style="fill:#000000;stroke:none;"/>
+      </g>
+      <line x1="0" y1="25.906" x2="0" y2="-25.906" transform="translate(406.5 417.844)" style="fill:none;stroke:#000000;stroke-width:2;"/>
+      <g transform="translate(406.5 417.844)">
+        <path d="M-2.924 -6c2.599 3.578 2.599 8.422 0 12l12 -6l-12 -6Z" transform="matrix(0 -1 1 0 0 -14.831)" style="fill:#000000;stroke:none;"/>
+      </g>
+      <rect x="-78.25" y="-28.5" width="156.5" height="57" rx="12" transform="translate(125.5 488.938)" style="fill:#ffffff;stroke:#000000;stroke-width:2;"/>
+      <g transform="translate(125.5 488.938)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-70.25 -10.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(1.563 16.605)">IFeatureExtractor</text>
+          </g>
+        </g>
+      </g>
+      <ellipse rx="111" ry="76.5" transform="translate(612.5 687)" style="fill:#ffce4e;stroke:#000000;stroke-width:2;"/>
+      <g transform="translate(612.5 687)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-103 -10.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(43.309 16.605)">VstParameters</text>
+          </g>
+        </g>
+      </g>
+      <path d="M-39.25 0c39.25 0 39.25 0 68.424 0" transform="translate(305.5 240.625)" style="fill:none;stroke:#242626;stroke-width:2;"/>
+      <g transform="translate(305.5 240.625)">
+        <path d="M-2.924 -6c2.599 3.578 2.599 8.422 0 12l12 -6l-12 -6Z" transform="translate(28.174 0)" style="fill:#242626;stroke:none;"/>
+      </g>
+      <path d="M-85.875 -87.813c85.875 0 85.875 175.625 161.674 175.625" transform="translate(261.125 355.938)" style="fill:none;stroke:#242626;stroke-width:2;"/>
+      <g transform="translate(261.125 355.938)">
+        <path d="M-2.924 -6c2.599 3.578 2.599 8.422 0 12l12 -6l-12 -6Z" transform="translate(74.799 87.813)" style="fill:#242626;stroke:none;"/>
+      </g>
+      <rect x="-88" y="-53.5" width="176" height="107" rx="12" transform="translate(783 345)" style="fill:#ffedeb;stroke:#df3339;stroke-width:2;"/>
+      <g transform="translate(783 345)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-80 -45.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(0 16.605)">EffectMixingUnit</text>
+          </g>
+        </g>
+      </g>
+      <rect x="-63" y="-29" width="126" height="58" rx="12" transform="translate(783 358.938)" style="fill:#ffffff;stroke:#242626;stroke-width:2;"/>
+      <g transform="translate(783 358.938)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-55 -10.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(28.936 16.605)">IEffect</text>
+          </g>
+        </g>
+      </g>
+      <ellipse rx="102" ry="62.625" transform="translate(846 129.75)" style="fill:#ffce4e;stroke:#242626;stroke-width:2;"/>
+      <g transform="translate(846 129.75)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-94 -10.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(33.795 16.605)">Audio Samples</text>
+          </g>
+        </g>
+      </g>
+      <path d="M-31.5 28.25c0 -28.25 63 -28.25 63 -46.424" transform="translate(814.5 220.625)" style="fill:none;stroke:#242626;stroke-width:2;"/>
+      <g transform="translate(814.5 220.625)">
+        <path d="M-2.924 -6c2.599 3.578 2.599 8.422 0 12l12 -6l-12 -6Z" transform="matrix(0 -1 1 0 31.5 -17.174)" style="fill:#242626;stroke:none;"/>
+      </g>
+      <path d="M71.625 31.875c-71.625 0 -71.625 -63.75 -133.174 -63.75" transform="translate(275.375 444.875)" style="fill:none;stroke:#242626;stroke-width:2;"/>
+      <g transform="translate(275.375 444.875)">
+        <path d="M-2.924 -6c2.599 3.578 2.599 8.422 0 12l12 -6l-12 -6Z" transform="matrix(-1 0 -0 -1 -60.549 -31.875)" style="fill:#242626;stroke:none;"/>
+      </g>
+      <path d="M71.625 -6.094c-71.625 0 -71.625 12.188 -133.174 12.188" transform="translate(275.375 482.844)" style="fill:none;stroke:#242626;stroke-width:2;"/>
+      <g transform="translate(275.375 482.844)">
+        <path d="M-2.924 -6c2.599 3.578 2.599 8.422 0 12l12 -6l-12 -6Z" transform="matrix(-1 0 -0 -1 -60.549 6.094)" style="fill:#242626;stroke:none;"/>
+      </g>
+      <path d="M77.25 -65.5c-77.25 0 -77.25 131 -144.424 131" transform="translate(269.75 542.25)" style="fill:none;stroke:#242626;stroke-width:2;"/>
+      <g transform="translate(269.75 542.25)">
+        <path d="M-2.924 -6c2.599 3.578 2.599 8.422 0 12l12 -6l-12 -6Z" transform="matrix(-1 0 -0 -1 -66.174 65.5)" style="fill:#242626;stroke:none;"/>
+      </g>
+      <path d="M-188 -84.781c188 0 188 169.563 365.924 169.563" transform="translate(313.5 602.219)" style="fill:none;stroke:#242626;stroke-width:2;"/>
+      <g transform="translate(313.5 602.219)">
+        <path d="M-2.924 -6c2.599 3.578 2.599 8.422 0 12l12 -6l-12 -6Z" transform="translate(176.924 84.781)" style="fill:#242626;stroke:none;"/>
+      </g>
+      <g transform="translate(791.833 218.625)">
+        <g transform="translate(-74.167 -10.5)">
+          <text xml:space="preserve" font-family="Roboto_italic" font-size="18" font-style="italic" fill="none" stroke="#ffffff" stroke-width="2" transform="translate(0 16.605)">applies modulation</text>
+          <text xml:space="preserve" font-family="Roboto_italic" font-size="18" font-style="italic" fill="#000000" transform="translate(0 16.605)">applies modulation</text>
+        </g>
+      </g>
+      <g transform="translate(353.25 646.75)">
+        <g transform="translate(-56.571 -10.5)">
+          <text xml:space="preserve" font-family="Roboto_italic" font-size="18" font-style="italic" fill="none" stroke="#ffffff" stroke-width="2" transform="translate(0 16.605)">exports values</text>
+          <text xml:space="preserve" font-family="Roboto_italic" font-size="18" font-style="italic" fill="#000000" transform="translate(0 16.605)">exports values</text>
+        </g>
+      </g>
+      <g transform="translate(240.292 314.25)">
+        <g transform="translate(-53.508 -10.5)">
+          <text xml:space="preserve" font-family="Roboto_italic" font-size="18" font-style="italic" fill="none" stroke="#ffffff" stroke-width="2" transform="translate(0 16.605)">controls state</text>
+          <text xml:space="preserve" font-family="Roboto_italic" font-size="18" font-style="italic" fill="#000000" transform="translate(0 16.605)">controls state</text>
+        </g>
+      </g>
+      <line x1="0" y1="20.438" x2="0" y2="-20.438" transform="translate(406.5 192.688)" style="fill:none;stroke:#000000;stroke-width:2;"/>
+      <g transform="translate(406.5 192.688)">
+        <path d="M-2.924 -6c2.599 3.578 2.599 8.422 0 12l12 -6l-12 -6Z" transform="matrix(0 -1 1 0 0 -9.362)" style="fill:#000000;stroke:none;"/>
+      </g>
+      <line x1="0" y1="19.625" x2="0" y2="-19.625" transform="translate(406.5 97.625)" style="fill:none;stroke:#000000;stroke-width:2;"/>
+      <g transform="translate(406.5 97.625)">
+        <path d="M-2.924 -6c2.599 3.578 2.599 8.422 0 12l12 -6l-12 -6Z" transform="matrix(0 -1 1 0 0 -8.549)" style="fill:#000000;stroke:none;"/>
+      </g>
+      <line x1="0" y1="-9.469" x2="0" y2="9.469" transform="translate(125.5 450.969)" style="fill:none;stroke:#242626;stroke-width:2;"/>
+      <rect x="-88" y="-53.5" width="176" height="107" rx="12" transform="translate(783 488.938)" style="fill:#ffedeb;stroke:#df3339;stroke-width:2;"/>
+      <g transform="translate(783 488.938)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-80 -45.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(0 16.605)">EffectMixingUnit</text>
+          </g>
+        </g>
+      </g>
+      <rect x="-63" y="-29" width="126" height="58" rx="12" transform="translate(783 503.688)" style="fill:#ffffff;stroke:#242626;stroke-width:2;"/>
+      <g transform="translate(783 503.688)">
+        <g transform="translate(0 0)">
+          <g transform="translate(-55 -10.5)">
+            <text xml:space="preserve" font-family="Roboto_regular" font-size="18" fill="#000000" transform="translate(28.936 16.605)">IEffect</text>
+          </g>
+        </g>
+      </g>
+      <line x1="0" y1="-18.469" x2="0" y2="18.469" transform="translate(783 416.969)" style="fill:none;stroke:#242626;stroke-width:2;"/>
+      <path d="M29.75 -54.938c0 60.682 -22.128 109.875 -49.424 109.875" transform="translate(753.25 632.063)" style="fill:none;stroke:#242626;stroke-width:2;"/>
+      <g transform="translate(753.25 632.063)">
+        <path d="M-2.924 -6c2.599 3.578 2.599 8.422 0 12l12 -6l-12 -6Z" transform="matrix(-1 0 -0 -1 -18.674 54.938)" style="fill:#242626;stroke:none;"/>
+      </g>
+      <g transform="translate(783 646.75)">
+        <g transform="translate(-48.867 -10.5)">
+          <text xml:space="preserve" font-family="Roboto_italic" font-size="18" font-style="italic" fill="none" stroke="#ffffff" stroke-width="2" transform="translate(0 16.605)">reads values</text>
+          <text xml:space="preserve" font-family="Roboto_italic" font-size="18" font-style="italic" fill="#000000" transform="translate(0 16.605)">reads values</text>
+        </g>
+      </g>
+      <g transform="translate(621.5 24)">
+        <g transform="translate(-40.625 -19)">
+          <text xml:space="preserve" font-family="Roboto_700" font-size="16" font-weight="700" fill="none" stroke="#ffffff" stroke-width="2" transform="translate(0 15.094)">component</text>
+          <text xml:space="preserve" font-family="Roboto_700" font-size="16" font-weight="700" fill="#aaabab" transform="translate(0 15.094)">component</text>
+          <text xml:space="preserve" font-family="Roboto_700" font-size="16" font-weight="700" fill="none" stroke="#ffffff" stroke-width="2" transform="translate(2.508 34.094)">separation</text>
+          <text xml:space="preserve" font-family="Roboto_700" font-size="16" font-weight="700" fill="#aaabab" transform="translate(2.508 34.094)">separation</text>
+        </g>
+      </g>
+      <g transform="translate(275.646 484.75)">
+        <g transform="translate(-34.326 -10.5)">
+          <text xml:space="preserve" font-family="Roboto_italic" font-size="18" font-style="italic" fill="none" stroke="#ffffff" stroke-width="2" transform="translate(0 16.605)">onFrame</text>
+          <text xml:space="preserve" font-family="Roboto_italic" font-size="18" font-style="italic" fill="#000000" transform="translate(0 16.605)">onFrame</text>
+        </g>
+      </g>
+      <line x1="-0" y1="-17.844" x2="0" y2="17.844" transform="translate(783 559.281)" style="fill:none;stroke:#242626;stroke-width:2;"/>
+      <line x1="0" y1="-21.313" x2="0" y2="21.313" transform="translate(783 270.188)" style="fill:none;stroke:#242626;stroke-width:2;"/>
+      <g transform="translate(831.867 24)">
+        <g transform="translate(-110.942 -16)">
+          <text xml:space="preserve" font-family="Roboto_700" font-size="26" font-weight="700" fill="#aaabab" transform="translate(2.22 23.652)">REAL-TIME AUDIO</text>
+        </g>
+      </g>
+      <g transform="translate(175.25 24)">
+        <g transform="translate(-110.942 -16)">
+          <text xml:space="preserve" font-family="Roboto_700" font-size="26" font-weight="700" fill="#aaabab" transform="translate(8.612 23.652)">USER INTERFACE</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

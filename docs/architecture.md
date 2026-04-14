@@ -14,7 +14,7 @@ It follows the design pattern of VST SDK, separating it into two completely sepa
 
 ## High-level relationships overview
 
-![System diagram](resources/diagram_system.png)
+![System diagram](resources/diagram_system.svg)
 *The entity relationships inside Visimusic. Data types are shown in orange. Units with some amount of state control responsibility are shown in blue.*
 
 ## Video Pipeline
