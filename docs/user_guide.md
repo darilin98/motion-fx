@@ -32,7 +32,10 @@ Using the intensity sliders is recommended for muting effects that cause unwante
 The positions of the sliders reflect the flow of signal inside the plugin's inner effect chain. 
 Specifically, starting from the top with *"Brightness"* and ending at the bottom, with the final effect applied being *"Space"*.
 
-All parameters in this section can be automated \ref{automation}. A special case is the *"Color Base Frequency"* at the very bottom. This particular slider shifts the root from which the intervals in the color oscillators are calculated. Shifting the value across the frequency spectrum creates a special sweeping sound. 
+All parameters in this section can be automated. 
+A special case is the *"Color Base Frequency"* at the very bottom. 
+This particular slider shifts the root from which the intervals in the color oscillators are calculated. 
+Shifting the value across the frequency spectrum creates a special sweeping sound. 
 Automating this parameter is encouraged as it can yield unique sounding results.
 
 <img src="resources/screen_processing_intensity.png" alt="intensity" width="600"/>
@@ -80,6 +83,8 @@ This information is clearly signaled by a UI element in the *"Controls"* section
 The ready state remains valid even in-between project re-opens.
 The only time it gets invalidated is when the *"Exit"* button is pressed and the video is disengaged.
 
-### Need more help?
+---
+
+## Need more help?
 
 Visit Chapter 2 of the Thesis for an even more in-depth user manual.
