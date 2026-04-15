@@ -41,5 +41,5 @@ For a description of the installation process and troubleshooting help visit [th
 
 - [Detailed user guide](docs/user_guide.md)
 - [Installation guide](docs/build_guide.md)
-- [Full project documentation](https://darilin98.github.io/motion-fx/index.html)
+- [Full project documentation](https://darilin98.github.io/visimusic/index.html)
 - Thesis full text pdf
