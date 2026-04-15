@@ -11,6 +11,9 @@
 
 /**
  * @brief Extracts the perceived scene depth out of a VideoFrame.
+ *
+ * Calculates perceived spatial-ness of a scene by converting pixels to the luminance domain and then calculating edge energy.
+ * Resulting value is the ratio between edge energy (details) in the upper third and lower third of the image.
  */
 class DepthFeatureExtractor : public IFrameReceiver, public IFeatureExtractor {
 public:

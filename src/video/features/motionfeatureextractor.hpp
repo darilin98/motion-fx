@@ -11,6 +11,10 @@
 
 /**
  * @brief Extracts types of motion detected between VideoFrames.
+ *
+ * Motion is represented as the difference in energy between two consecutive frames.
+ * Motion average is a long-term value, resistant to small spikes in energy.
+ * Motion burst calculates the delta of motion, boosts it but decays fast. This leads to dynamic value changes.
  */
 class MotionFeatureExtractor : public IFrameReceiver, public IFeatureExtractor {
 public:

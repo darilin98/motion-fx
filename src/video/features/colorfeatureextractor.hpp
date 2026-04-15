@@ -11,6 +11,8 @@
 
 /**
  * @brief Extracts the RGB color composition out of a VideoFrame.
+ *
+ * Sums and normalizes color values independently. Exports them as three individual parameters.
  */
 class ColorFeatureExtractor : public IFrameReceiver, public IFeatureExtractor {
 public:

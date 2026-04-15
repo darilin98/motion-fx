@@ -12,6 +12,8 @@
 
 /**
  * @brief Extracts the brightness value out of a VideoFrame.
+ *
+ * Sums the values of all pixels of a frame (ignoring the alpha channel) and normalizes them by the total pixel count.
  */
 class BrightnessFeatureExtractor : public IFrameReceiver, public IFeatureExtractor {
 public:

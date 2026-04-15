@@ -11,7 +11,9 @@
 
 
 /**
- * @brief Extracts an estimation of saturation of a VideoFrame.
+ * @brief Extracts saturation of a VideoFrame.
+ *
+ * Calculates mean frame saturation using the HSV formula.
  */
 class SaturationFeatureExtractor : public IFrameReceiver, public IFeatureExtractor {
 public:
