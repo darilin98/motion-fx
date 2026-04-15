@@ -6,7 +6,6 @@
 
 #include "parameterdefaults.hpp"
 #include "utils.hpp"
-#include "../cmake-build-debug/_deps/vst3sdk-src/vstgui4/vstgui/standalone/include/iasync.h"
 #include "base/source/fstreamer.h"
 #include "vstgui/lib/vstguiinit.h"
 #include "ui/visimusiceditor.hpp"
