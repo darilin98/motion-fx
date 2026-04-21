@@ -37,6 +37,23 @@ Binaries for both Windows and macOS are available for download in the *Releases*
 
 For a description of the installation process and troubleshooting help visit [this page.](docs/build_guide.md)
 
+## License
+
+This project is licensed under the GNU GPL v3.
+See the [LICENSE](LICENSE.txt) file for full details.
+
+## Third-party dependencies
+
+The project uses the following libraries.
+
+- [VST3SDK](https://github.com/steinbergmedia/vst3sdk)
+- [FFMPEG](https://ffmpeg.org/)
+- [STB](https://github.com/nothings/stb)
+- [DaisySP](https://github.com/electro-smith/DaisySP)
+- [Catch2](https://github.com/catchorg/Catch2)
+
+See the [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES.txt) file for details and licensing information.
+
 ## Help & Documentation
 
 - [Detailed user guide](docs/user_guide.md)

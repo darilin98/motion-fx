@@ -1,0 +1,22 @@
+This project uses the following third-party libraries:
+
+- VST3SDK - MIT License
+- STB - MIT License
+- DaisySP - MIT License
+- Catch2 - BSL-v1.0 License
+
+Regarding FFmpeg:
+
+    The plugin uses FFmpeg,
+    source code available from (https://ffmpeg.org/)
+
+    Source builds:
+    FFmpeg is not included in the source tree. During compilation,
+    the build system links against a local FFmpeg installation.
+
+    Prebuilt binaries:
+    Official prebuilt releases of this plugin include FFmpeg binaries,
+    which are dynamically linked.
+
+    FFmpeg version used in prebuilt binaries: 8.1
+    FFmpeg is licensed under the GNU GPL-3.0 in this configuration.
