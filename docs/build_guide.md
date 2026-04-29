@@ -10,11 +10,18 @@ The macOS version of the plugin is packaged as a file with the `.dmg` suffix.
 
 Once you open it, you will be prompted with a Finder window containing an installation script (with the suffix `.app`) and the plugin bundle (with the suffix `.vst3`)
 
-To continue, double-click the installation script. It should prompt you with a pop-up window, accept it and the script will ask you for your system password.
-Entering your password is necessary in order to give the script admin privileges for white-listing the plugin files.
+To continue, double-click the installation script. macOS might flag it as foreign software and show a warning.
+To remove this, go to the Privacy & Security section in the settings, scroll down and explicitly allow `Install.app` to run.
 
-After successfully running the script, the plugin should already be copied to `~/Library/Audio/Plug-Ins/VST3`. 
-If not, manually copy the entire `.vst3` folder from the installer to the plugin location.
+Running the installation script should prompt you with a pop-up window, accept it and the script should both copy the plugin to the destination and white-list its files.
+
+In the event that the installation script fails, you can execute its steps manually by first copying the `visimusic.vst3` folder (might be showing as just `visimusic` in some Finder configurations) to the VST plugin destination: `~/Library/Audio/Plug-Ins/VST3/`
+
+If you manually copied the plugin files to the destination folder, run the following command in the terminal, it ensures that all of the files contained in the plugin have been white-listed:
+
+```
+xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/visimusic.vst3
+```
 
 Finally, restart your DAW, and it should either automatically detect and add the plugin or prompt you to include it during start up.
 
