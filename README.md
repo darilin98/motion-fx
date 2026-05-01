@@ -54,6 +54,12 @@ The project uses the following libraries.
 
 See the [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES.txt) file for details and licensing information.
 
+## Input videos starter pack
+
+To help you get started with using Visimusic, you can visit [this page](docs/example_input_videos.md) for a list of videos that have been used during testing and react with the plugin in interesting ways.
+
+The videos are provided as download links to comply with the license of the provider - [PixaBay](https://pixabay.com/).
+
 ## Help & Documentation
 
 - [Detailed user guide](docs/user_guide.md)
